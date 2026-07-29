@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Najot Ta'lim ERP</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">N</div>
+          <div>
+            <h1>Najot Ta'lim</h1>
+            <p>ERP Dashboard</p>
+          </div>
+        </div>
+
+        <nav class="nav-links">
+          <a href="#" class="active">Dashboard</a>
+          <a href="#">Courses</a>
+          <a href="#">Students</a>
+          <a href="#">Payments</a>
+          <a href="#">Reports</a>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Najot Ta'lim operatsion boshqaruvi</p>
+            <h2 id="welcome-title">Salom, Azizbek!</h2>
+          </div>
+          <button class="login-btn" id="login-btn">Kirish</button>
+        </header>
+
+        <section class="stats-grid" id="stats-grid"></section>
+
+        <section class="cards-grid">
+          <article class="card panel">
+            <div class="card-header">
+              <h3>Kurslar</h3>
+              <span>Active</span>
+            </div>
+            <div id="courses-list"></div>
+          </article>
+
+          <article class="card panel">
+            <div class="card-header">
+              <h3>Talabalar</h3>
+              <span>Today</span>
+            </div>
+            <div id="students-list"></div>
+          </article>
+
+          <article class="card panel">
+            <div class="card-header">
+              <h3>Davomat</h3>
+              <span>Weekly</span>
+            </div>
+            <div id="attendance-list"></div>
+          </article>
+
+          <article class="card panel">
+            <div class="card-header">
+              <h3>Moliya</h3>
+              <span>Payments</span>
+            </div>
+            <div id="finance-list"></div>
+          </article>
+        </section>
+
+        <section class="card announcements">
+          <div class="card-header">
+            <h3>E'lonlar</h3>
+            <span>Important</span>
+          </div>
+          <div id="announcements-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
