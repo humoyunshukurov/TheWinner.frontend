@@ -80,7 +80,6 @@ export default function HomePage() {
 
         <div className="level-divider" />
 
-        <h3>Guruh</h3>
         <div className="level-row">
           <span className="muted">Guruh:</span>
           <strong>{groupName || '...'}</strong>
