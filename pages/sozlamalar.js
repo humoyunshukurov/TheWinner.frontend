@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
-import { IconEdit, IconCamera, IconShield, IconLogout } from '../components/icons';
-import { getGuest, isRegistered, logout } from '../lib/guest';
+import LogoutButton from '../components/LogoutButton';
+import { IconEdit, IconCamera, IconShield } from '../components/icons';
+import { getGuest, isRegistered } from '../lib/guest';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -18,7 +18,6 @@ const DEFAULT_PROFILE = {
 };
 
 export default function SozlamalarPage() {
-  const router = useRouter();
   const [photo, setPhoto] = useState(null);
   const [photoError, setPhotoError] = useState(null);
   const fileInputRef = useRef(null);
@@ -43,11 +42,6 @@ export default function SozlamalarPage() {
       setAccount(getGuest());
     }
   }, []);
-
-  function handleLogout() {
-    logout();
-    router.push('/');
-  }
 
   function handlePhotoChange(event) {
     const file = event.target.files?.[0];
@@ -214,7 +208,7 @@ export default function SozlamalarPage() {
       </article>
 
       {account && (
-        <article className="card" style={{ marginTop: 14 }}>
+        <article className="card profile-settings-card" style={{ marginTop: 14 }}>
           <div className="card-header">
             <h3>
               <IconShield size={18} /> Hisob
@@ -226,9 +220,7 @@ export default function SozlamalarPage() {
               <span className="muted">{account.name}</span>
             </div>
           </div>
-          <button className="pill-btn logout-btn" onClick={handleLogout}>
-            <IconLogout /> Hisobdan chiqish
-          </button>
+          <LogoutButton />
         </article>
       )}
     </Layout>

@@ -6,6 +6,7 @@ import { getGuest, GUEST_CHANGED_EVENT } from '../lib/guest';
 import { addUsageMs } from '../lib/usage';
 import LottieCoin from './LottieCoin';
 import ThemeToggle from './ThemeToggle';
+import LogoutButton from './LogoutButton';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const TICK_MS = 5000;
@@ -104,6 +105,7 @@ export default function Layout({ title, eyebrow, backHref, children }) {
                 {coins}
               </div>
             )}
+            <LogoutButton compact />
             <div className="avatar">AN</div>
           </div>
         </header>
