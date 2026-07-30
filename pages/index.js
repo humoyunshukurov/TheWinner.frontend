@@ -10,13 +10,20 @@ export default function HomePage() {
   const [coins, setCoins] = useState(null);
   const [hpData, setHpData] = useState(null);
   const [groupName, setGroupName] = useState(null);
+  const [groupRank, setGroupRank] = useState(null);
   const [usageText, setUsageText] = useState('');
 
   useEffect(() => {
     const { guestId } = getGuest();
     fetch(`${API_URL}/coins?guestId=${guestId}`).then((res) => res.json()).then((data) => setCoins(data.coins)).catch(() => {});
     fetch(`${API_URL}/hp?guestId=${guestId}`).then((res) => res.json()).then(setHpData).catch(() => {});
-    fetch(`${API_URL}/leaderboard/group`).then((res) => res.json()).then((data) => setGroupName(data.group ?? null)).catch(() => {});
+    fetch(`${API_URL}/leaderboard/group`)
+      .then((res) => res.json())
+      .then((data) => {
+        setGroupName(data.group ?? null);
+        setGroupRank(data.me?.rank ?? null);
+      })
+      .catch(() => {});
 
     const updateUsage = () => setUsageText(formatUsageDuration(getTotalUsageMs()));
     updateUsage();
@@ -76,7 +83,8 @@ export default function HomePage() {
         <h3>Guruh</h3>
         <div className="level-row" style={{ marginBottom: 0 }}>
           <span className="muted">Nomi:</span>
-          <strong className="level-rank-value">{groupName || '...'}</strong>
+          <strong>{groupName || '...'}</strong>
+          {groupRank && <span className="level-rank-value">&middot; {groupRank}-o'rin</span>}
         </div>
       </article>
     </Layout>
