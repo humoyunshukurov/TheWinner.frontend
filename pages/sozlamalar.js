@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
-import { IconEdit, IconCamera } from '../components/icons';
+import { IconEdit, IconCamera, IconShield, IconLogout } from '../components/icons';
+import { getGuest, isRegistered, logout } from '../lib/guest';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -16,6 +18,7 @@ const DEFAULT_PROFILE = {
 };
 
 export default function SozlamalarPage() {
+  const router = useRouter();
   const [photo, setPhoto] = useState(null);
   const [photoError, setPhotoError] = useState(null);
   const fileInputRef = useRef(null);
@@ -23,6 +26,7 @@ export default function SozlamalarPage() {
   const [profile, setProfile] = useState(DEFAULT_PROFILE);
   const [draft, setDraft] = useState(DEFAULT_PROFILE);
   const [editingProfile, setEditingProfile] = useState(false);
+  const [account, setAccount] = useState(null);
 
   useEffect(() => {
     const savedPhoto = localStorage.getItem('nt_profile_photo');
@@ -34,7 +38,16 @@ export default function SozlamalarPage() {
       setProfile(parsed);
       setDraft(parsed);
     }
+
+    if (isRegistered()) {
+      setAccount(getGuest());
+    }
   }, []);
+
+  function handleLogout() {
+    logout();
+    router.push('/');
+  }
 
   function handlePhotoChange(event) {
     const file = event.target.files?.[0];
@@ -199,6 +212,25 @@ export default function SozlamalarPage() {
           </div>
         )}
       </article>
+
+      {account && (
+        <article className="card" style={{ marginTop: 14 }}>
+          <div className="card-header">
+            <h3>
+              <IconShield size={18} /> Hisob
+            </h3>
+          </div>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <strong>Foydalanuvchi nomi</strong>
+              <span className="muted">{account.name}</span>
+            </div>
+          </div>
+          <button className="pill-btn logout-btn" onClick={handleLogout}>
+            <IconLogout /> Hisobdan chiqish
+          </button>
+        </article>
+      )}
     </Layout>
   );
 }
