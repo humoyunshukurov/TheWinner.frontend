@@ -9,14 +9,14 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 export default function HomePage() {
   const [coins, setCoins] = useState(null);
   const [hpData, setHpData] = useState(null);
-  const [groupRank, setGroupRank] = useState(null);
+  const [groupName, setGroupName] = useState(null);
   const [usageText, setUsageText] = useState('');
 
   useEffect(() => {
     const { guestId } = getGuest();
     fetch(`${API_URL}/coins?guestId=${guestId}`).then((res) => res.json()).then((data) => setCoins(data.coins)).catch(() => {});
     fetch(`${API_URL}/hp?guestId=${guestId}`).then((res) => res.json()).then(setHpData).catch(() => {});
-    fetch(`${API_URL}/leaderboard/group`).then((res) => res.json()).then((data) => setGroupRank(data.me?.rank ?? null)).catch(() => {});
+    fetch(`${API_URL}/leaderboard/group`).then((res) => res.json()).then((data) => setGroupName(data.group ?? null)).catch(() => {});
 
     const updateUsage = () => setUsageText(formatUsageDuration(getTotalUsageMs()));
     updateUsage();
@@ -73,10 +73,10 @@ export default function HomePage() {
 
         <div className="level-divider" />
 
-        <h3>Reyting</h3>
+        <h3>Guruh</h3>
         <div className="level-row" style={{ marginBottom: 0 }}>
-          <span className="muted">Umumiy:</span>
-          <strong className="level-rank-value">{groupRank ? `${groupRank} - o'rin` : '...'}</strong>
+          <span className="muted">Nomi:</span>
+          <strong className="level-rank-value">{groupName || '...'}</strong>
         </div>
       </article>
     </Layout>
