@@ -9,11 +9,7 @@ const PROFILE_STORAGE_KEY = 'nt_profile_info';
 
 const DEFAULT_PROFILE = {
   firstName: 'Azizbek',
-  lastName: 'Nurmatov',
-  phone: "(+998) 90 123 45 67",
-  birthDate: '',
-  gender: 'Erkak',
-  studentId: 'NT-24831'
+  lastName: 'Nurmatov'
 };
 
 export default function SozlamalarPage() {
@@ -155,45 +151,6 @@ export default function SozlamalarPage() {
             )}
           </div>
 
-          <div className="profile-field">
-            <span className="muted">Telefon raqam</span>
-            {editingProfile ? (
-              <input className="form-input" value={draft.phone} onChange={(e) => updateDraft('phone', e.target.value)} />
-            ) : (
-              <strong>{profile.phone}</strong>
-            )}
-          </div>
-
-          <div className="profile-field">
-            <span className="muted">Tug&apos;ilgan sana</span>
-            {editingProfile ? (
-              <input
-                type="date"
-                className="form-input"
-                value={draft.birthDate}
-                onChange={(e) => updateDraft('birthDate', e.target.value)}
-              />
-            ) : (
-              <strong>{profile.birthDate || '—'}</strong>
-            )}
-          </div>
-
-          <div className="profile-field">
-            <span className="muted">Jinsi</span>
-            {editingProfile ? (
-              <select className="form-input" value={draft.gender} onChange={(e) => updateDraft('gender', e.target.value)}>
-                <option value="Erkak">Erkak</option>
-                <option value="Ayol">Ayol</option>
-              </select>
-            ) : (
-              <strong>{profile.gender}</strong>
-            )}
-          </div>
-
-          <div className="profile-field">
-            <span className="muted">Talaba ID</span>
-            <strong>{profile.studentId}</strong>
-          </div>
         </div>
 
         {editingProfile && (
