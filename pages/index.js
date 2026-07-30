@@ -81,10 +81,13 @@ export default function HomePage() {
         <div className="level-divider" />
 
         <h3>Guruh</h3>
-        <div className="level-row" style={{ marginBottom: 0 }}>
-          <span className="muted">Nomi:</span>
+        <div className="level-row">
+          <span className="muted">Guruh:</span>
           <strong>{groupName || '...'}</strong>
-          {groupRank && <span className="level-rank-value">&middot; {groupRank}-o'rin</span>}
+        </div>
+        <div className="level-row" style={{ marginBottom: 0 }}>
+          <span className="muted">Umumiy:</span>
+          <strong className="level-rank-value">{groupRank ? `${groupRank}-o'rin` : '...'}</strong>
         </div>
       </article>
     </Layout>
