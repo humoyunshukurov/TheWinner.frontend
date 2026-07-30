@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Layout from '../components/Layout';
-import { IconEdit, IconCamera } from '../components/icons';
+import { IconEdit, IconCamera, IconShield } from '../components/icons';
 import { getGuest, isRegistered } from '../lib/guest';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
@@ -87,7 +87,9 @@ export default function SozlamalarPage() {
 
   return (
     <Layout eyebrow="Ilova sozlamalari" title="Sozlamalar">
-      <article className="card profile-settings-card">
+      <div className="dashboard-grid">
+      <div>
+      <article className="card">
         <div className="card-header">
           <h3>Shaxsiy ma'lumotlar</h3>
           {!editingProfile && (
@@ -205,22 +207,37 @@ export default function SozlamalarPage() {
           </div>
         )}
       </article>
+      </div>
 
-      {account && (
-        <div className="quick-settings-grid" style={{ maxWidth: 640, margin: '14px auto 0' }}>
-          <article className="card quick-settings-card">
-            <strong>Kirish</strong>
-            <p className="muted">{account.name}</p>
-          </article>
-
-          <article className="card quick-settings-card">
-            <div className="quick-settings-card-header">
-              <strong>Parol</strong>
+      <div>
+        {account && (
+          <article className="card">
+            <div className="card-header">
+              <h3>Hisob xavfsizligi</h3>
+              <IconShield size={18} />
             </div>
-            <p className="muted password-dots">••••••••</p>
+
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <span className="muted">Kirish</span>
+                <strong>{account.name}</strong>
+              </div>
+            </div>
+
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <span className="muted">Parol</span>
+                <strong className="password-dots">••••••••</strong>
+              </div>
+            </div>
+
+            <p className="muted" style={{ fontSize: '0.78rem', marginTop: 14, marginBottom: 0 }}>
+              Bu login va parol orqali istalgan qurilmadan hisobingizga kirishingiz mumkin.
+            </p>
           </article>
-        </div>
-      )}
+        )}
+      </div>
+      </div>
     </Layout>
   );
 }

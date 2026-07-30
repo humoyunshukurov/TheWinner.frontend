@@ -1812,11 +1812,6 @@ body {
 }
 
 /* Settings */
-.profile-settings-card {
-  max-width: 640px;
-  margin: 28px auto 0;
-}
-
 .profile-photo-row {
   display: flex;
   align-items: center;
@@ -1928,41 +1923,6 @@ body {
   outline: none;
   border-color: var(--accent);
   background: var(--card-bg);
-}
-
-.quick-settings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-  margin: 18px 0;
-}
-
-.quick-settings-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  text-decoration: none;
-  color: inherit;
-  cursor: default;
-}
-
-a.quick-settings-card {
-  cursor: pointer;
-  transition: transform 0.15s ease;
-}
-
-a.quick-settings-card:hover {
-  transform: translateY(-2px);
-}
-
-.quick-settings-card strong {
-  font-size: 0.92rem;
-}
-
-.quick-settings-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .icon-edit-btn {
@@ -2170,10 +2130,6 @@ a.quick-settings-card:hover {
   }
 
   .profile-fields-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .quick-settings-grid {
     grid-template-columns: 1fr;
   }
 
