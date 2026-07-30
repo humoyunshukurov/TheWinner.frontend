@@ -1393,6 +1393,32 @@ body {
   width: 100%;
 }
 
+.method-tabs {
+  display: inline-flex;
+  gap: 4px;
+  background: var(--content-bg);
+  border-radius: 10px;
+  padding: 3px;
+  margin-bottom: 16px;
+}
+
+.method-tab {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.method-tab.active {
+  background: var(--card-bg);
+  color: var(--accent);
+  box-shadow: var(--card-shadow);
+}
+
 .game-code-form {
   display: flex;
   gap: 8px;
