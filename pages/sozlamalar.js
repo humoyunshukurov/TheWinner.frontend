@@ -83,7 +83,7 @@ export default function SozlamalarPage() {
 
   return (
     <Layout eyebrow="Ilova sozlamalari" title="Sozlamalar">
-      <div className="dashboard-grid">
+      <div className="dashboard-grid settings-dashboard-grid">
       <div>
       <article className="card">
         <div className="card-header">
@@ -166,9 +166,9 @@ export default function SozlamalarPage() {
       </article>
       </div>
 
-      <div>
+      <div style={{ height: '100%' }}>
         {account && (
-          <article className="card">
+          <article className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <div className="card-header">
               <h3>Hisob xavfsizligi</h3>
               <IconShield size={18} />
@@ -188,7 +188,7 @@ export default function SozlamalarPage() {
               </div>
             </div>
 
-            <p className="muted" style={{ fontSize: '0.78rem', marginTop: 14, marginBottom: 0 }}>
+            <p className="muted" style={{ fontSize: '0.78rem', marginTop: 'auto', paddingTop: 14, marginBottom: 0 }}>
               Bu login va parol orqali istalgan qurilmadan hisobingizga kirishingiz mumkin.
             </p>
           </article>

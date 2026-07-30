@@ -538,6 +538,10 @@ body {
   align-items: start;
 }
 
+.settings-dashboard-grid {
+  align-items: stretch;
+}
+
 .card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
