@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Layout from '../components/Layout';
-import LogoutButton from '../components/LogoutButton';
-import { IconEdit, IconCamera, IconShield } from '../components/icons';
+import { IconEdit, IconCamera } from '../components/icons';
 import { getGuest, isRegistered } from '../lib/guest';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
@@ -208,20 +207,19 @@ export default function SozlamalarPage() {
       </article>
 
       {account && (
-        <article className="card profile-settings-card" style={{ marginTop: 14 }}>
-          <div className="card-header">
-            <h3>
-              <IconShield size={18} /> Hisob
-            </h3>
-          </div>
-          <div className="settings-row">
-            <div className="settings-row-info">
-              <strong>Foydalanuvchi nomi</strong>
-              <span className="muted">{account.name}</span>
+        <div className="quick-settings-grid" style={{ maxWidth: 640, margin: '14px auto 0' }}>
+          <article className="card quick-settings-card">
+            <strong>Kirish</strong>
+            <p className="muted">{account.name}</p>
+          </article>
+
+          <article className="card quick-settings-card">
+            <div className="quick-settings-card-header">
+              <strong>Parol</strong>
             </div>
-          </div>
-          <LogoutButton />
-        </article>
+            <p className="muted password-dots">••••••••</p>
+          </article>
+        </div>
       )}
     </Layout>
   );
