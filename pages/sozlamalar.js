@@ -83,8 +83,6 @@ export default function SozlamalarPage() {
 
   return (
     <Layout eyebrow="Ilova sozlamalari" title="Sozlamalar">
-      <div className="dashboard-grid settings-dashboard-grid">
-      <div>
       <article className="card">
         <div className="card-header">
           <h3>Shaxsiy ma'lumotlar</h3>
@@ -163,38 +161,38 @@ export default function SozlamalarPage() {
             </button>
           </div>
         )}
-      </article>
-      </div>
 
-      <div style={{ height: '100%' }}>
         {account && (
-          <article className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <>
+            <div style={{ borderTop: '1px solid var(--card-border)', margin: '24px 0 18px' }} />
+
             <div className="card-header">
               <h3>Hisob xavfsizligi</h3>
               <IconShield size={18} />
             </div>
 
-            <div className="settings-row">
-              <div className="settings-row-info">
-                <span className="muted">Kirish</span>
-                <strong>{account.name}</strong>
+            <div className="profile-fields-grid">
+              <div className="settings-row">
+                <div className="settings-row-info">
+                  <span className="muted">Kirish</span>
+                  <strong>{account.name}</strong>
+                </div>
+              </div>
+
+              <div className="settings-row">
+                <div className="settings-row-info">
+                  <span className="muted">Parol</span>
+                  <strong className="password-dots">••••••••</strong>
+                </div>
               </div>
             </div>
 
-            <div className="settings-row">
-              <div className="settings-row-info">
-                <span className="muted">Parol</span>
-                <strong className="password-dots">••••••••</strong>
-              </div>
-            </div>
-
-            <p className="muted" style={{ fontSize: '0.78rem', marginTop: 'auto', paddingTop: 14, marginBottom: 0 }}>
+            <p className="muted" style={{ fontSize: '0.78rem', marginTop: 14, marginBottom: 0 }}>
               Bu login va parol orqali istalgan qurilmadan hisobingizga kirishingiz mumkin.
             </p>
-          </article>
+          </>
         )}
-      </div>
-      </div>
+      </article>
     </Layout>
   );
 }
