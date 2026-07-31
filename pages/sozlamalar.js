@@ -8,8 +8,7 @@ const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 const PROFILE_STORAGE_KEY = 'nt_profile_info';
 
 const DEFAULT_PROFILE = {
-  firstName: 'Azizbek',
-  lastName: 'Nurmatov'
+  firstName: 'Azizbek'
 };
 
 export default function SozlamalarPage() {
@@ -122,33 +121,17 @@ export default function SozlamalarPage() {
           </div>
         </div>
 
-        <div className="profile-fields-grid">
-          <div className="profile-field">
-            <span className="muted">Ism</span>
-            {editingProfile ? (
-              <input
-                className="form-input"
-                value={draft.firstName}
-                onChange={(e) => updateDraft('firstName', e.target.value)}
-              />
-            ) : (
-              <strong>{profile.firstName}</strong>
-            )}
-          </div>
-
-          <div className="profile-field">
-            <span className="muted">Familiya</span>
-            {editingProfile ? (
-              <input
-                className="form-input"
-                value={draft.lastName}
-                onChange={(e) => updateDraft('lastName', e.target.value)}
-              />
-            ) : (
-              <strong>{profile.lastName}</strong>
-            )}
-          </div>
-
+        <div className="profile-field" style={{ maxWidth: 280 }}>
+          <span className="muted">Ism</span>
+          {editingProfile ? (
+            <input
+              className="form-input"
+              value={draft.firstName}
+              onChange={(e) => updateDraft('firstName', e.target.value)}
+            />
+          ) : (
+            <strong>{profile.firstName}</strong>
+          )}
         </div>
 
         {editingProfile && (
