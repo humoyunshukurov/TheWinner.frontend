@@ -152,7 +152,7 @@ export default function TestPage() {
             </div>
           </div>
 
-          <button className="pill-btn primary" disabled={!answered || submitting} onClick={goToNext}>
+          <button className="pill-btn primary quiz-check-btn" disabled={!answered || submitting} onClick={goToNext}>
             {submitting ? 'Yuborilmoqda...' : isLast ? 'Yakunlash' : 'Keyingi savol'}
           </button>
         </article>

@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/Layout';
 import Bracket from '../../components/Bracket';
 import TournamentBanner from '../../components/TournamentBanner';
-import { IconTrophy, IconUsers } from '../../components/icons';
+import { IconTrophy, IconUsers, IconClock } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
 import { useRequireAccess } from '../../lib/useRequireAccess';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const QUESTION_SECONDS = 15;
 
 function rankBadgeClass(place) {
   if (place === 1) return 'rank-badge gold';
@@ -23,6 +24,8 @@ export default function TurnirPage() {
   const [state, setState] = useState(null);
   const [bracket, setBracket] = useState(null);
   const [answers, setAnswers] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(QUESTION_SECONDS);
   const [submittedMatchId, setSubmittedMatchId] = useState(null);
   const { requireAccess } = useRequireAccess();
 
@@ -33,6 +36,24 @@ export default function TurnirPage() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (state?.status !== 'match') return;
+    setTimeLeft(QUESTION_SECONDS);
+  }, [currentIndex, state?.status]);
+
+  useEffect(() => {
+    if (state?.status !== 'match' || submittedMatchId === state?.matchId) return;
+
+    if (timeLeft <= 0) {
+      goToNext();
+      return;
+    }
+
+    const timer = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft, state?.status, submittedMatchId]);
+
   function poll() {
     const { guestId } = guestRef.current;
     fetch(`${API_URL}/tournament/state?guestId=${guestId}`)
@@ -42,6 +63,8 @@ export default function TurnirPage() {
         if (data.status === 'match' && data.matchId !== loadedMatchIdRef.current) {
           loadedMatchIdRef.current = data.matchId;
           setAnswers(new Array(data.questions.length).fill(null));
+          setCurrentIndex(0);
+          setTimeLeft(QUESTION_SECONDS);
           startTimeRef.current = Date.now();
           setSubmittedMatchId(null);
         }
@@ -75,6 +98,14 @@ export default function TurnirPage() {
     setAnswers((prev) => prev.map((value, i) => (i === qIndex ? oIndex : value)));
   }
 
+  function goToNext() {
+    if (currentIndex < state.questions.length - 1) {
+      setCurrentIndex((i) => i + 1);
+    } else {
+      submitMatch();
+    }
+  }
+
   function submitMatch() {
     const timeMs = Date.now() - startTimeRef.current;
     const { guestId } = guestRef.current;
@@ -104,7 +135,9 @@ export default function TurnirPage() {
     );
   }
 
-  const allAnswered = answers.length > 0 && answers.every((a) => a !== null);
+  const question = state.status === 'match' ? state.questions?.[currentIndex] : null;
+  const answered = answers[currentIndex] !== null && answers[currentIndex] !== undefined;
+  const isLast = state.status === 'match' && currentIndex === state.questions.length - 1;
   const { guestId } = guestRef.current;
 
   return (
@@ -157,7 +190,7 @@ export default function TurnirPage() {
         </article>
       )}
 
-      {state.status === 'match' && (
+      {state.status === 'match' && question && (
         <article className="card">
           <div className="duel-vs-banner">
             <span>
@@ -167,33 +200,46 @@ export default function TurnirPage() {
             <span>Raqib: {state.opponent.name}</span>
           </div>
 
-          {state.questions.map((question, qIndex) => (
-            <div className="question-block" key={question.text}>
-              <p>
-                {qIndex + 1}. {question.text}
-              </p>
-              <div className="options">
-                {question.options.map((option, oIndex) => (
-                  <label key={option} className={`option-label ${answers[qIndex] === oIndex ? 'selected' : ''}`}>
-                    <input
-                      type="radio"
-                      name={`turnir-q-${qIndex}`}
-                      checked={answers[qIndex] === oIndex}
-                      onChange={() => selectAnswer(qIndex, oIndex)}
-                    />
-                    {option}
-                  </label>
-                ))}
-              </div>
+          <div className="test-progress-header">
+            <span className="test-progress-label">
+              Savol {currentIndex + 1} / {state.questions.length}
+            </span>
+            <span className={`test-timer-badge ${timeLeft <= 3 ? 'low' : ''}`}>
+              <IconClock /> {timeLeft}s
+            </span>
+          </div>
+          <div className="test-progress-bar">
+            <div
+              className="test-progress-fill"
+              style={{ width: `${((currentIndex + 1) / state.questions.length) * 100}%` }}
+            />
+          </div>
+
+          <div className="question-block">
+            <p>
+              {currentIndex + 1}. {question.text}
+            </p>
+            <div className="options">
+              {question.options.map((option, oIndex) => (
+                <label key={option} className={`option-label ${answers[currentIndex] === oIndex ? 'selected' : ''}`}>
+                  <input
+                    type="radio"
+                    name={`turnir-q-${currentIndex}`}
+                    checked={answers[currentIndex] === oIndex}
+                    onChange={() => selectAnswer(currentIndex, oIndex)}
+                  />
+                  {option}
+                </label>
+              ))}
             </div>
-          ))}
+          </div>
 
           <button
-            className="pill-btn primary"
-            disabled={!allAnswered || submittedMatchId === state.matchId}
-            onClick={submitMatch}
+            className="pill-btn primary quiz-check-btn"
+            disabled={!answered || submittedMatchId === state.matchId}
+            onClick={goToNext}
           >
-            {submittedMatchId === state.matchId ? 'Yuborildi...' : 'Yakunlash'}
+            {submittedMatchId === state.matchId ? 'Yuborildi...' : isLast ? 'Yakunlash' : 'Keyingi savol'}
           </button>
         </article>
       )}

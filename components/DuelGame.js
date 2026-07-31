@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import BattleBanner from './BattleBanner';
-import { IconSwords } from './icons';
+import { IconSwords, IconClock } from './icons';
 import { getGuest } from '../lib/guest';
 import { useRequireAccess } from '../lib/useRequireAccess';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const QUESTION_SECONDS = 15;
 
 export default function DuelGame({ compact, onPhaseChange }) {
   const [phase, setPhase] = useState('idle');
   const [duel, setDuel] = useState(null);
   const [answers, setAnswers] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(QUESTION_SECONDS);
   const [result, setResult] = useState(null);
   const [reward, setReward] = useState(null);
 
@@ -27,9 +30,29 @@ export default function DuelGame({ compact, onPhaseChange }) {
     onPhaseChange?.(phase);
   }, [phase, onPhaseChange]);
 
+  useEffect(() => {
+    if (phase !== 'playing') return;
+    setTimeLeft(QUESTION_SECONDS);
+  }, [currentIndex, phase]);
+
+  useEffect(() => {
+    if (phase !== 'playing' || !duel) return;
+
+    if (timeLeft <= 0) {
+      goToNext();
+      return;
+    }
+
+    const timer = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft, phase, duel]);
+
   function enterMatch(data) {
     setDuel(data);
     setAnswers(new Array(data.questions.length).fill(null));
+    setCurrentIndex(0);
+    setTimeLeft(QUESTION_SECONDS);
     startTimeRef.current = Date.now();
     setPhase('playing');
   }
@@ -71,6 +94,14 @@ export default function DuelGame({ compact, onPhaseChange }) {
 
   function selectAnswer(qIndex, oIndex) {
     setAnswers((prev) => prev.map((value, i) => (i === qIndex ? oIndex : value)));
+  }
+
+  function goToNext() {
+    if (currentIndex < duel.questions.length - 1) {
+      setCurrentIndex((i) => i + 1);
+    } else {
+      handleSubmit();
+    }
   }
 
   function handleSubmit() {
@@ -128,7 +159,9 @@ export default function DuelGame({ compact, onPhaseChange }) {
     setAnswers([]);
   }
 
-  const allAnswered = answers.length > 0 && answers.every((a) => a !== null);
+  const question = duel?.questions[currentIndex];
+  const answered = answers[currentIndex] !== null && answers[currentIndex] !== undefined;
+  const isLast = duel && currentIndex === duel.questions.length - 1;
   const me = result?.players.find((p) => p.guestId === guestRef.current.guestId);
   const opponent = result?.players.find((p) => p.guestId !== guestRef.current.guestId);
   const iWon = result && result.winnerGuestId === guestRef.current.guestId;
@@ -161,7 +194,7 @@ export default function DuelGame({ compact, onPhaseChange }) {
         </div>
       )}
 
-      {phase === 'playing' && duel && (
+      {phase === 'playing' && duel && question && (
         <article className="card">
           <div className="duel-vs-banner">
             <span>Siz</span>
@@ -169,29 +202,42 @@ export default function DuelGame({ compact, onPhaseChange }) {
             <span>{duel.opponent.name}</span>
           </div>
 
-          {duel.questions.map((question, qIndex) => (
-            <div className="question-block" key={question.text}>
-              <p>
-                {qIndex + 1}. {question.text}
-              </p>
-              <div className="options">
-                {question.options.map((option, oIndex) => (
-                  <label key={option} className={`option-label ${answers[qIndex] === oIndex ? 'selected' : ''}`}>
-                    <input
-                      type="radio"
-                      name={`duel-q-${qIndex}`}
-                      checked={answers[qIndex] === oIndex}
-                      onChange={() => selectAnswer(qIndex, oIndex)}
-                    />
-                    {option}
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
+          <div className="test-progress-header">
+            <span className="test-progress-label">
+              Savol {currentIndex + 1} / {duel.questions.length}
+            </span>
+            <span className={`test-timer-badge ${timeLeft <= 3 ? 'low' : ''}`}>
+              <IconClock /> {timeLeft}s
+            </span>
+          </div>
+          <div className="test-progress-bar">
+            <div
+              className="test-progress-fill"
+              style={{ width: `${((currentIndex + 1) / duel.questions.length) * 100}%` }}
+            />
+          </div>
 
-          <button className="pill-btn primary" disabled={!allAnswered} onClick={handleSubmit}>
-            Yakunlash
+          <div className="question-block">
+            <p>
+              {currentIndex + 1}. {question.text}
+            </p>
+            <div className="options">
+              {question.options.map((option, oIndex) => (
+                <label key={option} className={`option-label ${answers[currentIndex] === oIndex ? 'selected' : ''}`}>
+                  <input
+                    type="radio"
+                    name={`duel-q-${currentIndex}`}
+                    checked={answers[currentIndex] === oIndex}
+                    onChange={() => selectAnswer(currentIndex, oIndex)}
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <button className="pill-btn primary quiz-check-btn" disabled={!answered} onClick={goToNext}>
+            {isLast ? 'Yakunlash' : 'Keyingi savol'}
           </button>
         </article>
       )}
