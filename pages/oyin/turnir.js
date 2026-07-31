@@ -191,7 +191,7 @@ export default function TurnirPage() {
       )}
 
       {state.status === 'match' && question && (
-        <article className="card">
+        <article className="card quiz-card">
           <div className="duel-vs-banner">
             <span>
               {state.round}-tur / {state.totalRounds}

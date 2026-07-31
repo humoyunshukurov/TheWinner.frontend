@@ -99,7 +99,7 @@ export default function TestPage() {
       {(!test || access !== true) && <p className="muted">Yuklanmoqda...</p>}
 
       {access === true && test && !result && question && (
-        <article className="card">
+        <article className="card quiz-card">
           <div className="test-progress-header">
             <span className="test-progress-label">
               Savol {currentIndex + 1} / {test.questions.length}

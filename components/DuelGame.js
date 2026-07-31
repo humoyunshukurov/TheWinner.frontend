@@ -201,7 +201,7 @@ export default function DuelGame({ compact, onPhaseChange }) {
       )}
 
       {phase === 'playing' && duel && question && (
-        <article className="card">
+        <article className="card quiz-card">
           <div className="duel-vs-banner">
             <span>Siz</span>
             <IconSwords size={16} />
