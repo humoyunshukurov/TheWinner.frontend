@@ -5,6 +5,7 @@ import TournamentBanner from '../../components/TournamentBanner';
 import { IconTrophy, IconUsers, IconClock } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
 import { useRequireAccess } from '../../lib/useRequireAccess';
+import { burstSideConfetti } from '../../lib/confetti';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const QUESTION_SECONDS = 15;
@@ -53,6 +54,12 @@ export default function TurnirPage() {
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, state?.status, submittedMatchId]);
+
+  useEffect(() => {
+    if (state?.status !== 'finished') return;
+    if (state.standings?.[0]?.guestId !== guestRef.current.guestId) return;
+    return burstSideConfetti(2000);
+  }, [state?.status, state?.standings]);
 
   function poll() {
     const { guestId } = guestRef.current;

@@ -51,7 +51,7 @@ export default function DuelGame({ compact, onPhaseChange }) {
 
   useEffect(() => {
     if (!result || result.winnerGuestId !== guestRef.current.guestId) return;
-    return burstSideConfetti(1000);
+    return burstSideConfetti(2000);
   }, [result]);
 
   function enterMatch(data) {
