@@ -3,6 +3,7 @@ import BattleBanner from './BattleBanner';
 import { IconSwords, IconClock } from './icons';
 import { getGuest } from '../lib/guest';
 import { useRequireAccess } from '../lib/useRequireAccess';
+import { burstSideConfetti } from '../lib/confetti';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const QUESTION_SECONDS = 15;
@@ -47,6 +48,11 @@ export default function DuelGame({ compact, onPhaseChange }) {
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, phase, duel]);
+
+  useEffect(() => {
+    if (!result || result.winnerGuestId !== guestRef.current.guestId) return;
+    return burstSideConfetti(1000);
+  }, [result]);
 
   function enterMatch(data) {
     setDuel(data);

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Layout from '../../components/Layout';
 import { IconCoin, IconSparkle, IconClock } from '../../components/icons';
 import { getGuest, isRegistered } from '../../lib/guest';
+import { burstSideConfetti } from '../../lib/confetti';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const QUESTION_SECONDS = 15;
@@ -60,26 +61,7 @@ export default function TestPage() {
 
   useEffect(() => {
     if (!result || result.correctCount !== result.total) return;
-
-    let cancelled = false;
-    import('canvas-confetti').then(({ default: confetti }) => {
-      if (cancelled) return;
-      const duration = 3000;
-      const end = Date.now() + duration;
-      const colors = ['#4f46e5', '#fbbf24', '#22c55e', '#f97316'];
-
-      (function frame() {
-        confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 }, colors });
-        confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 }, colors });
-        if (Date.now() < end && !cancelled) {
-          requestAnimationFrame(frame);
-        }
-      })();
-    });
-
-    return () => {
-      cancelled = true;
-    };
+    return burstSideConfetti(3000);
   }, [result]);
 
   function selectAnswer(optionIndex) {
