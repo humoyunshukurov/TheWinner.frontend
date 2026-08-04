@@ -768,6 +768,18 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  border-color: rgba(20, 20, 43, 0.12);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+:root[data-theme='dark'] .test-card {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.test-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow: 0 18px 34px rgba(76, 70, 150, 0.16);
 }
 
 .test-card-top {
