@@ -2,14 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import Layout from '../components/Layout';
 import { IconEdit, IconCamera, IconShield } from '../components/icons';
 import { getGuest, isRegistered } from '../lib/guest';
+import { PROFILE_STORAGE_KEY, DEFAULT_PROFILE } from '../lib/profile';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
-const PROFILE_STORAGE_KEY = 'nt_profile_info';
-
-const DEFAULT_PROFILE = {
-  firstName: 'Azizbek'
-};
 
 export default function SozlamalarPage() {
   const [photo, setPhoto] = useState(null);
