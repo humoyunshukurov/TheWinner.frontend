@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Layout from '../components/Layout';
 import { IconEdit, IconCamera, IconShield } from '../components/icons';
 import { getGuest, isRegistered } from '../lib/guest';
-import { PROFILE_STORAGE_KEY, DEFAULT_PROFILE } from '../lib/profile';
+import { loadProfile, saveProfile as persistProfile, loadProfilePhoto, saveProfilePhoto } from '../lib/profile';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -12,24 +12,23 @@ export default function SozlamalarPage() {
   const [photoError, setPhotoError] = useState(null);
   const fileInputRef = useRef(null);
 
-  const [profile, setProfile] = useState(DEFAULT_PROFILE);
-  const [draft, setDraft] = useState(DEFAULT_PROFILE);
+  const [profile, setProfile] = useState({ firstName: '' });
+  const [draft, setDraft] = useState({ firstName: '' });
   const [editingProfile, setEditingProfile] = useState(false);
   const [account, setAccount] = useState(null);
 
   useEffect(() => {
-    const savedPhoto = localStorage.getItem('nt_profile_photo');
+    const { guestId, name } = getGuest();
+
+    const savedPhoto = loadProfilePhoto(guestId);
     if (savedPhoto) setPhoto(savedPhoto);
 
-    const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
-    if (savedProfile) {
-      const parsed = JSON.parse(savedProfile);
-      setProfile(parsed);
-      setDraft(parsed);
-    }
+    const loadedProfile = loadProfile(guestId, name);
+    setProfile(loadedProfile);
+    setDraft(loadedProfile);
 
     if (isRegistered()) {
-      setAccount(getGuest());
+      setAccount({ guestId, name });
     }
   }, []);
 
@@ -51,7 +50,7 @@ export default function SozlamalarPage() {
     const reader = new FileReader();
     reader.onload = () => {
       setPhoto(reader.result);
-      localStorage.setItem('nt_profile_photo', reader.result);
+      saveProfilePhoto(getGuest().guestId, reader.result);
     };
     reader.readAsDataURL(file);
   }
@@ -72,7 +71,7 @@ export default function SozlamalarPage() {
 
   function saveProfile() {
     setProfile(draft);
-    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(draft));
+    persistProfile(getGuest().guestId, draft);
     setEditingProfile(false);
   }
 
