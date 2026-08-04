@@ -6,7 +6,7 @@ import { useRequireAccess } from '../../lib/useRequireAccess';
 import { burstSideConfetti } from '../../lib/confetti';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-const QUESTION_SECONDS = 15;
+const QUESTION_SECONDS = 20;
 
 export default function KodOyinPage() {
   const [code, setCode] = useState('');
@@ -17,6 +17,7 @@ export default function KodOyinPage() {
   const [answered, setAnswered] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState(QUESTION_SECONDS);
+  const [lastResult, setLastResult] = useState<{ correct: boolean; points: number } | null>(null);
 
   const guestRef = useRef({ guestId: '', name: '' });
   const pollRef = useRef<any>(null);
@@ -39,6 +40,7 @@ export default function KodOyinPage() {
     if (state?.status !== 'question') return;
     setAnswered(false);
     setSelectedIndex(null);
+    setLastResult(null);
     setTimeLeft(QUESTION_SECONDS);
   }, [state?.index, state?.status]);
 
@@ -107,7 +109,12 @@ export default function KodOyinPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ guestId, answerIndex: optionIndex })
-    }).then(poll);
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setLastResult({ correct: data.correct, points: data.points });
+        poll();
+      });
   }
 
   function leaveSession() {
@@ -199,7 +206,15 @@ export default function KodOyinPage() {
             </div>
           </div>
 
-          {answered && <p className="muted">Javobingiz qabul qilindi, keyingi savolni kutmoqdamiz...</p>}
+          {answered && (
+            <p className={`game-message ${lastResult ? (lastResult.correct ? 'good' : 'bad') : ''}`}>
+              {lastResult
+                ? lastResult.correct
+                  ? `To'g'ri! +${lastResult.points} ball`
+                  : "Noto'g'ri javob, 0 ball"
+                : 'Javobingiz qabul qilinmoqda...'}
+            </p>
+          )}
         </article>
       )}
 
@@ -208,7 +223,12 @@ export default function KodOyinPage() {
           <div className="game-card">
             <div className="duel-spinner" />
             <h3>Keyingi savol kutilmoqda</h3>
-            <p className="muted">Hozirgi balingiz: {state.score}</p>
+            {lastResult && (
+              <p className={`game-message ${lastResult.correct ? 'good' : 'bad'}`}>
+                {lastResult.correct ? `To'g'ri! +${lastResult.points} ball` : "Noto'g'ri javob, 0 ball"}
+              </p>
+            )}
+            <p className="muted">Umumiy balingiz: {state.score}</p>
           </div>
         </div>
       )}

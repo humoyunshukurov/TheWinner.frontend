@@ -1551,6 +1551,16 @@ body {
   font-weight: 600;
 }
 
+.game-message.good {
+  background: var(--good-soft);
+  color: var(--good);
+}
+
+.game-message.bad {
+  background: var(--critical-soft);
+  color: var(--critical);
+}
+
 .duel-icon {
   background: linear-gradient(135deg, #f97316, #fb7185);
 }
