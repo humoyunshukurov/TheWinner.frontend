@@ -8,7 +8,13 @@ import { burstSideConfetti } from '../lib/confetti';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const QUESTION_SECONDS = 15;
 
-export default function DuelGame({ compact, onPhaseChange }) {
+export default function DuelGame({
+  compact,
+  onPhaseChange
+}: {
+  compact?: boolean;
+  onPhaseChange?: (phase: string) => void;
+}) {
   const [phase, setPhase] = useState('idle');
   const [duel, setDuel] = useState(null);
   const [answers, setAnswers] = useState([]);

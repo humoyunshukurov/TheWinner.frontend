@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconArrowLeft, IconShield } from './icons';
@@ -20,7 +20,17 @@ const navItems = [
   { label: 'Sozlamalar', href: '/sozlamalar', Icon: IconGear }
 ];
 
-export default function Layout({ title, eyebrow, backHref, children }) {
+export default function Layout({
+  title,
+  eyebrow,
+  backHref,
+  children
+}: {
+  title?: string;
+  eyebrow?: string;
+  backHref?: string;
+  children: ReactNode;
+}) {
   const router = useRouter();
   const [coins, setCoins] = useState(null);
   const [rank, setRank] = useState(null);

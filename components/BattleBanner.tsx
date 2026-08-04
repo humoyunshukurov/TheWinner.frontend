@@ -1,6 +1,6 @@
 import { IconSwords, IconTrophy, IconUsers, IconClock, IconBolt } from './icons';
 
-export default function BattleBanner({ onPlay, compact }) {
+export default function BattleBanner({ onPlay, compact }: { onPlay: () => void; compact?: boolean }) {
   return (
     <div className={`battle-banner ${compact ? 'compact' : ''}`}>
       <div className="battle-banner-top">

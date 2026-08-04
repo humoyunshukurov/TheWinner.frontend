@@ -1,7 +1,17 @@
 import Link from 'next/link';
 import { IconPlay, IconUsers, IconBolt } from './icons';
 
-export default function KodBanner({ href, onPlay, compact, ctaLabel = 'Kirish' }) {
+export default function KodBanner({
+  href,
+  onPlay,
+  compact,
+  ctaLabel = 'Kirish'
+}: {
+  href?: string;
+  onPlay?: () => void;
+  compact?: boolean;
+  ctaLabel?: string;
+}) {
   const cta = href ? (
     <Link href={href} className="battle-cta">
       <IconBolt /> {ctaLabel}
