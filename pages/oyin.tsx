@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import DuelGame from '../components/DuelGame';
 import TournamentBanner from '../components/TournamentBanner';
 import KodBanner from '../components/KodBanner';
+import MarafonBanner from '../components/MarafonBanner';
 
 export default function OyinHubPage() {
   const [duelActive, setDuelActive] = useState(false);
@@ -22,6 +23,10 @@ export default function OyinHubPage() {
 
             <div className="mode-card mode-card-battle">
               <TournamentBanner compact href="/oyin/turnir" />
+            </div>
+
+            <div className="mode-card mode-card-battle">
+              <MarafonBanner compact href="/oyin/marafon" />
             </div>
           </>
         )}

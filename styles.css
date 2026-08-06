@@ -972,6 +972,34 @@ body {
   font-weight: 700;
 }
 
+.option-label.correct {
+  border-color: var(--good);
+  background: var(--good-soft);
+  font-weight: 700;
+}
+
+.option-label.correct input[type='radio'] {
+  border-color: var(--good);
+}
+
+.option-label.correct input[type='radio']::after {
+  background: var(--good);
+}
+
+.option-label.wrong {
+  border-color: var(--critical);
+  background: var(--critical-soft);
+  font-weight: 700;
+}
+
+.option-label.wrong input[type='radio'] {
+  border-color: var(--critical);
+}
+
+.option-label.wrong input[type='radio']::after {
+  background: var(--critical);
+}
+
 .option-label input[type='radio'] {
   appearance: none;
   -webkit-appearance: none;
@@ -1307,6 +1335,13 @@ body {
 .battle-banner.kod {
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.16) 1.5px, transparent 0),
     linear-gradient(135deg, #0ea5e9 0%, #6366f1 55%, #4338ca 100%);
+  background-size: 20px 20px, cover;
+  background-position: 0 0, center;
+}
+
+.battle-banner.marathon {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.16) 1.5px, transparent 0),
+    linear-gradient(135deg, #f97316 0%, #ef4444 55%, #b91c1c 100%);
   background-size: 20px 20px, cover;
   background-position: 0 0, center;
 }
