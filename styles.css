@@ -1200,6 +1200,12 @@ body {
   gap: 16px;
 }
 
+@media (min-width: 900px) {
+  .mode-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 .duel-stage,
 .duel-stage-inner {
   display: flex;
