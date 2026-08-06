@@ -32,7 +32,8 @@ export default function Bracket({ rounds, champion }) {
   return (
     <div className="bracket">
       {rounds.map((round, index) => (
-        <div className="bracket-round" key={index} style={{ gap: `${18 * Math.pow(1.7, index)}px` }}>
+        <div className="bracket-round" key={index} style={{ '--bracket-gap': `${18 * Math.pow(1.7, index)}px` } as any}>
+          <span className="bracket-round-label">{round[0]?.round}-tur</span>
           {round.map((entry) => (
             <BracketMatch entry={entry} key={`${entry.round}-${entry.players[0].guestId}`} />
           ))}
@@ -40,6 +41,7 @@ export default function Bracket({ rounds, champion }) {
       ))}
 
       <div className="bracket-round bracket-final">
+        <span className="bracket-round-label">G'olib</span>
         <div className={`bracket-champion ${champion ? 'ready' : ''}`}>
           <IconTrophy size={22} />
           <span>{champion ? champion.name : 'Kutilmoqda...'}</span>
