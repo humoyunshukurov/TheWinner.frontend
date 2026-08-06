@@ -70,26 +70,28 @@ export default function ReytingPage() {
               <span className="select-chip">{groupBoard?.group}</span>
             </div>
             {groupBoard ? (
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>O'rin</th>
-                    <th>Talaba</th>
-                    <th>Ball</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {groupBoard.members.map((member) => (
-                    <tr key={member.name} className={member.name === CURRENT_USER ? 'me-row' : ''}>
-                      <td>
-                        <span className={rankBadgeClass(member.rank)}>{member.rank}</span>
-                      </td>
-                      <td>{member.name === CURRENT_USER ? `${member.name} (siz)` : member.name}</td>
-                      <td>{member.points}</td>
+              <div className="table-scroll">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>O'rin</th>
+                      <th>Talaba</th>
+                      <th>Ball</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {groupBoard.members.map((member) => (
+                      <tr key={member.name} className={member.name === CURRENT_USER ? 'me-row' : ''}>
+                        <td>
+                          <span className={rankBadgeClass(member.rank)}>{member.rank}</span>
+                        </td>
+                        <td>{member.name === CURRENT_USER ? `${member.name} (siz)` : member.name}</td>
+                        <td>{member.points}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <p className="muted">Yuklanmoqda...</p>
             )}
@@ -104,33 +106,35 @@ export default function ReytingPage() {
             </div>
             {groupsBoard ? (
               <>
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>O'rin</th>
-                      <th>Guruh</th>
-                      <th>Coin</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {groupsBoard
-                      .slice(groupsPage * GROUPS_PAGE_SIZE, groupsPage * GROUPS_PAGE_SIZE + GROUPS_PAGE_SIZE)
-                      .map((group) => (
-                        <tr key={group.group} className={group.group === groupBoard?.group ? 'me-row' : ''}>
-                          <td>
-                            <span className={rankBadgeClass(group.rank)}>{group.rank}</span>
-                          </td>
-                          <td>
-                            {group.group}
-                            <div className="muted" style={{ fontSize: '0.78rem' }}>
-                              {group.membersCount} talaba
-                            </div>
-                          </td>
-                          <td>{group.totalPoints}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
+                <div className="table-scroll">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>O'rin</th>
+                        <th>Guruh</th>
+                        <th>Coin</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {groupsBoard
+                        .slice(groupsPage * GROUPS_PAGE_SIZE, groupsPage * GROUPS_PAGE_SIZE + GROUPS_PAGE_SIZE)
+                        .map((group) => (
+                          <tr key={group.group} className={group.group === groupBoard?.group ? 'me-row' : ''}>
+                            <td>
+                              <span className={rankBadgeClass(group.rank)}>{group.rank}</span>
+                            </td>
+                            <td>
+                              {group.group}
+                              <div className="muted" style={{ fontSize: '0.78rem' }}>
+                                {group.membersCount} talaba
+                              </div>
+                            </td>
+                            <td>{group.totalPoints}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
 
                 {groupsBoard.length > GROUPS_PAGE_SIZE && (
                   <div className="pagination">

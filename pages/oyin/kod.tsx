@@ -240,24 +240,26 @@ export default function KodOyinPage() {
               <IconTrophy size={18} /> Yakuniy natijalar
             </h3>
           </div>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>O'rin</th>
-                <th>Ism</th>
-                <th>Ball</th>
-              </tr>
-            </thead>
-            <tbody>
-              {state.leaderboard?.map((p: any) => (
-                <tr key={p.guestId} className={p.guestId === guestRef.current.guestId ? 'me-row' : ''}>
-                  <td>{p.place}</td>
-                  <td>{p.name}</td>
-                  <td>{p.score}</td>
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>O'rin</th>
+                  <th>Ism</th>
+                  <th>Ball</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {state.leaderboard?.map((p: any) => (
+                  <tr key={p.guestId} className={p.guestId === guestRef.current.guestId ? 'me-row' : ''}>
+                    <td>{p.place}</td>
+                    <td>{p.name}</td>
+                    <td>{p.score}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <div className="action-row" style={{ marginTop: 18 }}>
             <button className="pill-btn primary" onClick={leaveSession}>

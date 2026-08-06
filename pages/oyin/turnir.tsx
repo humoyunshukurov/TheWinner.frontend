@@ -270,29 +270,31 @@ export default function TurnirPage() {
               <IconTrophy size={18} /> Yakuniy natijalar
             </h3>
           </div>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>O'rin</th>
-                <th>Ishtirokchi</th>
-                <th>G'alabalar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {state.standings.map((p) => (
-                <tr key={p.guestId} className={p.guestId === guestId ? 'me-row' : ''}>
-                  <td>
-                    <span className={rankBadgeClass(p.place)}>{p.place}</span>
-                  </td>
-                  <td>
-                    {p.name}
-                    {p.guestId === guestId ? ' (siz)' : ''}
-                  </td>
-                  <td>{p.wins}</td>
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>O'rin</th>
+                  <th>Ishtirokchi</th>
+                  <th>G'alabalar</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {state.standings.map((p) => (
+                  <tr key={p.guestId} className={p.guestId === guestId ? 'me-row' : ''}>
+                    <td>
+                      <span className={rankBadgeClass(p.place)}>{p.place}</span>
+                    </td>
+                    <td>
+                      {p.name}
+                      {p.guestId === guestId ? ' (siz)' : ''}
+                    </td>
+                    <td>{p.wins}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {state.standings[0]?.guestId === guestId && (
             <div className="coins-earned-banner" style={{ marginTop: 14 }}>
