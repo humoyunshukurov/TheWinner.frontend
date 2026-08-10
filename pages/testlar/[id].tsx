@@ -7,7 +7,7 @@ import { getGuest, isRegistered } from '../../lib/guest';
 import { burstSideConfetti } from '../../lib/confetti';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-const QUESTION_SECONDS = 15;
+const DEFAULT_QUESTION_SECONDS = 15;
 
 export default function TestPage() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function TestPage() {
   const [test, setTest] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(QUESTION_SECONDS);
+  const [timeLeft, setTimeLeft] = useState(DEFAULT_QUESTION_SECONDS);
   const [result, setResult] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [access, setAccess] = useState(null);
@@ -43,8 +43,8 @@ export default function TestPage() {
   }, [id, access]);
 
   useEffect(() => {
-    setTimeLeft(QUESTION_SECONDS);
-  }, [currentIndex]);
+    setTimeLeft(test?.questionSeconds || DEFAULT_QUESTION_SECONDS);
+  }, [currentIndex, test]);
 
   useEffect(() => {
     if (!test || result || submitting) return;
@@ -152,7 +152,7 @@ export default function TestPage() {
 
             <p className="muted">Natijangiz</p>
             <div className="result-score">
-              {result.score} / {result.maxScore} ball
+              {result.correctCount} / {result.total}
             </div>
             <p className="muted">
               {result.correctCount} ta savoldan {result.total} tasiga to'g'ri javob berdingiz.
@@ -164,7 +164,8 @@ export default function TestPage() {
               </div>
             ) : (
               <p className="locked-hint">
-                {result.passThreshold} balldan ko'proq to'plasangiz, coin va qiziqarli ma'lumotlar ochiladi.
+                Savollarning {result.passThresholdPercent}% dan ko'prog'iga to'g'ri javob bersangiz, coin va
+                qiziqarli ma'lumotlar ochiladi.
               </p>
             )}
 

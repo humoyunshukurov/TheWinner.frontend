@@ -27,14 +27,13 @@ export default function TestlarPage() {
 
               <div className="test-meta">
                 <span>
-                  <IconClock /> {test.duration}
+                  <IconClock /> {test.questionSeconds}s/savol
                 </span>
-                <span>{test.points} ball</span>
               </div>
 
               <div className="test-card-footer">
                 {test.status === 'completed' ? (
-                  <span className="badge good">{test.score} / {test.points} ball</span>
+                  <span className="badge good">{test.correctCount} / {test.total} to'g'ri</span>
                 ) : (
                   <span className="badge warn">Yechilmagan</span>
                 )}
