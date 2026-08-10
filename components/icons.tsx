@@ -23,6 +23,14 @@ export function IconArrowLeft(props) {
   );
 }
 
+export function IconMenu(props) {
+  return (
+    <Svg {...props}>
+      <path d="M4 6.5h16M4 12h16M4 17.5h16" />
+    </Svg>
+  );
+}
+
 export function IconGrid(props) {
   return (
     <Svg {...props}>

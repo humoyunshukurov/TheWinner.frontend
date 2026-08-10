@@ -84,27 +84,13 @@ body {
 }
 
 .shell.sidebar-collapsed {
-  grid-template-columns: 76px 1fr;
+  grid-template-columns: 0px 1fr;
 }
 
-.shell.sidebar-collapsed .brand {
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 0;
-}
-
-.shell.sidebar-collapsed .sidebar-toggle-btn {
-  margin-left: 0;
-}
-
-.shell.sidebar-collapsed .nav-links a {
-  justify-content: center;
-  padding: 11px 0;
-}
-
-.shell.sidebar-collapsed .nav-links a span {
-  display: none;
+.shell.sidebar-collapsed .sidebar {
+  padding-left: 0;
+  padding-right: 0;
+  border-right: none;
 }
 
 @media (min-width: 1240px) {
@@ -133,9 +119,9 @@ body {
 }
 
 .sidebar-toggle-btn {
-  width: 26px;
-  height: 26px;
-  min-width: 26px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -143,18 +129,12 @@ body {
   background: var(--content-bg);
   color: var(--text-secondary);
   cursor: pointer;
-  margin-left: auto;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
 .sidebar-toggle-btn:hover {
   background: var(--accent-soft);
   color: var(--accent);
-}
-
-.toggle-icon-rotated {
-  display: inline-flex;
-  transform: rotate(180deg);
 }
 
 .brand-icon {
@@ -235,6 +215,12 @@ body {
 
 .back-link:hover {
   color: var(--accent);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .topbar-actions {

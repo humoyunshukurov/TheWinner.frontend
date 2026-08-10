@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconArrowLeft, IconShield } from './icons';
+import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconArrowLeft, IconShield, IconMenu } from './icons';
 import { getGuest, GUEST_CHANGED_EVENT } from '../lib/guest';
 import { addUsageMs } from '../lib/usage';
 import LottieCoin from './LottieCoin';
@@ -91,22 +91,12 @@ export default function Layout({
       <aside className="sidebar">
         <div className="brand">
           <div className="brand-icon">N</div>
-          {!collapsed && <h1>Najot Ta'lim</h1>}
-          <button
-            type="button"
-            className="sidebar-toggle-btn"
-            onClick={toggleSidebar}
-            aria-label={collapsed ? "Panelni ochish" : "Panelni yopish"}
-          >
-            <span className={collapsed ? 'toggle-icon-rotated' : ''}>
-              <IconArrowLeft size={14} />
-            </span>
-          </button>
+          <h1>Najot Ta'lim</h1>
         </div>
 
         <nav className="nav-links">
           {navItems.map(({ label, href, Icon }) => (
-            <Link key={label} href={href} className={isActive(href) ? 'active' : ''} title={collapsed ? label : undefined}>
+            <Link key={label} href={href} className={isActive(href) ? 'active' : ''}>
               <Icon />
               <span>{label}</span>
             </Link>
@@ -116,13 +106,23 @@ export default function Layout({
 
       <section className="main-content">
         <header className="topbar">
-          <div>
-            {backHref && (
-              <Link href={backHref} className="back-link">
-                <IconArrowLeft /> Orqaga
-              </Link>
-            )}
-            {title && <h2>{title}</h2>}
+          <div className="topbar-left">
+            <button
+              type="button"
+              className="sidebar-toggle-btn"
+              onClick={toggleSidebar}
+              aria-label={collapsed ? "Panelni ochish" : "Panelni yopish"}
+            >
+              <IconMenu size={18} />
+            </button>
+            <div>
+              {backHref && (
+                <Link href={backHref} className="back-link">
+                  <IconArrowLeft /> Orqaga
+                </Link>
+              )}
+              {title && <h2>{title}</h2>}
+            </div>
           </div>
 
           <div className="topbar-actions">
