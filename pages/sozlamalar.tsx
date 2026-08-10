@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Layout from '../components/Layout';
 import { IconEdit, IconCamera, IconShield, IconEye, IconEyeOff } from '../components/icons';
-import { getGuest, isRegistered, updateAccount } from '../lib/guest';
+import { getGuest, isRegistered, updateAccount, getStoredPassword } from '../lib/guest';
 import { loadProfile, saveProfile as persistProfile, loadProfilePhoto, saveProfilePhoto, migrateProfileStorage } from '../lib/profile';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
@@ -44,6 +44,8 @@ export default function SozlamalarPage() {
   const [newPassword, setNewPassword] = useState('');
   const [renameError, setRenameError] = useState(null);
   const [renaming, setRenaming] = useState(false);
+  const [storedPassword, setStoredPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const { guestId, name } = getGuest();
@@ -57,6 +59,7 @@ export default function SozlamalarPage() {
       setAccount({ guestId, name });
       setProfile({ firstName: name });
       setDraft({ firstName: name });
+      setStoredPassword(getStoredPassword());
     } else {
       const loadedProfile = loadProfile(guestId, name);
       setProfile(loadedProfile);
@@ -137,6 +140,8 @@ export default function SozlamalarPage() {
         setAccount({ guestId: data.guestId, name: data.username });
         setProfile({ firstName: data.username });
         setDraft({ firstName: data.username });
+        setStoredPassword(getStoredPassword());
+        setShowPassword(false);
         setCurrentPassword('');
         setNewPassword('');
         setEditingProfile(false);
@@ -240,8 +245,20 @@ export default function SozlamalarPage() {
                 <div className="settings-row">
                   <div className="settings-row-info">
                     <span className="muted">Parol</span>
-                    <strong className="password-dots">••••••••</strong>
+                    <strong className={showPassword ? '' : 'password-dots'}>
+                      {showPassword && storedPassword ? storedPassword : '••••••••'}
+                    </strong>
                   </div>
+                  {storedPassword && (
+                    <button
+                      type="button"
+                      className="icon-edit-btn"
+                      onClick={() => setShowPassword((v) => !v)}
+                      aria-label={showPassword ? 'Parolni yashirish' : "Parolni ko'rsatish"}
+                    >
+                      {showPassword ? <IconEyeOff /> : <IconEye />}
+                    </button>
+                  )}
                 </div>
               </div>
             )}
