@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Layout from '../components/Layout';
 import { IconEdit, IconCamera, IconShield } from '../components/icons';
-import { getGuest, isRegistered } from '../lib/guest';
-import { loadProfile, saveProfile as persistProfile, loadProfilePhoto, saveProfilePhoto } from '../lib/profile';
+import { getGuest, isRegistered, renameAccount } from '../lib/guest';
+import { loadProfile, saveProfile as persistProfile, loadProfilePhoto, saveProfilePhoto, migrateProfileStorage } from '../lib/profile';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -16,6 +16,8 @@ export default function SozlamalarPage() {
   const [draft, setDraft] = useState({ firstName: '' });
   const [editingProfile, setEditingProfile] = useState(false);
   const [account, setAccount] = useState(null);
+  const [renameError, setRenameError] = useState(null);
+  const [renaming, setRenaming] = useState(false);
 
   useEffect(() => {
     const { guestId, name } = getGuest();
@@ -23,12 +25,16 @@ export default function SozlamalarPage() {
     const savedPhoto = loadProfilePhoto(guestId);
     if (savedPhoto) setPhoto(savedPhoto);
 
-    const loadedProfile = loadProfile(guestId, name);
-    setProfile(loadedProfile);
-    setDraft(loadedProfile);
-
     if (isRegistered()) {
+      // Registered accounts: "Ism" IS the login username, so it comes
+      // straight from the account, not the local-only profile store.
       setAccount({ guestId, name });
+      setProfile({ firstName: name });
+      setDraft({ firstName: name });
+    } else {
+      const loadedProfile = loadProfile(guestId, name);
+      setProfile(loadedProfile);
+      setDraft(loadedProfile);
     }
   }, []);
 
@@ -61,15 +67,45 @@ export default function SozlamalarPage() {
 
   function startEditProfile() {
     setDraft(profile);
+    setRenameError(null);
     setEditingProfile(true);
   }
 
   function cancelEditProfile() {
     setDraft(profile);
+    setRenameError(null);
     setEditingProfile(false);
   }
 
-  function saveProfile() {
+  async function saveProfile() {
+    const newName = (draft.firstName || '').trim();
+    if (!newName) {
+      setRenameError('Ismni kiriting');
+      return;
+    }
+
+    if (account) {
+      // Ism va Kirish bitta narsa: nomni o'zgartirish backenddagi
+      // username'ni ham o'zgartiradi, shu bilan boshqa qurilmadan ham
+      // yangi nom bilan kirish mumkin bo'ladi.
+      setRenaming(true);
+      setRenameError(null);
+      const oldGuestId = account.guestId;
+      try {
+        const data = await renameAccount(newName);
+        migrateProfileStorage(oldGuestId, data.guestId);
+        setAccount({ guestId: data.guestId, name: data.username });
+        setProfile({ firstName: data.username });
+        setDraft({ firstName: data.username });
+        setEditingProfile(false);
+      } catch (err) {
+        setRenameError(err.message || 'Xatolik yuz berdi');
+      } finally {
+        setRenaming(false);
+      }
+      return;
+    }
+
     setProfile(draft);
     persistProfile(getGuest().guestId, draft);
     setEditingProfile(false);
@@ -117,7 +153,7 @@ export default function SozlamalarPage() {
         </div>
 
         <div className="profile-field" style={{ maxWidth: 280 }}>
-          <span className="muted">Ism</span>
+          <span className="muted">Ism{account ? ' (kirish uchun ham shu)' : ''}</span>
           {editingProfile ? (
             <input
               className="form-input"
@@ -129,12 +165,18 @@ export default function SozlamalarPage() {
           )}
         </div>
 
+        {editingProfile && renameError && (
+          <p className="muted" style={{ color: 'var(--critical)', marginTop: 8, marginBottom: 0 }}>
+            {renameError}
+          </p>
+        )}
+
         {editingProfile && (
           <div className="action-row" style={{ marginTop: 18 }}>
-            <button className="pill-btn primary" onClick={saveProfile}>
-              Saqlash
+            <button className="pill-btn primary" onClick={saveProfile} disabled={renaming}>
+              {renaming ? 'Saqlanmoqda...' : 'Saqlash'}
             </button>
-            <button className="pill-btn" onClick={cancelEditProfile}>
+            <button className="pill-btn" onClick={cancelEditProfile} disabled={renaming}>
               Bekor qilish
             </button>
           </div>
@@ -152,13 +194,6 @@ export default function SozlamalarPage() {
             <div className="profile-fields-grid">
               <div className="settings-row">
                 <div className="settings-row-info">
-                  <span className="muted">Kirish</span>
-                  <strong>{account.name}</strong>
-                </div>
-              </div>
-
-              <div className="settings-row">
-                <div className="settings-row-info">
                   <span className="muted">Parol</span>
                   <strong className="password-dots">••••••••</strong>
                 </div>
@@ -166,7 +201,7 @@ export default function SozlamalarPage() {
             </div>
 
             <p className="muted" style={{ fontSize: '0.78rem', marginTop: 14, marginBottom: 0 }}>
-              Bu login va parol orqali istalgan qurilmadan hisobingizga kirishingiz mumkin.
+              Kirish uchun login - yuqoridagi Ism. Ismni o&apos;zgartirsangiz, boshqa qurilmadan shu yangi ism va parol bilan kirasiz.
             </p>
           </>
         )}

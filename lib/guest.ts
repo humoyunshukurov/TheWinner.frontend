@@ -62,3 +62,18 @@ export function registerAccount(username, password) {
 export function loginAccount(username, password) {
   return callAuth('login', username, password);
 }
+
+export async function renameAccount(newUsername) {
+  const { guestId } = getGuest();
+  const res = await fetch(`${API_URL}/auth/rename`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ guestId, newUsername })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.message || 'Xatolik yuz berdi');
+  }
+  persistIdentity(data.guestId, data.username);
+  return data;
+}

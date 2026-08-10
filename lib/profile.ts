@@ -29,3 +29,22 @@ export function saveProfilePhoto(guestId, dataUrl) {
   if (typeof window === 'undefined' || !guestId) return;
   localStorage.setItem(PROFILE_PHOTO_PREFIX + guestId, dataUrl);
 }
+
+// Username rename moves the guestId, and photo/profile-info are namespaced by
+// guestId in localStorage - without this they'd look "lost" on the new name,
+// same class of bug as the pre-persistence-fix coin/HP loss.
+export function migrateProfileStorage(oldGuestId, newGuestId) {
+  if (typeof window === 'undefined' || !oldGuestId || !newGuestId || oldGuestId === newGuestId) return;
+
+  const photo = localStorage.getItem(PROFILE_PHOTO_PREFIX + oldGuestId);
+  if (photo) {
+    localStorage.setItem(PROFILE_PHOTO_PREFIX + newGuestId, photo);
+    localStorage.removeItem(PROFILE_PHOTO_PREFIX + oldGuestId);
+  }
+
+  const info = localStorage.getItem(PROFILE_INFO_PREFIX + oldGuestId);
+  if (info) {
+    localStorage.setItem(PROFILE_INFO_PREFIX + newGuestId, info);
+    localStorage.removeItem(PROFILE_INFO_PREFIX + oldGuestId);
+  }
+}
