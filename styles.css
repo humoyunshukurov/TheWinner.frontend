@@ -2119,6 +2119,35 @@ body {
   letter-spacing: 2px;
 }
 
+.password-input-wrap {
+  position: relative;
+}
+
+.password-input-wrap .form-input {
+  padding-right: 38px;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.password-toggle-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
 .settings-row {
   display: flex;
   align-items: center;

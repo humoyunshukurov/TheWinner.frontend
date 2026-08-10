@@ -63,12 +63,12 @@ export function loginAccount(username, password) {
   return callAuth('login', username, password);
 }
 
-export async function renameAccount(newUsername) {
+export async function updateAccount({ currentPassword, newUsername, newPassword }) {
   const { guestId } = getGuest();
   const res = await fetch(`${API_URL}/auth/rename`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ guestId, newUsername })
+    body: JSON.stringify({ guestId, currentPassword, newUsername, newPassword })
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {

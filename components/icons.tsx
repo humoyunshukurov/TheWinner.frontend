@@ -268,3 +268,22 @@ export function IconMoon(props) {
     </Svg>
   );
 }
+
+export function IconEye(props) {
+  return (
+    <Svg size={16} {...props}>
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
+      <circle cx="12" cy="12" r="2.6" />
+    </Svg>
+  );
+}
+
+export function IconEyeOff(props) {
+  return (
+    <Svg size={16} {...props}>
+      <path d="M3.5 3.5l17 17" />
+      <path d="M10.6 5.7A9.7 9.7 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a15.3 15.3 0 0 1-3.2 4.1M6.7 6.9C4.2 8.6 2.5 12 2.5 12s3.5 6.5 9.5 6.5c1.4 0 2.7-.3 3.8-.9" />
+      <path d="M9.9 10.1a2.6 2.6 0 0 0 3.6 3.7" />
+    </Svg>
+  );
+}

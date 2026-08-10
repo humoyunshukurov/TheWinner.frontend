@@ -1,11 +1,35 @@
 import { useEffect, useRef, useState } from 'react';
 import Layout from '../components/Layout';
-import { IconEdit, IconCamera, IconShield } from '../components/icons';
-import { getGuest, isRegistered, renameAccount } from '../lib/guest';
+import { IconEdit, IconCamera, IconShield, IconEye, IconEyeOff } from '../components/icons';
+import { getGuest, isRegistered, updateAccount } from '../lib/guest';
 import { loadProfile, saveProfile as persistProfile, loadProfilePhoto, saveProfilePhoto, migrateProfileStorage } from '../lib/profile';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+
+function PasswordInput({ value, onChange, placeholder }) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <div className="password-input-wrap">
+      <input
+        className="form-input"
+        type={visible ? 'text' : 'password'}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        autoComplete="new-password"
+      />
+      <button
+        type="button"
+        className="password-toggle-btn"
+        onClick={() => setVisible((v) => !v)}
+        aria-label={visible ? 'Parolni yashirish' : "Parolni ko'rsatish"}
+      >
+        {visible ? <IconEyeOff /> : <IconEye />}
+      </button>
+    </div>
+  );
+}
 
 export default function SozlamalarPage() {
   const [photo, setPhoto] = useState(null);
@@ -16,6 +40,8 @@ export default function SozlamalarPage() {
   const [draft, setDraft] = useState({ firstName: '' });
   const [editingProfile, setEditingProfile] = useState(false);
   const [account, setAccount] = useState(null);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [renameError, setRenameError] = useState(null);
   const [renaming, setRenaming] = useState(false);
 
@@ -67,12 +93,16 @@ export default function SozlamalarPage() {
 
   function startEditProfile() {
     setDraft(profile);
+    setCurrentPassword('');
+    setNewPassword('');
     setRenameError(null);
     setEditingProfile(true);
   }
 
   function cancelEditProfile() {
     setDraft(profile);
+    setCurrentPassword('');
+    setNewPassword('');
     setRenameError(null);
     setEditingProfile(false);
   }
@@ -85,18 +115,30 @@ export default function SozlamalarPage() {
     }
 
     if (account) {
-      // Ism va Kirish bitta narsa: nomni o'zgartirish backenddagi
-      // username'ni ham o'zgartiradi, shu bilan boshqa qurilmadan ham
-      // yangi nom bilan kirish mumkin bo'ladi.
+      // Ism va Kirish bitta narsa, shu bilan birga bu yerdan parolni ham
+      // o'zgartirish mumkin - shu sabab har qanday saqlashda joriy
+      // parolni tasdiqlash talab qilinadi (faqat username bilib account
+      // egallab olinmasin uchun).
+      if (!currentPassword) {
+        setRenameError('Joriy parolni kiriting');
+        return;
+      }
+
       setRenaming(true);
       setRenameError(null);
       const oldGuestId = account.guestId;
       try {
-        const data = await renameAccount(newName);
+        const data = await updateAccount({
+          currentPassword,
+          newUsername: newName,
+          newPassword: newPassword || undefined
+        });
         migrateProfileStorage(oldGuestId, data.guestId);
         setAccount({ guestId: data.guestId, name: data.username });
         setProfile({ firstName: data.username });
         setDraft({ firstName: data.username });
+        setCurrentPassword('');
+        setNewPassword('');
         setEditingProfile(false);
       } catch (err) {
         setRenameError(err.message || 'Xatolik yuz berdi');
@@ -153,7 +195,7 @@ export default function SozlamalarPage() {
         </div>
 
         <div className="profile-field" style={{ maxWidth: 280 }}>
-          <span className="muted">Ism{account ? ' (kirish uchun ham shu)' : ''}</span>
+          <span className="muted">Ism</span>
           {editingProfile ? (
             <input
               className="form-input"
@@ -165,8 +207,49 @@ export default function SozlamalarPage() {
           )}
         </div>
 
+        {account && (
+          <>
+            <div style={{ borderTop: '1px solid var(--card-border)', margin: '24px 0 18px' }} />
+
+            <div className="card-header">
+              <h3>Hisob xavfsizligi</h3>
+              <IconShield size={18} />
+            </div>
+
+            {editingProfile ? (
+              <div className="profile-fields-grid">
+                <div className="profile-field">
+                  <span className="muted">Joriy parol</span>
+                  <PasswordInput
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Joriy parolingiz"
+                  />
+                </div>
+                <div className="profile-field">
+                  <span className="muted">Yangi parol</span>
+                  <PasswordInput
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="O'zgartirmasa bo'sh qoldiring"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="profile-fields-grid">
+                <div className="settings-row">
+                  <div className="settings-row-info">
+                    <span className="muted">Parol</span>
+                    <strong className="password-dots">••••••••</strong>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
         {editingProfile && renameError && (
-          <p className="muted" style={{ color: 'var(--critical)', marginTop: 8, marginBottom: 0 }}>
+          <p className="muted" style={{ color: 'var(--critical)', marginTop: 14, marginBottom: 0 }}>
             {renameError}
           </p>
         )}
@@ -180,30 +263,6 @@ export default function SozlamalarPage() {
               Bekor qilish
             </button>
           </div>
-        )}
-
-        {account && (
-          <>
-            <div style={{ borderTop: '1px solid var(--card-border)', margin: '24px 0 18px' }} />
-
-            <div className="card-header">
-              <h3>Hisob xavfsizligi</h3>
-              <IconShield size={18} />
-            </div>
-
-            <div className="profile-fields-grid">
-              <div className="settings-row">
-                <div className="settings-row-info">
-                  <span className="muted">Parol</span>
-                  <strong className="password-dots">••••••••</strong>
-                </div>
-              </div>
-            </div>
-
-            <p className="muted" style={{ fontSize: '0.78rem', marginTop: 14, marginBottom: 0 }}>
-              Kirish uchun login - yuqoridagi Ism. Ismni o&apos;zgartirsangiz, boshqa qurilmadan shu yangi ism va parol bilan kirasiz.
-            </p>
-          </>
         )}
       </article>
     </Layout>
