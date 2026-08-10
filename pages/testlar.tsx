@@ -9,7 +9,7 @@ export default function TestlarPage() {
   const [tests, setTests] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/tests`).then((res) => res.json()).then(setTests).catch(() => {});
+    fetch(`${API_URL}/tests`, { cache: 'no-store' }).then((res) => res.json()).then(setTests).catch(() => {});
   }, []);
 
   return (
