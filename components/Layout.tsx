@@ -11,6 +11,7 @@ import LogoutButton from './LogoutButton';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const TICK_MS = 5000;
 const IDLE_LIMIT_MS = 30000;
+const SIDEBAR_COLLAPSED_KEY = 'nt_sidebar_collapsed';
 
 const navItems = [
   { label: 'Bosh sahifa', href: '/', Icon: IconGrid },
@@ -34,6 +35,19 @@ export default function Layout({
   const router = useRouter();
   const [coins, setCoins] = useState(null);
   const [rank, setRank] = useState(null);
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    setCollapsed(localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1');
+  }, []);
+
+  function toggleSidebar() {
+    setCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, next ? '1' : '0');
+      return next;
+    });
+  }
 
   useEffect(() => {
     function loadStats() {
@@ -73,16 +87,26 @@ export default function Layout({
   }
 
   return (
-    <main className="shell">
+    <main className={`shell ${collapsed ? 'sidebar-collapsed' : ''}`}>
       <aside className="sidebar">
         <div className="brand">
           <div className="brand-icon">N</div>
-          <h1>Najot Ta'lim</h1>
+          {!collapsed && <h1>Najot Ta'lim</h1>}
+          <button
+            type="button"
+            className="sidebar-toggle-btn"
+            onClick={toggleSidebar}
+            aria-label={collapsed ? "Panelni ochish" : "Panelni yopish"}
+          >
+            <span className={collapsed ? 'toggle-icon-rotated' : ''}>
+              <IconArrowLeft size={14} />
+            </span>
+          </button>
         </div>
 
         <nav className="nav-links">
           {navItems.map(({ label, href, Icon }) => (
-            <Link key={label} href={href} className={isActive(href) ? 'active' : ''}>
+            <Link key={label} href={href} className={isActive(href) ? 'active' : ''} title={collapsed ? label : undefined}>
               <Icon />
               <span>{label}</span>
             </Link>
