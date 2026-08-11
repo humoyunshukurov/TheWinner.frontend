@@ -158,11 +158,19 @@ export default function TestPage() {
               {result.correctCount} ta savoldan {result.total} tasiga to'g'ri javob berdingiz.
             </p>
 
-            {result.passed ? (
+            {result.passed && result.coinsEarned > 0 && (
               <div className="coins-earned-banner">
                 <IconCoin /> +{result.coinsEarned} coin qo'lga kiritdingiz!
               </div>
-            ) : (
+            )}
+
+            {result.passed && result.coinsEarned === 0 && (
+              <div className="coins-earned-banner already">
+                <IconCoin /> Bu testni avval yechib bo'lgansiz, shuning uchun coin qayta berilmaydi
+              </div>
+            )}
+
+            {!result.passed && (
               <p className="locked-hint">
                 Savollarning {result.passThresholdPercent}% dan ko'prog'iga to'g'ri javob bersangiz, coin va
                 qiziqarli ma'lumotlar ochiladi.

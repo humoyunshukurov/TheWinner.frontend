@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Layout from '../components/Layout';
 import { IconClock } from '../components/icons';
+import { getGuest } from '../lib/guest';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
@@ -9,7 +10,8 @@ export default function TestlarPage() {
   const [tests, setTests] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/tests`, { cache: 'no-store' }).then((res) => res.json()).then(setTests).catch(() => {});
+    const { guestId } = getGuest();
+    fetch(`${API_URL}/tests?guestId=${guestId}`, { cache: 'no-store' }).then((res) => res.json()).then(setTests).catch(() => {});
   }, []);
 
   return (

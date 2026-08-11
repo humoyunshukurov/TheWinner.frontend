@@ -1134,6 +1134,12 @@ body {
   margin-top: 8px;
 }
 
+.coins-earned-banner.already {
+  background: var(--content-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--card-border);
+}
+
 .congrats-banner {
   display: flex;
   align-items: center;
