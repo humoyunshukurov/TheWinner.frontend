@@ -99,16 +99,22 @@ export default function KodOyinPage() {
       });
   }
 
-  function selectAnswer(optionIndex: number) {
-    if (answered) return;
-    setAnswered(true);
+  function chooseOption(optionIndex: number) {
+    // Just selects locally - a mistaken tap no longer locks in the wrong
+    // answer, since nothing is sent to the server until "Topshirish".
+    if (answered || timeLeft <= 0) return;
     setSelectedIndex(optionIndex);
+  }
+
+  function submitAnswer() {
+    if (answered || selectedIndex === null) return;
+    setAnswered(true);
     const { guestId } = guestRef.current;
 
     fetch(`${API_URL}/kod/${sessionCode}/answer`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ guestId, answerIndex: optionIndex })
+      body: JSON.stringify({ guestId, answerIndex: selectedIndex })
     })
       .then((res) => res.json())
       .then((data) => {
@@ -139,10 +145,13 @@ export default function KodOyinPage() {
             <form className="game-code-form" onSubmit={submitJoin}>
               <input
                 type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                autoComplete="one-time-code"
                 className="game-code-input"
-                placeholder="Kodni kiriting"
+                placeholder="000000"
                 value={code}
-                onChange={(event) => setCode(event.target.value)}
+                onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
                 maxLength={6}
               />
             </form>
@@ -191,20 +200,32 @@ export default function KodOyinPage() {
                 <label
                   key={option}
                   className={`option-label ${selectedIndex === oIndex ? 'selected' : ''}`}
-                  onClick={() => selectAnswer(oIndex)}
+                  onClick={() => chooseOption(oIndex)}
                 >
                   <input
                     type="radio"
                     name={`kod-q-${state.index}`}
                     checked={selectedIndex === oIndex}
                     readOnly
-                    disabled={answered}
+                    disabled={answered || timeLeft <= 0}
                   />
                   {option}
                 </label>
               ))}
             </div>
           </div>
+
+          {!answered && selectedIndex !== null && (
+            <div className="action-row" style={{ marginTop: 14 }}>
+              <button className="pill-btn primary quiz-check-btn" onClick={submitAnswer}>
+                Topshirish
+              </button>
+            </div>
+          )}
+
+          {!answered && selectedIndex === null && timeLeft <= 0 && (
+            <p className="game-message">Vaqt tugadi, keyingi savolga o'tilmoqda...</p>
+          )}
 
           {answered && (
             <p className={`game-message ${lastResult ? (lastResult.correct ? 'good' : 'bad') : ''}`}>
