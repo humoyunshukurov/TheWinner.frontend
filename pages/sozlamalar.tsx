@@ -43,6 +43,7 @@ function EditIconButton({ onClick }) {
 export default function SozlamalarPage() {
   const [photo, setPhoto] = useState(null);
   const [photoError, setPhotoError] = useState(null);
+  const [pendingPhoto, setPendingPhoto] = useState(null);
   const fileInputRef = useRef(null);
 
   const [profile, setProfile] = useState({ firstName: '' });
@@ -93,29 +94,38 @@ export default function SozlamalarPage() {
       setPhotoError("Rasm hajmi 2MB dan oshmasligi kerak");
       return;
     }
-    if (photo && !window.confirm('Haqiqatan ham rasmni o\'zgartirmoqchimisiz?')) {
-      return;
-    }
 
     setPhotoError(null);
     const reader = new FileReader();
-    reader.onload = () => {
-      setPhoto(reader.result);
-      saveProfilePhoto(getGuest().guestId, reader.result);
-    };
+    reader.onload = () => applyOrConfirmPhoto(reader.result);
     reader.readAsDataURL(file);
   }
 
   function chooseAvatar(src) {
     if (photo === src) return;
-    if (photo && !window.confirm('Haqiqatan ham rasmni o\'zgartirmoqchimisiz?')) {
-      return;
-    }
-    // A preset is just a static file path - it's stored exactly like an
-    // uploaded photo's data: URL, since both are just an <img src>.
     setPhotoError(null);
+    applyOrConfirmPhoto(src);
+  }
+
+  // A preset avatar and an uploaded photo are stored the same way - just
+  // an <img src> (a static path or a data: URL) - so replacing either one
+  // goes through the same confirm step.
+  function applyOrConfirmPhoto(src) {
+    if (photo) {
+      setPendingPhoto(src);
+    } else {
+      applyPhoto(src);
+    }
+  }
+
+  function applyPhoto(src) {
     setPhoto(src);
     saveProfilePhoto(getGuest().guestId, src);
+  }
+
+  function confirmPhotoChange() {
+    if (pendingPhoto) applyPhoto(pendingPhoto);
+    setPendingPhoto(null);
   }
 
   function updateDraft(field, value) {
@@ -403,6 +413,23 @@ export default function SozlamalarPage() {
           <button className="pill-btn" onClick={cancelEditProfile} disabled={renaming}>
             Bekor qilish
           </button>
+        </div>
+      )}
+
+      {pendingPhoto && (
+        <div className="modal-overlay" onClick={() => setPendingPhoto(null)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <h3>Rasmni almashtirish</h3>
+            <p className="muted">Haqiqatan ham rasmni o'zgartirmoqchimisiz?</p>
+            <div className="modal-actions">
+              <button className="pill-btn" onClick={() => setPendingPhoto(null)}>
+                Yo'q
+              </button>
+              <button className="pill-btn primary" onClick={confirmPhotoChange}>
+                Ha
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </Layout>
