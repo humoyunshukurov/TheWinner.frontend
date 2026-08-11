@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import BattleBanner from './BattleBanner';
+import Avatar from './Avatar';
 import { IconSwords, IconClock } from './icons';
 import { getGuest } from '../lib/guest';
+import { loadProfilePhoto } from '../lib/profile';
 import { useRequireAccess } from '../lib/useRequireAccess';
 import { burstSideConfetti } from '../lib/confetti';
 
@@ -22,6 +24,7 @@ export default function DuelGame({
   const [timeLeft, setTimeLeft] = useState(QUESTION_SECONDS);
   const [result, setResult] = useState(null);
   const [reward, setReward] = useState(null);
+  const [myPhoto, setMyPhoto] = useState(null);
 
   const pollRef = useRef(null);
   const startTimeRef = useRef(null);
@@ -30,6 +33,7 @@ export default function DuelGame({
 
   useEffect(() => {
     guestRef.current = getGuest();
+    setMyPhoto(loadProfilePhoto(guestRef.current.guestId));
     return () => clearInterval(pollRef.current);
   }, []);
 
@@ -195,10 +199,23 @@ export default function DuelGame({
 
       {phase === 'searching' && (
         <div className="game-hero">
-          <div className="game-card">
-            <div className="duel-spinner" />
-            <h3>Raqib qidirilmoqda...</h3>
-            <p className="muted">Boshqa o'yinchi "O'ynash" tugmasini bosishini kutyapmiz</p>
+          <div className="game-card duel-wait-card">
+            <h3>Jangni kutish</h3>
+            <div className="duel-wait-list">
+              <div className="duel-wait-row me">
+                <span className="duel-wait-number">1</span>
+                <Avatar photo={myPhoto} size={40} />
+                <span className="duel-wait-name">{guestRef.current.name}</span>
+              </div>
+              <div className="duel-wait-row">
+                <span className="duel-wait-number">2</span>
+                <Avatar photo={null} size={40} />
+                <span className="duel-wait-name muted">Kutilmoqda...</span>
+              </div>
+            </div>
+            <p className="muted" style={{ marginTop: 18 }}>
+              Jang boshlanishini kuting
+            </p>
             <button className="pill-btn" onClick={cancelSearch}>
               Bekor qilish
             </button>

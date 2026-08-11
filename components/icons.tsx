@@ -62,6 +62,15 @@ export function IconUsers(props) {
   );
 }
 
+export function IconUser(props) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="8" r="3.6" />
+      <path d="M4.5 20c1-4.3 4-6.6 7.5-6.6s6.5 2.3 7.5 6.6" />
+    </Svg>
+  );
+}
+
 export function IconCalendar(props) {
   return (
     <Svg {...props}>

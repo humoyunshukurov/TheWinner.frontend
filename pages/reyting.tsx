@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import GroupRaceChart from '../components/GroupRaceChart';
+import Avatar from '../components/Avatar';
+import { getGuest } from '../lib/guest';
+import { loadProfilePhoto } from '../lib/profile';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const CURRENT_USER = 'Azizbek Nurmatov';
@@ -27,10 +30,12 @@ export default function ReytingPage() {
   const [groupsHistory, setGroupsHistory] = useState(null);
   const [range, setRange] = useState('week');
   const [groupsPage, setGroupsPage] = useState(0);
+  const [myPhoto, setMyPhoto] = useState(null);
 
   useEffect(() => {
     fetch(`${API_URL}/leaderboard/group`).then((res) => res.json()).then(setGroupBoard).catch(() => {});
     fetch(`${API_URL}/leaderboard/groups`).then((res) => res.json()).then(setGroupsBoard).catch(() => {});
+    setMyPhoto(loadProfilePhoto(getGuest().guestId));
   }, []);
 
   useEffect(() => {
@@ -85,7 +90,12 @@ export default function ReytingPage() {
                         <td>
                           <span className={rankBadgeClass(member.rank)}>{member.rank}</span>
                         </td>
-                        <td>{member.name === CURRENT_USER ? `${member.name} (siz)` : member.name}</td>
+                        <td>
+                          <div className="table-name-cell">
+                            <Avatar photo={member.name === CURRENT_USER ? myPhoto : null} size={30} />
+                            {member.name === CURRENT_USER ? `${member.name} (siz)` : member.name}
+                          </div>
+                        </td>
                         <td>{member.points}</td>
                       </tr>
                     ))}
