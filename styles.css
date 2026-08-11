@@ -1330,15 +1330,31 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
   padding: 10px 14px;
   background: var(--content-bg);
   border: 1px solid var(--card-border);
   border-radius: 12px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+.group-directory-item:hover:not(:disabled) {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.group-directory-item:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .group-directory-item.mine {
   border-color: var(--accent);
   background: var(--accent-soft);
+  cursor: default;
 }
 
 .group-directory-icon {

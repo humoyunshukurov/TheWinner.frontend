@@ -13,6 +13,10 @@ export default function GuruhlarPage() {
   const [joining, setJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [allGroups, setAllGroups] = useState<any[] | null>(null);
+  const [joinTarget, setJoinTarget] = useState<string | null>(null);
+  const [modalCode, setModalCode] = useState('');
+  const [modalJoining, setModalJoining] = useState(false);
+  const [modalError, setModalError] = useState<string | null>(null);
   const { requireAccess } = useRequireAccess();
 
   function loadMyGroup() {
@@ -69,6 +73,52 @@ export default function GuruhlarPage() {
       .catch((err) => {
         setJoining(false);
         setError(err.message);
+      });
+  }
+
+  function openJoinModal(groupName: string) {
+    setJoinTarget(groupName);
+    setModalCode('');
+    setModalError(null);
+  }
+
+  function closeJoinModal() {
+    if (modalJoining) return;
+    setJoinTarget(null);
+  }
+
+  function submitModalJoin(event?: FormEvent) {
+    if (event) event.preventDefault();
+    requireAccess(doModalJoin);
+  }
+
+  function doModalJoin() {
+    const trimmed = modalCode.trim();
+    if (!trimmed) return;
+
+    setModalJoining(true);
+    setModalError(null);
+    const { guestId, name } = getGuest();
+
+    fetch(`${API_URL}/groups/join`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guestId, name, code: trimmed })
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Xatolik yuz berdi');
+        return data;
+      })
+      .then(() => {
+        setModalJoining(false);
+        setJoinTarget(null);
+        loadMyGroup();
+        loadAllGroups();
+      })
+      .catch((err) => {
+        setModalJoining(false);
+        setModalError(err.message);
       });
   }
 
@@ -148,18 +198,28 @@ export default function GuruhlarPage() {
 
         {allGroups && allGroups.length > 0 && (
           <ul className="group-directory-list">
-            {allGroups.map((g) => (
-              <li key={g.name} className={`group-directory-item ${group?.group === g.name ? 'mine' : ''}`}>
-                <div className="group-directory-icon">
-                  <IconUsers size={16} />
-                </div>
-                <div className="group-directory-main">
-                  <strong>{g.name}</strong>
-                  {g.createdBy && <span className="muted">{g.createdBy} tomonidan</span>}
-                </div>
-                <span className="muted">{g.membersCount} a&apos;zo</span>
-              </li>
-            ))}
+            {allGroups.map((g) => {
+              const mine = group?.group === g.name;
+              return (
+                <li key={g.name}>
+                  <button
+                    type="button"
+                    className={`group-directory-item ${mine ? 'mine' : ''}`}
+                    onClick={() => openJoinModal(g.name)}
+                    disabled={mine}
+                  >
+                    <div className="group-directory-icon">
+                      <IconUsers size={16} />
+                    </div>
+                    <div className="group-directory-main">
+                      <strong>{g.name}</strong>
+                      {g.createdBy && <span className="muted">{g.createdBy} tomonidan</span>}
+                    </div>
+                    <span className="muted">{mine ? "Siz a'zosiz" : `${g.membersCount} a'zo`}</span>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
 
@@ -167,6 +227,48 @@ export default function GuruhlarPage() {
           Qo&apos;shilish kodi bu yerda ko&apos;rsatilmaydi &mdash; uni o&apos;qituvchingizdan so&apos;rang.
         </p>
       </article>
+
+      {joinTarget && (
+        <div className="modal-overlay" onClick={closeJoinModal}>
+          <div className="modal-box" onClick={(event) => event.stopPropagation()}>
+            <div
+              className="game-icon-badge"
+              style={{ cursor: 'default', width: 56, height: 56, borderRadius: 16, margin: '0 auto 14px' }}
+            >
+              <IconUsers size={22} />
+            </div>
+            <h3>{joinTarget}</h3>
+            <p className="muted">Ushbu guruhga qo&apos;shilish uchun kodni kiriting</p>
+
+            <form className="game-code-form" onSubmit={submitModalJoin} style={{ marginTop: 16 }}>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                autoComplete="off"
+                autoFocus
+                className="game-code-input"
+                placeholder="000000"
+                value={modalCode}
+                onChange={(event) => setModalCode(event.target.value.replace(/\D/g, ''))}
+                maxLength={6}
+              />
+            </form>
+
+            {modalJoining && <p className="game-message">Qo&apos;shilinmoqda...</p>}
+            {modalError && <p className="game-message">{modalError}</p>}
+
+            <div className="modal-actions">
+              <button type="button" className="pill-btn" onClick={closeJoinModal} disabled={modalJoining}>
+                Bekor qilish
+              </button>
+              <button type="button" className="pill-btn primary" onClick={() => submitModalJoin()} disabled={modalJoining}>
+                Qo&apos;shilish
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
