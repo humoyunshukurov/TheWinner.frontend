@@ -1317,6 +1317,53 @@ body {
   }
 }
 
+.group-directory-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.group-directory-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--content-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+}
+
+.group-directory-item.mine {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.group-directory-icon {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--card-bg);
+  color: var(--text-muted);
+}
+
+.group-directory-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.group-directory-main .muted {
+  font-size: 0.78rem;
+}
+
 .review-list {
   display: grid;
   gap: 10px;

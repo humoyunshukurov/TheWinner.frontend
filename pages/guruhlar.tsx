@@ -12,6 +12,7 @@ export default function GuruhlarPage() {
   const [code, setCode] = useState('');
   const [joining, setJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [allGroups, setAllGroups] = useState<any[] | null>(null);
   const { requireAccess } = useRequireAccess();
 
   function loadMyGroup() {
@@ -24,7 +25,17 @@ export default function GuruhlarPage() {
       .finally(() => setLoading(false));
   }
 
-  useEffect(loadMyGroup, []);
+  function loadAllGroups() {
+    fetch(`${API_URL}/groups`)
+      .then((res) => res.json())
+      .then(setAllGroups)
+      .catch(() => setAllGroups([]));
+  }
+
+  useEffect(() => {
+    loadMyGroup();
+    loadAllGroups();
+  }, []);
 
   function submitJoin(event?: FormEvent) {
     if (event) event.preventDefault();
@@ -53,6 +64,7 @@ export default function GuruhlarPage() {
         setJoining(false);
         setCode('');
         loadMyGroup();
+        loadAllGroups();
       })
       .catch((err) => {
         setJoining(false);
@@ -66,7 +78,10 @@ export default function GuruhlarPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ guestId })
-    }).then(loadMyGroup);
+    }).then(() => {
+      loadMyGroup();
+      loadAllGroups();
+    });
   }
 
   return (
@@ -74,22 +89,22 @@ export default function GuruhlarPage() {
       {loading && <p className="muted">Yuklanmoqda...</p>}
 
       {!loading && group?.group && (
-        <div className="game-hero">
-          <div className="game-card">
-            <div className="game-icon-badge" style={{ cursor: 'default' }}>
-              <IconUsers size={26} />
+        <article className="card">
+          <div className="profile-photo-row">
+            <div className="game-icon-badge" style={{ cursor: 'default', width: 56, height: 56, borderRadius: 16 }}>
+              <IconUsers size={22} />
             </div>
-
-            <h3>{group.group}</h3>
-            <p className="muted">
-              Siz shu guruhga a&apos;zosiz &middot; {group.membersCount} a&apos;zo
-            </p>
-
-            <button type="button" className="link-more" onClick={leaveGroup}>
-              Boshqa kod bilan qo&apos;shilish
-            </button>
+            <div>
+              <strong style={{ fontSize: '1.1rem' }}>{group.group}</strong>
+              <p className="muted" style={{ margin: '2px 0 0' }}>
+                Siz shu guruhga a&apos;zosiz &middot; {group.membersCount} a&apos;zo
+              </p>
+            </div>
           </div>
-        </div>
+          <button type="button" className="link-more" onClick={leaveGroup}>
+            Boshqa kod bilan qo&apos;shilish
+          </button>
+        </article>
       )}
 
       {!loading && !group?.group && (
@@ -121,6 +136,37 @@ export default function GuruhlarPage() {
           </div>
         </div>
       )}
+
+      <article className="card" style={{ marginTop: 18 }}>
+        <div className="card-header">
+          <h3>Mavjud guruhlar</h3>
+          <span className="select-chip">{allGroups?.length || 0} ta</span>
+        </div>
+
+        {allGroups === null && <p className="muted">Yuklanmoqda...</p>}
+        {allGroups?.length === 0 && <p className="muted">Hali guruh yaratilmagan</p>}
+
+        {allGroups && allGroups.length > 0 && (
+          <ul className="group-directory-list">
+            {allGroups.map((g) => (
+              <li key={g.name} className={`group-directory-item ${group?.group === g.name ? 'mine' : ''}`}>
+                <div className="group-directory-icon">
+                  <IconUsers size={16} />
+                </div>
+                <div className="group-directory-main">
+                  <strong>{g.name}</strong>
+                  {g.createdBy && <span className="muted">{g.createdBy} tomonidan</span>}
+                </div>
+                <span className="muted">{g.membersCount} a&apos;zo</span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <p className="muted" style={{ fontSize: '0.78rem', marginTop: 14, marginBottom: 0 }}>
+          Qo&apos;shilish kodi bu yerda ko&apos;rsatilmaydi &mdash; uni o&apos;qituvchingizdan so&apos;rang.
+        </p>
+      </article>
     </Layout>
   );
 }
