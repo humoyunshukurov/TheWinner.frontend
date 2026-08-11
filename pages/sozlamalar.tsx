@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Layout from '../components/Layout';
 import { IconEdit, IconCamera, IconShield, IconEye, IconEyeOff } from '../components/icons';
-import { getGuest, isRegistered, updateAccount, getStoredPassword } from '../lib/guest';
+import { getGuest, isRegistered, updateAccount, getStoredPassword, loginAccount } from '../lib/guest';
 import { loadProfile, saveProfile as persistProfile, loadProfilePhoto, saveProfilePhoto, migrateProfileStorage } from '../lib/profile';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
@@ -46,6 +46,10 @@ export default function SozlamalarPage() {
   const [renaming, setRenaming] = useState(false);
   const [storedPassword, setStoredPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [revealPromptOpen, setRevealPromptOpen] = useState(false);
+  const [revealPromptValue, setRevealPromptValue] = useState('');
+  const [revealPromptError, setRevealPromptError] = useState(null);
+  const [revealPromptBusy, setRevealPromptBusy] = useState(false);
 
   useEffect(() => {
     const { guestId, name } = getGuest();
@@ -92,6 +96,42 @@ export default function SozlamalarPage() {
 
   function updateDraft(field, value) {
     setDraft((prev) => ({ ...prev, [field]: value }));
+  }
+
+  function togglePasswordReveal() {
+    if (showPassword) {
+      setShowPassword(false);
+      return;
+    }
+    if (storedPassword) {
+      setShowPassword(true);
+      return;
+    }
+    // This device never captured the plaintext password (e.g. it logged
+    // in before this feature shipped, or on another device) - the hash
+    // on the backend can't be reversed, so the only way to show it is to
+    // ask for it once and verify via the existing login call, which also
+    // caches it locally for next time.
+    setRevealPromptError(null);
+    setRevealPromptValue('');
+    setRevealPromptOpen(true);
+  }
+
+  async function confirmPasswordReveal() {
+    if (!revealPromptValue) return;
+    setRevealPromptBusy(true);
+    setRevealPromptError(null);
+    try {
+      await loginAccount(account.name, revealPromptValue);
+      setStoredPassword(getStoredPassword());
+      setShowPassword(true);
+      setRevealPromptOpen(false);
+      setRevealPromptValue('');
+    } catch (err) {
+      setRevealPromptError(err.message || 'Xatolik yuz berdi');
+    } finally {
+      setRevealPromptBusy(false);
+    }
   }
 
   function startEditProfile() {
@@ -249,17 +289,38 @@ export default function SozlamalarPage() {
                       {showPassword && storedPassword ? storedPassword : '••••••••'}
                     </strong>
                   </div>
-                  {storedPassword && (
-                    <button
-                      type="button"
-                      className="icon-edit-btn"
-                      onClick={() => setShowPassword((v) => !v)}
-                      aria-label={showPassword ? 'Parolni yashirish' : "Parolni ko'rsatish"}
-                    >
-                      {showPassword ? <IconEyeOff /> : <IconEye />}
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    className="icon-edit-btn"
+                    onClick={togglePasswordReveal}
+                    aria-label={showPassword ? 'Parolni yashirish' : "Parolni ko'rsatish"}
+                  >
+                    {showPassword ? <IconEyeOff /> : <IconEye />}
+                  </button>
                 </div>
+
+                {revealPromptOpen && (
+                  <div className="password-reveal-prompt">
+                    <PasswordInput
+                      value={revealPromptValue}
+                      onChange={(e) => setRevealPromptValue(e.target.value)}
+                      placeholder="Ko'rish uchun joriy parolni kiriting"
+                    />
+                    {revealPromptError && <p className="profile-photo-error">{revealPromptError}</p>}
+                    <div className="action-row" style={{ marginTop: 10 }}>
+                      <button
+                        className="pill-btn primary"
+                        onClick={confirmPasswordReveal}
+                        disabled={revealPromptBusy || !revealPromptValue}
+                      >
+                        {revealPromptBusy ? 'Tekshirilmoqda...' : "Ko'rsatish"}
+                      </button>
+                      <button className="pill-btn" onClick={() => setRevealPromptOpen(false)} disabled={revealPromptBusy}>
+                        Bekor qilish
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </>

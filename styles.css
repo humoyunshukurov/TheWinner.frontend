@@ -2148,6 +2148,12 @@ body {
   color: var(--accent);
 }
 
+.password-reveal-prompt {
+  max-width: 280px;
+  margin-top: 4px;
+  padding-bottom: 14px;
+}
+
 .settings-row {
   display: flex;
   align-items: center;
