@@ -58,8 +58,13 @@ export default function TurnirPage() {
   useEffect(() => {
     if (state?.status !== 'finished') return;
     if (state.standings?.[0]?.guestId !== guestRef.current.guestId) return;
-    return burstSideConfetti(2000);
-  }, [state?.status, state?.standings]);
+    return burstSideConfetti(3000);
+    // state?.standings is deliberately left out - polling keeps refreshing
+    // it with a brand-new array every 1.5s even after the tournament ends
+    // (same values, new reference), which was retriggering a fresh burst
+    // on every poll and never letting the confetti actually stop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state?.status]);
 
   function poll() {
     const { guestId } = guestRef.current;
