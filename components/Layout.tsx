@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconArrowLeft, IconShield, IconMenu, IconUsers } from './icons';
+import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconArrowLeft, IconShield, IconMenu, IconUsers, IconClock } from './icons';
 import { getGuest, GUEST_CHANGED_EVENT } from '../lib/guest';
 import { loadProfilePhoto, PROFILE_PHOTO_CHANGED_EVENT } from '../lib/profile';
 import { addUsageMs } from '../lib/usage';
@@ -20,6 +20,7 @@ const navItems = [
   { label: "O'yin", href: '/oyin', Icon: IconPlay },
   { label: 'Reyting', href: '/reyting', Icon: IconTrophy },
   { label: 'Guruhlar', href: '/guruhlar', Icon: IconUsers },
+  { label: 'Tarix', href: '/tarix', Icon: IconClock },
   { label: 'Sozlamalar', href: '/sozlamalar', Icon: IconGear }
 ];
 
