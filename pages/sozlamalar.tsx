@@ -93,6 +93,9 @@ export default function SozlamalarPage() {
       setPhotoError("Rasm hajmi 2MB dan oshmasligi kerak");
       return;
     }
+    if (photo && !window.confirm('Haqiqatan ham rasmni o\'zgartirmoqchimisiz?')) {
+      return;
+    }
 
     setPhotoError(null);
     const reader = new FileReader();
@@ -104,6 +107,10 @@ export default function SozlamalarPage() {
   }
 
   function chooseAvatar(src) {
+    if (photo === src) return;
+    if (photo && !window.confirm('Haqiqatan ham rasmni o\'zgartirmoqchimisiz?')) {
+      return;
+    }
     // A preset is just a static file path - it's stored exactly like an
     // uploaded photo's data: URL, since both are just an <img src>.
     setPhotoError(null);
@@ -225,17 +232,23 @@ export default function SozlamalarPage() {
           </div>
 
           <div className="profile-photo-row">
-            <button
-              type="button"
-              className="profile-photo-big"
-              onClick={() => fileInputRef.current?.click()}
-              aria-label="Profil rasmini yuklash"
-            >
-              {photo ? <img src={photo} alt="Profil rasmi" /> : 'AN'}
-              <span className="profile-photo-overlay">
-                <IconCamera size={15} />
-              </span>
-            </button>
+            {editingProfile ? (
+              <button
+                type="button"
+                className="profile-photo-big"
+                onClick={() => fileInputRef.current?.click()}
+                aria-label="Profil rasmini yuklash"
+              >
+                {photo ? <img src={photo} alt="Profil rasmi" /> : 'AN'}
+                <span className="profile-photo-overlay">
+                  <IconCamera size={15} />
+                </span>
+              </button>
+            ) : (
+              <div className="profile-photo-big" style={{ cursor: 'default' }}>
+                {photo ? <img src={photo} alt="Profil rasmi" /> : 'AN'}
+              </div>
+            )}
             <input
               type="file"
               accept="image/jpeg,image/jpg,image/png"
@@ -243,32 +256,36 @@ export default function SozlamalarPage() {
               onChange={handlePhotoChange}
               className="visually-hidden"
             />
-            <div className="profile-photo-hint">
-              {photo && <span className="badge good">Talabga mos</span>}
-              <p className="muted">JPEG, JPG, PNG &middot; maksimum 2MB &middot; 500x500 o&apos;lcham</p>
-              {photoError && <p className="profile-photo-error">{photoError}</p>}
-              <button type="button" className="link-more" onClick={() => fileInputRef.current?.click()}>
-                {photo ? "Rasmni o'zgartirish" : 'Rasm yuklash'}
-              </button>
-            </div>
+            {editingProfile && (
+              <div className="profile-photo-hint">
+                {photo && <span className="badge good">Talabga mos</span>}
+                <p className="muted">JPEG, JPG, PNG &middot; maksimum 2MB &middot; 500x500 o&apos;lcham</p>
+                {photoError && <p className="profile-photo-error">{photoError}</p>}
+                <button type="button" className="link-more" onClick={() => fileInputRef.current?.click()}>
+                  {photo ? "Rasmni o'zgartirish" : 'Rasm yuklash'}
+                </button>
+              </div>
+            )}
           </div>
 
-          <div className="avatar-preset-section">
-            <span className="muted">Tavsiya etilgan avatarlar</span>
-            <div className="avatar-preset-grid">
-              {PRESET_AVATARS.map((avatar) => (
-                <button
-                  key={avatar.id}
-                  type="button"
-                  className={`avatar-preset-item ${photo === avatar.src ? 'selected' : ''}`}
-                  onClick={() => chooseAvatar(avatar.src)}
-                  aria-label="Avatarni tanlash"
-                >
-                  <img src={avatar.src} alt="" />
-                </button>
-              ))}
+          {editingProfile && (
+            <div className="avatar-preset-section">
+              <span className="muted">Tavsiya etilgan avatarlar</span>
+              <div className="avatar-preset-grid">
+                {PRESET_AVATARS.map((avatar) => (
+                  <button
+                    key={avatar.id}
+                    type="button"
+                    className={`avatar-preset-item ${photo === avatar.src ? 'selected' : ''}`}
+                    onClick={() => chooseAvatar(avatar.src)}
+                    aria-label="Avatarni tanlash"
+                  >
+                    <img src={avatar.src} alt="" />
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="profile-field">
             <span className="muted">Ism{account ? ' (kirish uchun ham shu)' : ''}</span>
@@ -334,20 +351,32 @@ export default function SozlamalarPage() {
 
                 {revealPromptOpen && (
                   <div className="password-reveal-prompt">
-                    <PasswordInput
-                      value={revealPromptValue}
-                      onChange={(e) => setRevealPromptValue(e.target.value)}
-                      placeholder="Ko'rish uchun joriy parolni kiriting"
-                    />
-                    {revealPromptError && <p className="profile-photo-error">{revealPromptError}</p>}
-                    <div className="action-row" style={{ marginTop: 10 }}>
+                    <div className="password-input-wrap">
+                      <input
+                        className="form-input"
+                        type="password"
+                        value={revealPromptValue}
+                        onChange={(e) => setRevealPromptValue(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && confirmPasswordReveal()}
+                        placeholder="Joriy parolni kiriting"
+                        autoComplete="current-password"
+                        autoFocus
+                      />
+                      {/* Kod bilan bir xil: ko'zni bosish - bu shu yerda parolni
+                          yashirin/ochiq qilish emas, balki haqiqiy parolni
+                          o'zini tekshirib ko'rsatadigan tugma. */}
                       <button
-                        className="pill-btn primary"
+                        type="button"
+                        className="password-toggle-btn"
                         onClick={confirmPasswordReveal}
                         disabled={revealPromptBusy || !revealPromptValue}
+                        aria-label="Parolni ko'rsatish"
                       >
-                        {revealPromptBusy ? 'Tekshirilmoqda...' : "Ko'rsatish"}
+                        <IconEye />
                       </button>
+                    </div>
+                    {revealPromptError && <p className="profile-photo-error">{revealPromptError}</p>}
+                    <div className="action-row" style={{ marginTop: 10 }}>
                       <button className="pill-btn" onClick={() => setRevealPromptOpen(false)} disabled={revealPromptBusy}>
                         Bekor qilish
                       </button>
