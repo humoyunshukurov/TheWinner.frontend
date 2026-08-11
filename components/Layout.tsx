@@ -1,11 +1,12 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconArrowLeft, IconShield, IconMenu, IconUsers, IconClock } from './icons';
+import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconArrowLeft, IconShield, IconUsers, IconClock } from './icons';
 import { getGuest, GUEST_CHANGED_EVENT } from '../lib/guest';
 import { loadProfilePhoto, PROFILE_PHOTO_CHANGED_EVENT } from '../lib/profile';
 import { addUsageMs } from '../lib/usage';
 import LottieCoin from './LottieCoin';
+import LottieMenuToggle from './LottieMenuToggle';
 import ThemeToggle from './ThemeToggle';
 import LogoutButton from './LogoutButton';
 
@@ -122,7 +123,7 @@ export default function Layout({
               onClick={toggleSidebar}
               aria-label={collapsed ? "Panelni ochish" : "Panelni yopish"}
             >
-              <IconMenu size={18} />
+              <LottieMenuToggle collapsed={collapsed} size={20} />
             </button>
             <div>
               {backHref && (
