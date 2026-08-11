@@ -2154,6 +2154,18 @@ body {
   padding-bottom: 14px;
 }
 
+.password-display-input {
+  cursor: default;
+  letter-spacing: 1px;
+}
+
+.settings-page-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
 .settings-row {
   display: flex;
   align-items: center;
@@ -2247,6 +2259,10 @@ body {
   }
 
   .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-page-grid {
     grid-template-columns: 1fr;
   }
 

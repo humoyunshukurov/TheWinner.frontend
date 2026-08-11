@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Layout from '../components/Layout';
-import { IconEdit, IconCamera, IconShield, IconEye, IconEyeOff } from '../components/icons';
+import { IconEdit, IconCamera, IconEye, IconEyeOff } from '../components/icons';
 import { getGuest, isRegistered, updateAccount, getStoredPassword, loginAccount } from '../lib/guest';
 import { loadProfile, saveProfile as persistProfile, loadProfilePhoto, saveProfilePhoto, migrateProfileStorage } from '../lib/profile';
 
@@ -28,6 +28,14 @@ function PasswordInput({ value, onChange, placeholder }) {
         {visible ? <IconEyeOff /> : <IconEye />}
       </button>
     </div>
+  );
+}
+
+function EditIconButton({ onClick }) {
+  return (
+    <button type="button" className="icon-edit-btn" onClick={onClick} aria-label="Tahrirlash" title="Tahrirlash">
+      <IconEdit size={15} />
+    </button>
   );
 }
 
@@ -200,65 +208,61 @@ export default function SozlamalarPage() {
 
   return (
     <Layout eyebrow="Ilova sozlamalari" title="Sozlamalar">
-      <article className="card">
-        <div className="card-header">
-          <h3>Shaxsiy ma'lumotlar</h3>
-          {!editingProfile && (
-            <button className="pill-btn" onClick={startEditProfile}>
-              <IconEdit /> Tahrirlash
-            </button>
-          )}
-        </div>
-
-        <div className="profile-photo-row">
-          <button
-            type="button"
-            className="profile-photo-big"
-            onClick={() => fileInputRef.current?.click()}
-            aria-label="Profil rasmini yuklash"
-          >
-            {photo ? <img src={photo} alt="Profil rasmi" /> : 'AN'}
-            <span className="profile-photo-overlay">
-              <IconCamera size={15} />
-            </span>
-          </button>
-          <input
-            type="file"
-            accept="image/jpeg,image/jpg,image/png"
-            ref={fileInputRef}
-            onChange={handlePhotoChange}
-            className="visually-hidden"
-          />
-          <div className="profile-photo-hint">
-            {photo && <span className="badge good">Talabga mos</span>}
-            <p className="muted">JPEG, JPG, PNG &middot; maksimum 2MB &middot; 500x500 o&apos;lcham</p>
-            {photoError && <p className="profile-photo-error">{photoError}</p>}
-            <button type="button" className="link-more" onClick={() => fileInputRef.current?.click()}>
-              {photo ? "Rasmni o'zgartirish" : 'Rasm yuklash'}
-            </button>
+      <div className="settings-page-grid">
+        <article className="card" style={!account ? { gridColumn: '1 / -1' } : undefined}>
+          <div className="card-header">
+            <h3>Shaxsiy ma'lumotlar</h3>
+            {!editingProfile && <EditIconButton onClick={startEditProfile} />}
           </div>
-        </div>
 
-        <div className="profile-field" style={{ maxWidth: 280 }}>
-          <span className="muted">Ism</span>
-          {editingProfile ? (
+          <div className="profile-photo-row">
+            <button
+              type="button"
+              className="profile-photo-big"
+              onClick={() => fileInputRef.current?.click()}
+              aria-label="Profil rasmini yuklash"
+            >
+              {photo ? <img src={photo} alt="Profil rasmi" /> : 'AN'}
+              <span className="profile-photo-overlay">
+                <IconCamera size={15} />
+              </span>
+            </button>
             <input
-              className="form-input"
-              value={draft.firstName}
-              onChange={(e) => updateDraft('firstName', e.target.value)}
+              type="file"
+              accept="image/jpeg,image/jpg,image/png"
+              ref={fileInputRef}
+              onChange={handlePhotoChange}
+              className="visually-hidden"
             />
-          ) : (
-            <strong>{profile.firstName}</strong>
-          )}
-        </div>
+            <div className="profile-photo-hint">
+              {photo && <span className="badge good">Talabga mos</span>}
+              <p className="muted">JPEG, JPG, PNG &middot; maksimum 2MB &middot; 500x500 o&apos;lcham</p>
+              {photoError && <p className="profile-photo-error">{photoError}</p>}
+              <button type="button" className="link-more" onClick={() => fileInputRef.current?.click()}>
+                {photo ? "Rasmni o'zgartirish" : 'Rasm yuklash'}
+              </button>
+            </div>
+          </div>
+
+          <div className="profile-field">
+            <span className="muted">Ism{account ? ' (kirish uchun ham shu)' : ''}</span>
+            {editingProfile ? (
+              <input
+                className="form-input"
+                value={draft.firstName}
+                onChange={(e) => updateDraft('firstName', e.target.value)}
+              />
+            ) : (
+              <strong>{profile.firstName}</strong>
+            )}
+          </div>
+        </article>
 
         {account && (
-          <>
-            <div style={{ borderTop: '1px solid var(--card-border)', margin: '24px 0 18px' }} />
-
+          <article className="card">
             <div className="card-header">
               <h3>Hisob xavfsizligi</h3>
-              <IconShield size={18} />
+              {!editingProfile && <EditIconButton onClick={startEditProfile} />}
             </div>
 
             {editingProfile ? (
@@ -281,22 +285,25 @@ export default function SozlamalarPage() {
                 </div>
               </div>
             ) : (
-              <div className="profile-fields-grid">
-                <div className="settings-row">
-                  <div className="settings-row-info">
-                    <span className="muted">Parol</span>
-                    <strong className={showPassword ? '' : 'password-dots'}>
-                      {showPassword && storedPassword ? storedPassword : '••••••••'}
-                    </strong>
+              <>
+                <div className="profile-field">
+                  <span className="muted">Parol</span>
+                  <div className="password-input-wrap">
+                    <input
+                      className="form-input password-display-input"
+                      type="text"
+                      readOnly
+                      value={showPassword && storedPassword ? storedPassword : '••••••••'}
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle-btn"
+                      onClick={togglePasswordReveal}
+                      aria-label={showPassword ? 'Parolni yashirish' : "Parolni ko'rsatish"}
+                    >
+                      {showPassword ? <IconEyeOff /> : <IconEye />}
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    className="icon-edit-btn"
-                    onClick={togglePasswordReveal}
-                    aria-label={showPassword ? 'Parolni yashirish' : "Parolni ko'rsatish"}
-                  >
-                    {showPassword ? <IconEyeOff /> : <IconEye />}
-                  </button>
                 </div>
 
                 {revealPromptOpen && (
@@ -321,28 +328,28 @@ export default function SozlamalarPage() {
                     </div>
                   </div>
                 )}
-              </div>
+              </>
             )}
-          </>
+          </article>
         )}
+      </div>
 
-        {editingProfile && renameError && (
-          <p className="muted" style={{ color: 'var(--critical)', marginTop: 14, marginBottom: 0 }}>
-            {renameError}
-          </p>
-        )}
+      {editingProfile && renameError && (
+        <p className="muted" style={{ color: 'var(--critical)', marginTop: 16, marginBottom: 0 }}>
+          {renameError}
+        </p>
+      )}
 
-        {editingProfile && (
-          <div className="action-row" style={{ marginTop: 18 }}>
-            <button className="pill-btn primary" onClick={saveProfile} disabled={renaming}>
-              {renaming ? 'Saqlanmoqda...' : 'Saqlash'}
-            </button>
-            <button className="pill-btn" onClick={cancelEditProfile} disabled={renaming}>
-              Bekor qilish
-            </button>
-          </div>
-        )}
-      </article>
+      {editingProfile && (
+        <div className="action-row" style={{ marginTop: 18 }}>
+          <button className="pill-btn primary" onClick={saveProfile} disabled={renaming}>
+            {renaming ? 'Saqlanmoqda...' : 'Saqlash'}
+          </button>
+          <button className="pill-btn" onClick={cancelEditProfile} disabled={renaming}>
+            Bekor qilish
+          </button>
+        </div>
+      )}
     </Layout>
   );
 }
