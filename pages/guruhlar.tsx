@@ -8,7 +8,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 export default function GuruhlarPage() {
   const [loading, setLoading] = useState(true);
-  const [group, setGroup] = useState<{ group: string; membersCount: number } | null>(null);
+  const [group, setGroup] = useState<{ group: string; type?: string; membersCount: number } | null>(null);
   const [allGroups, setAllGroups] = useState<any[] | null>(null);
   const [joinTarget, setJoinTarget] = useState<string | null>(null);
   const [modalCode, setModalCode] = useState('');
@@ -107,7 +107,10 @@ export default function GuruhlarPage() {
               <IconUsers size={22} />
             </div>
             <div>
-              <strong style={{ fontSize: '1.1rem' }}>{group.group}</strong>
+              {group.type && <span className="tag">{group.type}</span>}
+              <strong style={{ fontSize: '1.1rem', display: 'block', marginTop: group.type ? 4 : 0 }}>
+                {group.group}
+              </strong>
               <p className="muted" style={{ margin: '2px 0 0' }}>
                 Siz shu guruhga a&apos;zosiz &middot; {group.membersCount} a&apos;zo
               </p>
@@ -144,7 +147,14 @@ export default function GuruhlarPage() {
                       <IconUsers size={16} />
                     </div>
                     <div className="group-directory-main">
-                      <strong>{g.name}</strong>
+                      <span>
+                        {g.type && (
+                          <span className="tag" style={{ marginRight: 6 }}>
+                            {g.type}
+                          </span>
+                        )}
+                        <strong>{g.name}</strong>
+                      </span>
                       {g.createdBy && <span className="muted">{g.createdBy} tomonidan</span>}
                     </div>
                     <span className="muted">{mine ? "Siz a'zosiz" : `${g.membersCount} a'zo`}</span>
