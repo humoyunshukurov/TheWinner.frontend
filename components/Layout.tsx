@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconArrowLeft, IconShield, IconMenu } from './icons';
 import { getGuest, GUEST_CHANGED_EVENT } from '../lib/guest';
+import { loadProfilePhoto, PROFILE_PHOTO_CHANGED_EVENT } from '../lib/profile';
 import { addUsageMs } from '../lib/usage';
 import LottieCoin from './LottieCoin';
 import ThemeToggle from './ThemeToggle';
@@ -36,6 +37,7 @@ export default function Layout({
   const [coins, setCoins] = useState(null);
   const [rank, setRank] = useState(null);
   const [collapsed, setCollapsed] = useState(false);
+  const [photo, setPhoto] = useState(null);
 
   useEffect(() => {
     setCollapsed(localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1');
@@ -54,11 +56,16 @@ export default function Layout({
       const { guestId } = getGuest();
       fetch(`${API_URL}/coins?guestId=${guestId}`).then((res) => res.json()).then((data) => setCoins(data.coins)).catch(() => {});
       fetch(`${API_URL}/hp?guestId=${guestId}`).then((res) => res.json()).then((data) => setRank(data.rank)).catch(() => {});
+      setPhoto(loadProfilePhoto(guestId));
     }
 
     loadStats();
     window.addEventListener(GUEST_CHANGED_EVENT, loadStats);
-    return () => window.removeEventListener(GUEST_CHANGED_EVENT, loadStats);
+    window.addEventListener(PROFILE_PHOTO_CHANGED_EVENT, loadStats);
+    return () => {
+      window.removeEventListener(GUEST_CHANGED_EVENT, loadStats);
+      window.removeEventListener(PROFILE_PHOTO_CHANGED_EVENT, loadStats);
+    };
   }, [router.pathname]);
 
   useEffect(() => {
@@ -140,7 +147,7 @@ export default function Layout({
               </div>
             )}
             <LogoutButton compact />
-            <div className="avatar">AN</div>
+            <div className="avatar">{photo ? <img src={photo} alt="" /> : 'AN'}</div>
           </div>
         </header>
 

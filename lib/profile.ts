@@ -1,5 +1,8 @@
 const PROFILE_INFO_PREFIX = 'nt_profile_info_';
 const PROFILE_PHOTO_PREFIX = 'nt_profile_photo_';
+// So Layout.tsx's topbar avatar badge can pick up a photo change made on
+// Sozlamalar without a full page reload.
+export const PROFILE_PHOTO_CHANGED_EVENT = 'nt-profile-photo-changed';
 
 export function loadProfile(guestId, fallbackName) {
   const fallback = { firstName: fallbackName || '' };
@@ -28,6 +31,7 @@ export function loadProfilePhoto(guestId) {
 export function saveProfilePhoto(guestId, dataUrl) {
   if (typeof window === 'undefined' || !guestId) return;
   localStorage.setItem(PROFILE_PHOTO_PREFIX + guestId, dataUrl);
+  window.dispatchEvent(new Event(PROFILE_PHOTO_CHANGED_EVENT));
 }
 
 // Username rename moves the guestId, and photo/profile-info are namespaced by

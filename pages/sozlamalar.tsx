@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import { IconEdit, IconCamera, IconEye, IconEyeOff } from '../components/icons';
 import { getGuest, isRegistered, updateAccount, getStoredPassword, loginAccount } from '../lib/guest';
 import { loadProfile, saveProfile as persistProfile, loadProfilePhoto, saveProfilePhoto, migrateProfileStorage } from '../lib/profile';
+import { PRESET_AVATARS } from '../lib/avatars';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -100,6 +101,14 @@ export default function SozlamalarPage() {
       saveProfilePhoto(getGuest().guestId, reader.result);
     };
     reader.readAsDataURL(file);
+  }
+
+  function chooseAvatar(src) {
+    // A preset is just a static file path - it's stored exactly like an
+    // uploaded photo's data: URL, since both are just an <img src>.
+    setPhotoError(null);
+    setPhoto(src);
+    saveProfilePhoto(getGuest().guestId, src);
   }
 
   function updateDraft(field, value) {
@@ -241,6 +250,23 @@ export default function SozlamalarPage() {
               <button type="button" className="link-more" onClick={() => fileInputRef.current?.click()}>
                 {photo ? "Rasmni o'zgartirish" : 'Rasm yuklash'}
               </button>
+            </div>
+          </div>
+
+          <div className="avatar-preset-section">
+            <span className="muted">Tavsiya etilgan avatarlar</span>
+            <div className="avatar-preset-grid">
+              {PRESET_AVATARS.map((avatar) => (
+                <button
+                  key={avatar.id}
+                  type="button"
+                  className={`avatar-preset-item ${photo === avatar.src ? 'selected' : ''}`}
+                  onClick={() => chooseAvatar(avatar.src)}
+                  aria-label="Avatarni tanlash"
+                >
+                  <img src={avatar.src} alt="" />
+                </button>
+              ))}
             </div>
           </div>
 
