@@ -2258,6 +2258,13 @@ body {
     display: none;
   }
 
+  /* Mobile navigates via .bottom-nav instead - there's no sidebar left
+     to collapse/expand here, so the desktop hamburger toggle would just
+     sit uselessly in front of the page title. */
+  .sidebar-toggle-btn {
+    display: none;
+  }
+
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
