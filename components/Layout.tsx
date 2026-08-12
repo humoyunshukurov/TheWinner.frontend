@@ -7,6 +7,7 @@ import { loadProfilePhoto, PROFILE_PHOTO_CHANGED_EVENT } from '../lib/profile';
 import { addUsageMs } from '../lib/usage';
 import LottieCoin from './LottieCoin';
 import LottieMenuToggle from './LottieMenuToggle';
+import CrownBadge from './CrownBadge';
 import ThemeToggle from './ThemeToggle';
 import LogoutButton from './LogoutButton';
 
@@ -150,7 +151,10 @@ export default function Layout({
               </div>
             )}
             <LogoutButton compact />
-            <div className="avatar">{photo ? <img src={photo} alt="" /> : 'AN'}</div>
+            <div className="avatar-wrap">
+              {rank?.id === 'diamond' && <CrownBadge className="avatar-crown" />}
+              <div className="avatar">{photo ? <img src={photo} alt="" /> : 'AN'}</div>
+            </div>
           </div>
         </header>
 
