@@ -1361,6 +1361,22 @@ body {
   filter: brightness(0.97);
 }
 
+.champion-card .pill-btn:not(.primary) {
+  position: relative;
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+}
+
+.champion-card .pill-btn:not(.primary):hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+.champion-reward.already {
+  background: rgba(255, 255, 255, 0.12);
+  font-weight: 600;
+}
+
 .facts-card {
   margin-top: 18px;
   background: linear-gradient(135deg, var(--accent-soft), #fff);

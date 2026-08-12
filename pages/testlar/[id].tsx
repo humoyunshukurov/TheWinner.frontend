@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import { IconCoin, IconSparkle, IconClock } from '../../components/icons';
+import { IconCoin, IconSparkle, IconClock, IconTrophy } from '../../components/icons';
 import { getGuest, isRegistered } from '../../lib/guest';
 import { burstSideConfetti } from '../../lib/confetti';
 
@@ -62,7 +62,7 @@ export default function TestPage() {
 
   useEffect(() => {
     if (!result || result.correctCount !== result.total) return;
-    return burstSideConfetti(3000);
+    return burstSideConfetti(4000);
   }, [result]);
 
   function selectAnswer(optionIndex) {
@@ -94,6 +94,7 @@ export default function TestPage() {
   const answered = answers[currentIndex] !== null && answers[currentIndex] !== undefined;
   const isLast = test && currentIndex === test.questions.length - 1;
   const allAnswered = answers.length > 0 && answers.every((a) => a !== null && a !== undefined);
+  const isPerfect = result && result.total > 0 && result.correctCount === result.total;
 
   return (
     <Layout eyebrow="Test" title={test?.title || 'Yuklanmoqda...'}>
@@ -143,50 +144,90 @@ export default function TestPage() {
 
       {result && (
         <>
-          <article className="card">
-            {allAnswered && (
-              <div className="congrats-banner">
-                <span className="congrats-emoji">🎉</span>
-                Tabriklaymiz! Barcha savollarga javob berdingiz!
+          {isPerfect ? (
+            <article className="champion-card">
+              <div className="champion-shine" />
+
+              <div className="champion-icon-wrap">
+                <IconSparkle size={16} className="champion-sparkle one" />
+                <IconSparkle size={14} className="champion-sparkle two" />
+                <IconSparkle size={18} className="champion-sparkle three" />
+                <IconTrophy size={44} />
               </div>
-            )}
 
-            <p className="muted">Natijangiz</p>
-            <div className="result-score">
-              {result.correctCount} / {result.total}
-            </div>
-            <p className="muted">
-              {result.correctCount} ta savoldan {result.total} tasiga to'g'ri javob berdingiz.
-            </p>
+              <h2 className="champion-title">MUKAMMAL NATIJA!</h2>
+              <p className="champion-subtitle">Barcha savollarga to&apos;g&apos;ri javob berdingiz!</p>
 
-            {result.passed && result.coinsEarned > 0 && (
-              <div className="coins-earned-banner">
-                <IconCoin /> +{result.coinsEarned} coin qo'lga kiritdingiz!
+              <div className="champion-streak">
+                {result.correctCount}/{result.total}
               </div>
-            )}
+              <p className="champion-streak-label">to&apos;g&apos;ri javob</p>
 
-            {result.passed && result.coinsEarned === 0 && (
-              <div className="coins-earned-banner already">
-                <IconCoin /> Bu testni avval yechib bo'lgansiz, shuning uchun coin qayta berilmaydi
+              {result.coinsEarned > 0 ? (
+                <div className="champion-reward">
+                  <IconCoin /> +{result.coinsEarned} coin qo&apos;lga kiritdingiz!
+                </div>
+              ) : (
+                <div className="champion-reward already">
+                  <IconCoin /> Bu testni avval yechib bo&apos;lgansiz, shuning uchun coin qayta berilmaydi
+                </div>
+              )}
+
+              <div className="action-row" style={{ position: 'relative', justifyContent: 'center' }}>
+                <Link href="/testlar" className="pill-btn primary">
+                  Testlarga qaytish
+                </Link>
+                <Link href="/reyting" className="pill-btn">
+                  Reytingni ko&apos;rish
+                </Link>
               </div>
-            )}
+            </article>
+          ) : (
+            <article className="card">
+              {allAnswered && (
+                <div className="congrats-banner">
+                  <span className="congrats-emoji">🎉</span>
+                  Tabriklaymiz! Barcha savollarga javob berdingiz!
+                </div>
+              )}
 
-            {!result.passed && (
-              <p className="locked-hint">
-                Savollarning {result.passThresholdPercent}% dan ko'prog'iga to'g'ri javob bersangiz, coin va
-                qiziqarli ma'lumotlar ochiladi.
+              <p className="muted">Natijangiz</p>
+              <div className="result-score">
+                {result.correctCount} / {result.total}
+              </div>
+              <p className="muted">
+                {result.correctCount} ta savoldan {result.total} tasiga to'g'ri javob berdingiz.
               </p>
-            )}
 
-            <div className="action-row" style={{ marginTop: 18 }}>
-              <Link href="/testlar" className="pill-btn primary">
-                Testlarga qaytish
-              </Link>
-              <Link href="/reyting" className="pill-btn">
-                Reytingni ko'rish
-              </Link>
-            </div>
-          </article>
+              {result.passed && result.coinsEarned > 0 && (
+                <div className="coins-earned-banner">
+                  <IconCoin /> +{result.coinsEarned} coin qo'lga kiritdingiz!
+                </div>
+              )}
+
+              {result.passed && result.coinsEarned === 0 && (
+                <div className="coins-earned-banner already">
+                  <IconCoin /> Bu testni avval yechib bo'lgansiz, shuning uchun coin qayta berilmaydi
+                </div>
+              )}
+
+              {!result.passed && (
+                <p className="locked-hint">
+                  Savollarning {result.passThresholdPercent}% dan ko'prog'iga to'g'ri javob bersangiz, coin va
+                  qiziqarli ma'lumotlar ochiladi.
+                </p>
+              )}
+
+              <div className="action-row" style={{ marginTop: 18 }}>
+                <Link href="/testlar" className="pill-btn primary">
+                  Testlarga qaytish
+                </Link>
+                <Link href="/reyting" className="pill-btn">
+                  Reytingni ko'rish
+                </Link>
+              </div>
+            </article>
+          )}
 
           {result.breakdown?.length > 0 && (
             <article className="card">
