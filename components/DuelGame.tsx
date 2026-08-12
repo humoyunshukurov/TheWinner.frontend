@@ -25,6 +25,7 @@ export default function DuelGame({
   const [result, setResult] = useState(null);
   const [reward, setReward] = useState(null);
   const [myPhoto, setMyPhoto] = useState(null);
+  const [iAmReady, setIAmReady] = useState(false);
 
   const pollRef = useRef(null);
   const startTimeRef = useRef(null);
@@ -65,12 +66,48 @@ export default function DuelGame({
   }, [result]);
 
   function enterMatch(data) {
+    clearInterval(pollRef.current);
     setDuel(data);
     setAnswers(new Array(data.questions.length).fill(null));
+    setIAmReady(false);
+    setPhase('matched');
+  }
+
+  function startPlaying() {
+    clearInterval(pollRef.current);
     setCurrentIndex(0);
     setTimeLeft(QUESTION_SECONDS);
     startTimeRef.current = Date.now();
     setPhase('playing');
+  }
+
+  function markReady(duelId) {
+    setIAmReady(true);
+    const { guestId } = guestRef.current;
+
+    fetch(`${API_URL}/duel/${duelId}/ready`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guestId })
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.bothReady) {
+          startPlaying();
+        } else {
+          pollRef.current = setInterval(() => pollReady(duelId), 1000);
+        }
+      });
+  }
+
+  function pollReady(duelId) {
+    fetch(`${API_URL}/duel/${duelId}/state`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.bothReady) {
+          startPlaying();
+        }
+      });
   }
 
   function startSearch() {
@@ -218,6 +255,37 @@ export default function DuelGame({
             </p>
             <button className="pill-btn" onClick={cancelSearch}>
               Bekor qilish
+            </button>
+          </div>
+        </div>
+      )}
+
+      {phase === 'matched' && duel && (
+        <div className="game-hero">
+          <div className="game-card duel-wait-card">
+            <h3>Raqib topildi!</h3>
+            <div className="duel-wait-list">
+              <div className="duel-wait-row me">
+                <span className="duel-wait-number">1</span>
+                <Avatar photo={myPhoto} size={40} />
+                <span className="duel-wait-name">{guestRef.current.name}</span>
+                {iAmReady && <span className="badge good">Tayyor ✓</span>}
+              </div>
+              <div className="duel-wait-row">
+                <span className="duel-wait-number">2</span>
+                <Avatar photo={null} size={40} />
+                <span className="duel-wait-name">{duel.opponent.name}</span>
+              </div>
+            </div>
+            <p className="muted" style={{ marginTop: 18 }}>
+              {iAmReady ? "Raqibingiz tayyor bo'lishini kuting" : 'Ikkalangiz ham tayyor bo\'lgach, o\'yin boshlanadi'}
+            </p>
+            <button
+              className="pill-btn primary quiz-check-btn"
+              disabled={iAmReady}
+              onClick={() => markReady(duel.duelId)}
+            >
+              {iAmReady ? 'Kutilmoqda...' : "O'yinni boshlash"}
             </button>
           </div>
         </div>
