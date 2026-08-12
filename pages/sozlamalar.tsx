@@ -2,7 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import Layout from '../components/Layout';
 import { IconEdit, IconCamera, IconEye, IconEyeOff } from '../components/icons';
 import { getGuest, isRegistered, updateAccount, getStoredPassword, loginAccount } from '../lib/guest';
-import { loadProfile, saveProfile as persistProfile, loadProfilePhoto, saveProfilePhoto, migrateProfileStorage } from '../lib/profile';
+import {
+  loadProfile,
+  saveProfile as persistProfile,
+  loadProfilePhoto,
+  saveProfilePhoto,
+  migrateProfileStorage,
+  resizeImageDataUrl,
+  syncProfilePhotoToServer
+} from '../lib/profile';
 import { PRESET_AVATARS } from '../lib/avatars';
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
@@ -119,8 +127,14 @@ export default function SozlamalarPage() {
   }
 
   function applyPhoto(src) {
-    setPhoto(src);
-    saveProfilePhoto(getGuest().guestId, src);
+    resizeImageDataUrl(src)
+      .catch(() => src)
+      .then((finalSrc) => {
+        const { guestId } = getGuest();
+        setPhoto(finalSrc);
+        saveProfilePhoto(guestId, finalSrc);
+        syncProfilePhotoToServer(guestId, finalSrc);
+      });
   }
 
   function confirmPhotoChange() {

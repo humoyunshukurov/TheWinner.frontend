@@ -116,7 +116,7 @@ export default function ReytingPage() {
                           </td>
                           <td>
                             <div className="table-name-cell">
-                              <Avatar photo={isMe ? myPhoto : null} size={30} />
+                              <Avatar photo={isMe ? myPhoto : member.photo} size={30} />
                               {isMe ? `${member.name} (siz)` : member.name}
                             </div>
                           </td>
@@ -235,7 +235,7 @@ export default function ReytingPage() {
                           </td>
                           <td>
                             <div className="table-name-cell">
-                              <Avatar photo={isMe ? myPhoto : null} size={30} />
+                              <Avatar photo={isMe ? myPhoto : player.photo} size={30} />
                               <div>
                                 {isMe ? `${player.name} (siz)` : player.name}
                                 {player.group && (
