@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Layout from '../components/Layout';
 import GroupRaceChart from '../components/GroupRaceChart';
 import Avatar from '../components/Avatar';
@@ -6,7 +7,6 @@ import { getGuest } from '../lib/guest';
 import { loadProfilePhoto } from '../lib/profile';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-const CURRENT_USER = 'Azizbek Nurmatov';
 
 function rankBadgeClass(rank) {
   if (rank === 1) return 'rank-badge gold';
@@ -31,11 +31,14 @@ export default function ReytingPage() {
   const [range, setRange] = useState('week');
   const [groupsPage, setGroupsPage] = useState(0);
   const [myPhoto, setMyPhoto] = useState(null);
+  const [myGuestId, setMyGuestId] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/leaderboard/group`).then((res) => res.json()).then(setGroupBoard).catch(() => {});
+    const { guestId } = getGuest();
+    setMyGuestId(guestId);
+    fetch(`${API_URL}/leaderboard/group?guestId=${guestId}`).then((res) => res.json()).then(setGroupBoard).catch(() => {});
     fetch(`${API_URL}/leaderboard/groups`).then((res) => res.json()).then(setGroupsBoard).catch(() => {});
-    setMyPhoto(loadProfilePhoto(getGuest().guestId));
+    setMyPhoto(loadProfilePhoto(guestId));
   }, []);
 
   useEffect(() => {
@@ -46,7 +49,7 @@ export default function ReytingPage() {
   }, [range]);
 
   return (
-    <Layout eyebrow="Kim eng ko'p coin to'playapti?" title="Reyting">
+    <Layout eyebrow="Kim eng ko'p HP to'playapti?" title="Reyting">
       <article className="race-card">
         <div className="race-card-header">
           <h3>Guruhlar poygasi</h3>
@@ -72,38 +75,54 @@ export default function ReytingPage() {
           <article className="card">
             <div className="card-header">
               <h3>Guruhim reytingi</h3>
-              <span className="select-chip">{groupBoard?.group}</span>
+              {groupBoard?.group && <span className="select-chip">{groupBoard.group}</span>}
             </div>
-            {groupBoard ? (
+            {!groupBoard && <p className="muted">Yuklanmoqda...</p>}
+
+            {groupBoard && !groupBoard.group && (
+              <div className="empty-state">
+                <p className="muted">Siz hali biror guruhga a&apos;zo emassiz.</p>
+                <Link href="/guruhlar" className="pill-btn primary">
+                  Guruhga qo&apos;shilish
+                </Link>
+              </div>
+            )}
+
+            {groupBoard?.group && groupBoard.members.length === 0 && (
+              <p className="muted">Bu guruhda hali kod orqali qo&apos;shilgan a&apos;zo yo&apos;q</p>
+            )}
+
+            {groupBoard?.group && groupBoard.members.length > 0 && (
               <div className="table-scroll">
                 <table className="data-table">
                   <thead>
                     <tr>
                       <th>O'rin</th>
                       <th>Talaba</th>
-                      <th>Ball</th>
+                      <th>HP</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {groupBoard.members.map((member) => (
-                      <tr key={member.name} className={member.name === CURRENT_USER ? 'me-row' : ''}>
-                        <td>
-                          <span className={rankBadgeClass(member.rank)}>{member.rank}</span>
-                        </td>
-                        <td>
-                          <div className="table-name-cell">
-                            <Avatar photo={member.name === CURRENT_USER ? myPhoto : null} size={30} />
-                            {member.name === CURRENT_USER ? `${member.name} (siz)` : member.name}
-                          </div>
-                        </td>
-                        <td>{member.points}</td>
-                      </tr>
-                    ))}
+                    {groupBoard.members.map((member) => {
+                      const isMe = member.guestId === myGuestId;
+                      return (
+                        <tr key={member.guestId} className={isMe ? 'me-row' : ''}>
+                          <td>
+                            <span className={rankBadgeClass(member.rank)}>{member.rank}</span>
+                          </td>
+                          <td>
+                            <div className="table-name-cell">
+                              <Avatar photo={isMe ? myPhoto : null} size={30} />
+                              {isMe ? `${member.name} (siz)` : member.name}
+                            </div>
+                          </td>
+                          <td>{member.points}</td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
-            ) : (
-              <p className="muted">Yuklanmoqda...</p>
             )}
           </article>
         </div>
@@ -112,7 +131,7 @@ export default function ReytingPage() {
           <article className="card">
             <div className="card-header">
               <h3>Guruhlar reytingi</h3>
-              <span className="select-chip">Umumiy coin</span>
+              <span className="select-chip">Umumiy HP</span>
             </div>
             {groupsBoard ? (
               <>
@@ -122,7 +141,7 @@ export default function ReytingPage() {
                       <tr>
                         <th>O'rin</th>
                         <th>Guruh</th>
-                        <th>Coin</th>
+                        <th>HP</th>
                       </tr>
                     </thead>
                     <tbody>
