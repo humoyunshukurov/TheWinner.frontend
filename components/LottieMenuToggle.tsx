@@ -1,11 +1,16 @@
 import { useEffect, useRef } from 'react';
 
-// Frame 0 = hamburger (☰), frame 79 = back/close arrow (←) - a
-// "Hamburger to Back Button" morph. When the sidebar is open, the button's
-// job is "collapse it", so it rests on the arrow end; when the sidebar is
-// hidden, its job is "open it", so it rests on the hamburger end. Only the
-// morph itself plays on toggle - it doesn't loop and isn't autoplayed.
-const LAST_FRAME = 79;
+// This "Hamburger to Back Button" asset is authored as a single 80-frame
+// LOOP, not a one-way morph: frame 0 = hamburger (☰), it morphs into a
+// clean back-arrow (←) around frame 40 (the loop's midpoint), then morphs
+// BACK to hamburger by frame 79 so it can repeat seamlessly. Verified by
+// screenshotting every frame directly against lottie-web - frame 79 itself
+// is out of the valid [0, 79) range and renders nothing, and frames near
+// it are hamburger again, not the arrow. For a two-state toggle we only
+// ever need the first half of the loop: play 0->ARROW_FRAME to open, and
+// ARROW_FRAME->0 to close.
+const HAMBURGER_FRAME = 0;
+const ARROW_FRAME = 40;
 
 export default function LottieMenuToggle({ collapsed, size = 20 }: { collapsed: boolean; size?: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -40,7 +45,7 @@ export default function LottieMenuToggle({ collapsed, size = 20 }: { collapsed: 
       animRef.current = anim;
       anim.addEventListener('DOMLoaded', () => {
         readyRef.current = true;
-        anim.goToAndStop(collapsedRef.current ? 0 : LAST_FRAME, true);
+        anim.goToAndStop(collapsedRef.current ? HAMBURGER_FRAME : ARROW_FRAME, true);
         prevCollapsed.current = collapsedRef.current;
       });
     });
@@ -54,8 +59,7 @@ export default function LottieMenuToggle({ collapsed, size = 20 }: { collapsed: 
   useEffect(() => {
     if (!readyRef.current || !animRef.current || prevCollapsed.current === collapsed) return;
     prevCollapsed.current = collapsed;
-    animRef.current.setDirection(collapsed ? -1 : 1);
-    animRef.current.play();
+    animRef.current.playSegments(collapsed ? [ARROW_FRAME, HAMBURGER_FRAME] : [HAMBURGER_FRAME, ARROW_FRAME], true);
   }, [collapsed]);
 
   return <div ref={containerRef} style={{ width: size, height: size }} />;
