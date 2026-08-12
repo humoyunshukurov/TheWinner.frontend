@@ -33,7 +33,8 @@ export default function TestPage() {
 
   useEffect(() => {
     if (!id || access !== true) return;
-    fetch(`${API_URL}/tests/${id}`)
+    const { guestId } = getGuest();
+    fetch(`${API_URL}/tests/${id}?guestId=${guestId}`)
       .then((res) => res.json())
       .then((data) => {
         setTest(data);
