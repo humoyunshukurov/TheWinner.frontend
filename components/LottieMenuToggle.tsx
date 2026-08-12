@@ -13,6 +13,18 @@ export default function LottieMenuToggle({ collapsed, size = 20 }: { collapsed: 
   const readyRef = useRef(false);
   const prevCollapsed = useRef(collapsed);
 
+  // `collapsed` starts false on first render and only flips to its real
+  // (localStorage-backed) value a moment later, in Layout's own effect.
+  // Lottie loads asynchronously over the network, so its DOMLoaded callback
+  // below can easily fire AFTER that flip - but a `[]`-deps effect's
+  // closure only ever sees the value from the render it was created in.
+  // Mirroring `collapsed` into a ref keeps the callback reading the latest
+  // value instead of that stale snapshot.
+  const collapsedRef = useRef(collapsed);
+  useEffect(() => {
+    collapsedRef.current = collapsed;
+  }, [collapsed]);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -28,7 +40,8 @@ export default function LottieMenuToggle({ collapsed, size = 20 }: { collapsed: 
       animRef.current = anim;
       anim.addEventListener('DOMLoaded', () => {
         readyRef.current = true;
-        anim.goToAndStop(collapsed ? 0 : LAST_FRAME, true);
+        anim.goToAndStop(collapsedRef.current ? 0 : LAST_FRAME, true);
+        prevCollapsed.current = collapsedRef.current;
       });
     });
 
@@ -36,9 +49,6 @@ export default function LottieMenuToggle({ collapsed, size = 20 }: { collapsed: 
       cancelled = true;
       animRef.current?.destroy();
     };
-    // Only the initial state matters here - later changes are handled by
-    // the effect below so the button plays the morph instead of snapping.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
