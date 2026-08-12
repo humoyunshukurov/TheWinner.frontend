@@ -39,7 +39,7 @@ export default function HomePage() {
     <Layout eyebrow="Najot Ta'lim akademiyasi" title="Bosh sahifa">
       <article className="card alert-card">
         <div className="alert-icon accent">
-          <IconClock size={18} />
+          <IconClock size={22} />
         </div>
         <div>
           <strong>Ishlatish muddati</strong>

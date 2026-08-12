@@ -23,13 +23,16 @@ const RANGE_OPTIONS = [
 ];
 
 const GROUPS_PAGE_SIZE = 5;
+const ALL_PAGE_SIZE = 8;
 
 export default function ReytingPage() {
   const [groupBoard, setGroupBoard] = useState(null);
   const [groupsBoard, setGroupsBoard] = useState(null);
   const [groupsHistory, setGroupsHistory] = useState(null);
+  const [allBoard, setAllBoard] = useState(null);
   const [range, setRange] = useState('week');
   const [groupsPage, setGroupsPage] = useState(0);
+  const [allPage, setAllPage] = useState(0);
   const [myPhoto, setMyPhoto] = useState(null);
   const [myGuestId, setMyGuestId] = useState(null);
 
@@ -38,6 +41,7 @@ export default function ReytingPage() {
     setMyGuestId(guestId);
     fetch(`${API_URL}/leaderboard/group?guestId=${guestId}`).then((res) => res.json()).then(setGroupBoard).catch(() => {});
     fetch(`${API_URL}/leaderboard/groups`).then((res) => res.json()).then(setGroupsBoard).catch(() => {});
+    fetch(`${API_URL}/leaderboard/all`).then((res) => res.json()).then(setAllBoard).catch(() => {});
     setMyPhoto(loadProfilePhoto(guestId));
   }, []);
 
@@ -198,6 +202,83 @@ export default function ReytingPage() {
           </article>
         </div>
       </div>
+
+      <article className="card" style={{ marginTop: 18 }}>
+        <div className="card-header">
+          <h3>Barcha o&apos;yinchilar reytingi</h3>
+          <span className="select-chip">{allBoard?.length || 0} ta</span>
+        </div>
+
+        {!allBoard && <p className="muted">Yuklanmoqda...</p>}
+        {allBoard?.length === 0 && <p className="muted">Hali hech kim o&apos;ynamagan</p>}
+
+        {allBoard?.length > 0 && (
+          <>
+            <div className="table-scroll">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>O'rin</th>
+                    <th>O&apos;yinchi</th>
+                    <th>HP</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allBoard
+                    .slice(allPage * ALL_PAGE_SIZE, allPage * ALL_PAGE_SIZE + ALL_PAGE_SIZE)
+                    .map((player) => {
+                      const isMe = player.guestId === myGuestId;
+                      return (
+                        <tr key={player.guestId} className={isMe ? 'me-row' : ''}>
+                          <td>
+                            <span className={rankBadgeClass(player.rank)}>{player.rank}</span>
+                          </td>
+                          <td>
+                            <div className="table-name-cell">
+                              <Avatar photo={isMe ? myPhoto : null} size={30} />
+                              <div>
+                                {isMe ? `${player.name} (siz)` : player.name}
+                                {player.group && (
+                                  <div className="muted" style={{ fontSize: '0.78rem' }}>
+                                    {player.group}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td>{player.hp}</td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+
+            {allBoard.length > ALL_PAGE_SIZE && (
+              <div className="pagination">
+                <button
+                  className="pill-btn"
+                  disabled={allPage === 0}
+                  onClick={() => setAllPage((p) => Math.max(0, p - 1))}
+                >
+                  ← Oldingi
+                </button>
+                <span className="muted">
+                  {allPage * ALL_PAGE_SIZE + 1}-
+                  {Math.min(allBoard.length, allPage * ALL_PAGE_SIZE + ALL_PAGE_SIZE)} / {allBoard.length}
+                </span>
+                <button
+                  className="pill-btn"
+                  disabled={(allPage + 1) * ALL_PAGE_SIZE >= allBoard.length}
+                  onClick={() => setAllPage((p) => ((p + 1) * ALL_PAGE_SIZE < allBoard.length ? p + 1 : p))}
+                >
+                  Keyingi →
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </article>
     </Layout>
   );
 }

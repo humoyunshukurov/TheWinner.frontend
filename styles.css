@@ -796,15 +796,16 @@ body {
 /* Alerts */
 .alert-card {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: center;
+  gap: 16px;
+  padding: 26px 24px;
 }
 
 .alert-icon {
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  border-radius: 10px;
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  border-radius: 14px;
   display: grid;
   place-items: center;
 }
@@ -826,13 +827,13 @@ body {
 
 .alert-card strong {
   display: block;
-  font-size: 0.92rem;
-  margin-bottom: 2px;
+  font-size: 1.08rem;
+  margin-bottom: 3px;
 }
 
 .alert-card .muted-link {
   color: var(--text-muted);
-  font-size: 0.82rem;
+  font-size: 0.92rem;
 }
 
 .muted {
