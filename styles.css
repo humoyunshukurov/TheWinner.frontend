@@ -1188,6 +1188,179 @@ body {
   margin-top: 8px;
 }
 
+/* Marafon - clearing the entire question pool without a single mistake.
+   A fixed gold palette on purpose (not theme tokens) - this is a rare,
+   maximal-achievement spectacle, not a normal content card, so it should
+   look the same triumphant way in light or dark mode. */
+.champion-card {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 44px 24px 32px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #b45309, #f59e0b 35%, #fde047 55%, #f59e0b 75%, #b45309);
+  background-size: 300% 300%;
+  animation: champion-glow-shift 5s ease infinite;
+  color: #fff;
+  box-shadow: 0 20px 50px rgba(245, 158, 11, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+}
+
+@keyframes champion-glow-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.champion-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.35) 35%, transparent 50%);
+  background-size: 250% 250%;
+  animation: champion-shine-sweep 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes champion-shine-sweep {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -50% 0;
+  }
+}
+
+.champion-icon-wrap {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  animation: champion-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes champion-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 18px rgba(255, 255, 255, 0);
+  }
+}
+
+.champion-sparkle {
+  position: absolute;
+  color: #fff;
+  animation: champion-twinkle 1.6s ease-in-out infinite;
+}
+
+.champion-sparkle.one {
+  top: -8px;
+  left: -12px;
+  animation-delay: 0s;
+}
+
+.champion-sparkle.two {
+  bottom: -6px;
+  right: -16px;
+  animation-delay: 0.5s;
+}
+
+.champion-sparkle.three {
+  top: 8px;
+  right: -20px;
+  animation-delay: 1s;
+}
+
+@keyframes champion-twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.7) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(20deg);
+  }
+}
+
+.champion-title {
+  position: relative;
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  margin: 0 0 6px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  animation: champion-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.champion-subtitle {
+  position: relative;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.92rem;
+  margin: 0 0 22px;
+}
+
+@keyframes champion-pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.champion-streak {
+  position: relative;
+  font-size: 3.4rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+  animation: champion-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s backwards;
+}
+
+.champion-streak-label {
+  position: relative;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 22px;
+}
+
+.champion-reward {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+  backdrop-filter: blur(4px);
+}
+
+.champion-card .pill-btn.primary {
+  position: relative;
+  background: #fff;
+  color: #b45309;
+  border-color: transparent;
+}
+
+.champion-card .pill-btn.primary:hover {
+  filter: brightness(0.97);
+}
+
 .facts-card {
   margin-top: 18px;
   background: linear-gradient(135deg, var(--accent-soft), #fff);

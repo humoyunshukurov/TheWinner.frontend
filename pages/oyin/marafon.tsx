@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/Layout';
 import MarafonBanner from '../../components/MarafonBanner';
-import { IconTrendUp, IconCoin } from '../../components/icons';
+import { IconTrendUp, IconCoin, IconTrophy, IconSparkle } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
 import { useRequireAccess } from '../../lib/useRequireAccess';
+import { burstSideConfetti } from '../../lib/confetti';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const FEEDBACK_DELAY_MS = 650;
@@ -90,6 +91,11 @@ export default function MarafonPage() {
     setResult(null);
   }
 
+  useEffect(() => {
+    if (!result?.allQuestionsUsed) return;
+    return burstSideConfetti(4000);
+  }, [result]);
+
   return (
     <Layout eyebrow="Xato qilmasdan qancha uzoqqa borasiz?" title="Marafon" backHref="/oyin">
       {phase === 'idle' && (
@@ -135,7 +141,38 @@ export default function MarafonPage() {
         </article>
       )}
 
-      {phase === 'finished' && result && (
+      {phase === 'finished' && result && result.allQuestionsUsed && (
+        <article className="champion-card">
+          <div className="champion-shine" />
+
+          <div className="champion-icon-wrap">
+            <IconSparkle size={16} className="champion-sparkle one" />
+            <IconSparkle size={14} className="champion-sparkle two" />
+            <IconSparkle size={18} className="champion-sparkle three" />
+            <IconTrophy size={44} />
+          </div>
+
+          <h2 className="champion-title">MUTLAQ G&apos;OLIB!</h2>
+          <p className="champion-subtitle">Barcha savollarni birortasida ham xato qilmasdan yakunladingiz!</p>
+
+          <div className="champion-streak">{result.streak}</div>
+          <p className="champion-streak-label">ketma-ket to&apos;g&apos;ri javob</p>
+
+          {result.coins > 0 && (
+            <div className="champion-reward">
+              <IconCoin /> +{result.coins} tanga &middot; +{result.hp} HP
+            </div>
+          )}
+
+          <div className="action-row" style={{ position: 'relative', justifyContent: 'center' }}>
+            <button className="pill-btn primary" onClick={playAgain}>
+              Qayta o&apos;ynash
+            </button>
+          </div>
+        </article>
+      )}
+
+      {phase === 'finished' && result && !result.allQuestionsUsed && (
         <article className="card">
           <p className="muted">{result.streak > 0 ? "O'yin tugadi!" : 'Birinchi savolda xato bo\'ldi'}</p>
           <div className="result-score">{result.streak}</div>

@@ -1,4 +1,4 @@
-function Svg({ children, size = 20, fill = 'none', stroke = 'currentColor' }) {
+function Svg({ children, size = 20, fill = 'none', stroke = 'currentColor', className }) {
   return (
     <svg
       width={size}
@@ -9,6 +9,7 @@ function Svg({ children, size = 20, fill = 'none', stroke = 'currentColor' }) {
       strokeWidth="1.6"
       strokeLinecap="round"
       strokeLinejoin="round"
+      className={className}
     >
       {children}
     </svg>
