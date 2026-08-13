@@ -1887,10 +1887,9 @@ body {
 }
 
 .battle-banner.marathon {
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.16) 1.5px, transparent 0),
-    linear-gradient(135deg, #f97316 0%, #ef4444 55%, #b91c1c 100%);
-  background-size: 20px 20px, cover;
-  background-position: 0 0, center;
+  background-image: linear-gradient(180deg, rgba(10, 8, 25, 0.4) 0%, rgba(30, 10, 35, 0.05) 35%, rgba(10, 8, 25, 0.15) 65%, rgba(10, 8, 25, 0.55) 100%),
+    url('/images/infinite-quiz.jpg');
+  background-position: center 42%;
 }
 
 .battle-banner.compact {
