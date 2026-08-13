@@ -11,7 +11,7 @@ const TYPE_META = {
   duel: { label: '1vs1 Jang', Icon: IconSwords },
   kod: { label: "Kod bilan o'yin", Icon: IconPlay },
   turnir: { label: 'Turnir', Icon: IconTrophy },
-  marafon: { label: 'Marafon', Icon: IconTrendUp }
+  marafon: { label: 'Infinite Quiz', Icon: IconTrendUp }
 };
 
 const RESULT_META = {

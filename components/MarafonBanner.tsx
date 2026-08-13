@@ -34,7 +34,7 @@ export default function MarafonBanner({
       </div>
 
       <div className="battle-banner-main">
-        <h2 className="battle-title">MARAFON</h2>
+        <h2 className="battle-title">INFINITE QUIZ</h2>
         <p className="battle-subtitle">Xato qilmasdan qancha uzoqqa borasiz?</p>
         <div className="battle-features">
           <span className="battle-feature">
