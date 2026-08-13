@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
+import QuestionPrompt from '../../components/QuestionPrompt';
 import { IconCoin, IconSparkle, IconClock, IconTrophy } from '../../components/icons';
 import { getGuest, isRegistered } from '../../lib/guest';
 import { burstSideConfetti } from '../../lib/confetti';
@@ -118,9 +119,7 @@ export default function TestPage() {
           </div>
 
           <div className="question-block">
-            <p>
-              {currentIndex + 1}. {question.text}
-            </p>
+            <QuestionPrompt number={currentIndex + 1} text={question.text} image={question.image} />
             <div className="options">
               {question.options.map((option, oIndex) => (
                 <label key={option} className={`option-label ${answers[currentIndex] === oIndex ? 'selected' : ''}`}>

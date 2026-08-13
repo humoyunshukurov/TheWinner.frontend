@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import Layout from '../../components/Layout';
+import QuestionPrompt from '../../components/QuestionPrompt';
 import { IconPlay, IconTrophy, IconClock } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
 import { useRequireAccess } from '../../lib/useRequireAccess';
@@ -194,7 +195,7 @@ export default function KodOyinPage() {
           </div>
 
           <div className="question-block">
-            <p>{state.question?.text}</p>
+            <QuestionPrompt text={state.question?.text} image={state.question?.image} />
             <div className="options">
               {state.question?.options.map((option: string, oIndex: number) => (
                 <label

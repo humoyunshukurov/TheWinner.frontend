@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/Layout';
 import MarafonBanner from '../../components/MarafonBanner';
+import QuestionPrompt from '../../components/QuestionPrompt';
 import { IconTrendUp, IconCoin, IconTrophy, IconSparkle } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
 import { useRequireAccess } from '../../lib/useRequireAccess';
@@ -116,7 +117,7 @@ export default function MarafonPage() {
           </div>
 
           <div className="question-block">
-            <p>{question.text}</p>
+            <QuestionPrompt text={question.text} image={question.image} />
             <div className="options">
               {question.options.map((option: string, oIndex: number) => {
                 let stateClass = '';

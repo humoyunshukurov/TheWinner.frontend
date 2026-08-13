@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/Layout';
 import Bracket from '../../components/Bracket';
 import TournamentBanner from '../../components/TournamentBanner';
+import QuestionPrompt from '../../components/QuestionPrompt';
 import { IconTrophy, IconUsers, IconClock } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
 import { useRequireAccess } from '../../lib/useRequireAccess';
@@ -228,9 +229,7 @@ export default function TurnirPage() {
           </div>
 
           <div className="question-block">
-            <p>
-              {currentIndex + 1}. {question.text}
-            </p>
+            <QuestionPrompt number={currentIndex + 1} text={question.text} image={question.image} />
             <div className="options">
               {question.options.map((option, oIndex) => (
                 <label key={option} className={`option-label ${answers[currentIndex] === oIndex ? 'selected' : ''}`}>

@@ -1060,6 +1060,39 @@ body {
   font-size: 1.05rem;
   line-height: 1.45;
   margin: 0 0 18px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* A code question (its text contains real line breaks - see
+   QuestionPrompt.tsx) reads as code, not squished prose: monospace,
+   left-aligned, a distinct background so it visually separates from
+   the question number/intro line above it. */
+.question-block p.code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-weight: 500;
+  font-size: 0.92rem;
+  background: var(--content-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+/* "katta bo'lsin" - a question image is a primary part of the question
+   (a diagram, a code screenshot), not a decoration, so it gets real
+   size: full card width, tall enough to actually read, never cropped. */
+.question-image-wrap {
+  margin-bottom: 18px;
+}
+
+.question-image {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  border-radius: 14px;
+  border: 1px solid var(--card-border);
+  background: var(--content-bg);
 }
 
 .options {

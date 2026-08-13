@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import BattleBanner from './BattleBanner';
 import Avatar from './Avatar';
+import QuestionPrompt from './QuestionPrompt';
 import { IconSwords, IconClock } from './icons';
 import { getGuest } from '../lib/guest';
 import { loadProfilePhoto } from '../lib/profile';
@@ -315,9 +316,7 @@ export default function DuelGame({
           </div>
 
           <div className="question-block">
-            <p>
-              {currentIndex + 1}. {question.text}
-            </p>
+            <QuestionPrompt number={currentIndex + 1} text={question.text} image={question.image} />
             <div className="options">
               {question.options.map((option, oIndex) => (
                 <label key={option} className={`option-label ${answers[currentIndex] === oIndex ? 'selected' : ''}`}>
