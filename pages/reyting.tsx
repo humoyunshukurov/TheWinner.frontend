@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Layout from '../components/Layout';
 import GroupRaceChart from '../components/GroupRaceChart';
 import Avatar from '../components/Avatar';
+import CrownBadge from '../components/CrownBadge';
 import { getGuest } from '../lib/guest';
 import { loadProfilePhoto } from '../lib/profile';
 
@@ -112,7 +113,10 @@ export default function ReytingPage() {
                       return (
                         <tr key={member.guestId} className={isMe ? 'me-row' : ''}>
                           <td>
-                            <span className={rankBadgeClass(member.rank)}>{member.rank}</span>
+                            <span className="rank-badge-wrap">
+                              {member.rank === 1 && member.points > 0 && <CrownBadge size={20} className="rank-crown" />}
+                              <span className={rankBadgeClass(member.rank)}>{member.rank}</span>
+                            </span>
                           </td>
                           <td>
                             <div className="table-name-cell">
@@ -231,7 +235,10 @@ export default function ReytingPage() {
                       return (
                         <tr key={player.guestId} className={isMe ? 'me-row' : ''}>
                           <td>
-                            <span className={rankBadgeClass(player.rank)}>{player.rank}</span>
+                            <span className="rank-badge-wrap">
+                              {player.rank === 1 && player.hp > 0 && <CrownBadge size={20} className="rank-crown" />}
+                              <span className={rankBadgeClass(player.rank)}>{player.rank}</span>
+                            </span>
                           </td>
                           <td>
                             <div className="table-name-cell">

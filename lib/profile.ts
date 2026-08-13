@@ -57,6 +57,22 @@ export function syncProfilePhotoToServer(guestId, photo) {
   }).catch(() => {});
 }
 
+// Sync only ever fired on the ACT of setting/changing a photo in
+// Sozlamalar - anyone who picked their photo before that existed (i.e.
+// nearly everyone, since this shipped well after most accounts did)
+// has a perfectly good local photo the backend has simply never seen,
+// so it shows as missing on leaderboards to everyone else. This
+// backfills it once per browser session from wherever the guest's
+// stats already get loaded (Layout.tsx) - cheap and self-healing,
+// every returning visit eventually re-pushes it without hammering the
+// server on every single page navigation.
+let backfillSyncedThisSession = false;
+export function resyncProfilePhotoOnce(guestId, photo) {
+  if (backfillSyncedThisSession || !photo) return;
+  backfillSyncedThisSession = true;
+  syncProfilePhotoToServer(guestId, photo);
+}
+
 export function loadProfile(guestId, fallbackName) {
   const fallback = { firstName: fallbackName || '' };
   if (typeof window === 'undefined' || !guestId) return fallback;

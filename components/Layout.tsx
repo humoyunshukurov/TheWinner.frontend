@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconArrowLeft, IconShield, IconUsers, IconClock } from './icons';
 import { getGuest, GUEST_CHANGED_EVENT } from '../lib/guest';
-import { loadProfilePhoto, PROFILE_PHOTO_CHANGED_EVENT } from '../lib/profile';
+import { loadProfilePhoto, resyncProfilePhotoOnce, PROFILE_PHOTO_CHANGED_EVENT } from '../lib/profile';
 import { addUsageMs } from '../lib/usage';
 import LottieCoin from './LottieCoin';
 import LottieMenuToggle from './LottieMenuToggle';
@@ -66,7 +66,9 @@ export default function Layout({
       const { guestId } = getGuest();
       fetch(`${API_URL}/coins?guestId=${guestId}`).then((res) => res.json()).then((data) => setCoins(data.coins)).catch(() => {});
       fetch(`${API_URL}/hp?guestId=${guestId}`).then((res) => res.json()).then((data) => setRank(data.rank)).catch(() => {});
-      setPhoto(loadProfilePhoto(guestId));
+      const localPhoto = loadProfilePhoto(guestId);
+      setPhoto(localPhoto);
+      resyncProfilePhotoOnce(guestId, localPhoto);
 
       // Reset first - both champion checks below only ever flip this to
       // true, so a stale true from a previous guest/moment needs clearing

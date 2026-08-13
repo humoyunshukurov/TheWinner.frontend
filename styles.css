@@ -984,6 +984,24 @@ body {
   color: var(--text-secondary);
 }
 
+.rank-badge-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+/* Same asset/positioning idea as .avatar-crown, just smaller for a
+   table's rank column - shown publicly here (unlike the topbar one,
+   which only the player themselves ever sees) for whoever is genuinely
+   #1 in that table. */
+.rank-crown {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-8deg);
+  pointer-events: none;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+}
+
 .rank-badge.gold {
   background: #fef3c7;
   color: #b45309;
