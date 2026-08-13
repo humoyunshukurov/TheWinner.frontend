@@ -43,6 +43,11 @@ export default function Layout({
   const [rank, setRank] = useState(null);
   const [collapsed, setCollapsed] = useState(false);
   const [photo, setPhoto] = useState(null);
+  // Crown is for whoever is actually #1 - either #1 in their own group's
+  // ranking or #1 among every player on the platform - not "everyone who
+  // reached Champion tier". Only ever computed for the logged-in user's
+  // own topbar, so it's inherently visible to nobody but themselves.
+  const [isChampion, setIsChampion] = useState(false);
 
   useEffect(() => {
     setCollapsed(localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1');
@@ -62,6 +67,27 @@ export default function Layout({
       fetch(`${API_URL}/coins?guestId=${guestId}`).then((res) => res.json()).then((data) => setCoins(data.coins)).catch(() => {});
       fetch(`${API_URL}/hp?guestId=${guestId}`).then((res) => res.json()).then((data) => setRank(data.rank)).catch(() => {});
       setPhoto(loadProfilePhoto(guestId));
+
+      // Reset first - both champion checks below only ever flip this to
+      // true, so a stale true from a previous guest/moment needs clearing
+      // (e.g. after a guest switch, or after someone else overtakes 1st).
+      setIsChampion(false);
+
+      fetch(`${API_URL}/leaderboard/group?guestId=${guestId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const mine = (data.members || []).find((m) => m.guestId === guestId);
+          if (mine && mine.rank === 1 && mine.points > 0) setIsChampion(true);
+        })
+        .catch(() => {});
+
+      fetch(`${API_URL}/leaderboard/all`)
+        .then((res) => res.json())
+        .then((list) => {
+          const mine = (list || []).find((u) => u.guestId === guestId);
+          if (mine && mine.rank === 1 && mine.hp > 0) setIsChampion(true);
+        })
+        .catch(() => {});
     }
 
     loadStats();
@@ -159,7 +185,7 @@ export default function Layout({
             )}
             <LogoutButton compact />
             <div className="avatar-wrap">
-              {rank?.id === 'diamond' && <CrownBadge className="avatar-crown" />}
+              {isChampion && <CrownBadge className="avatar-crown" />}
               <div className="avatar">{photo ? <img src={photo} alt="" /> : 'AN'}</div>
             </div>
           </div>
