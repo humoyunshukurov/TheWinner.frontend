@@ -10,12 +10,12 @@ import LottieMenuToggle from './LottieMenuToggle';
 import CrownBadge from './CrownBadge';
 import ThemeToggle from './ThemeToggle';
 import LogoutButton from './LogoutButton';
-import AboutMe from './AboutMe';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const TICK_MS = 5000;
 const IDLE_LIMIT_MS = 30000;
 const SIDEBAR_COLLAPSED_KEY = 'nt_sidebar_collapsed';
+const PORTFOLIO_URL = 'https://shukurovhumoyun.vercel.app/';
 
 const navItems = [
   { label: 'Bosh sahifa', href: '/', Icon: IconGrid },
@@ -114,6 +114,12 @@ export default function Layout({
             </Link>
           ))}
         </nav>
+
+        <div className="sidebar-footer">
+          <a href={PORTFOLIO_URL} target="_blank" rel="noopener noreferrer" className="about-me-link">
+            About me
+          </a>
+        </div>
       </aside>
 
       <section className="main-content">
@@ -151,7 +157,6 @@ export default function Layout({
                 {coins}
               </div>
             )}
-            <AboutMe />
             <LogoutButton compact />
             <div className="avatar-wrap">
               {rank?.id === 'diamond' && <CrownBadge className="avatar-crown" />}

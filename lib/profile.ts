@@ -1,6 +1,5 @@
 const PROFILE_INFO_PREFIX = 'nt_profile_info_';
 const PROFILE_PHOTO_PREFIX = 'nt_profile_photo_';
-const PROFILE_BIO_PREFIX = 'nt_profile_bio_';
 // So Layout.tsx's topbar avatar badge can pick up a photo change made on
 // Sozlamalar without a full page reload.
 export const PROFILE_PHOTO_CHANGED_EVENT = 'nt-profile-photo-changed';
@@ -88,19 +87,6 @@ export function saveProfilePhoto(guestId, dataUrl) {
   window.dispatchEvent(new Event(PROFILE_PHOTO_CHANGED_EVENT));
 }
 
-// A short "About me" bio, shown from the topbar button - local-only like
-// the rest of `profile`, no reason for other users to see it so it isn't
-// synced to the backend the way the photo is.
-export function loadProfileBio(guestId) {
-  if (typeof window === 'undefined' || !guestId) return '';
-  return localStorage.getItem(PROFILE_BIO_PREFIX + guestId) || '';
-}
-
-export function saveProfileBio(guestId, bio) {
-  if (typeof window === 'undefined' || !guestId) return;
-  localStorage.setItem(PROFILE_BIO_PREFIX + guestId, bio);
-}
-
 // Username rename moves the guestId, and photo/profile-info are namespaced by
 // guestId in localStorage - without this they'd look "lost" on the new name,
 // same class of bug as the pre-persistence-fix coin/HP loss.
@@ -117,11 +103,5 @@ export function migrateProfileStorage(oldGuestId, newGuestId) {
   if (info) {
     localStorage.setItem(PROFILE_INFO_PREFIX + newGuestId, info);
     localStorage.removeItem(PROFILE_INFO_PREFIX + oldGuestId);
-  }
-
-  const bio = localStorage.getItem(PROFILE_BIO_PREFIX + oldGuestId);
-  if (bio) {
-    localStorage.setItem(PROFILE_BIO_PREFIX + newGuestId, bio);
-    localStorage.removeItem(PROFILE_BIO_PREFIX + oldGuestId);
   }
 }
