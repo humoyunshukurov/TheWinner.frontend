@@ -19,6 +19,11 @@ export default function KodOyinPage() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState(QUESTION_SECONDS);
   const [lastResult, setLastResult] = useState<{ correct: boolean; points: number } | null>(null);
+  // Session can genuinely disappear server-side (expired after an hour of
+  // inactivity, or - previously - a backend restart wiping it entirely).
+  // Without this, a gone session just left state.status undefined and the
+  // whole page silently rendered nothing forever, which read as "frozen".
+  const [sessionError, setSessionError] = useState<string | null>(null);
 
   const guestRef = useRef({ guestId: '', name: '' });
   const pollRef = useRef<any>(null);
@@ -62,8 +67,15 @@ export default function KodOyinPage() {
   function poll() {
     const { guestId } = guestRef.current;
     fetch(`${API_URL}/kod/${sessionCode}/state?guestId=${guestId}`)
-      .then((res) => res.json())
-      .then(setState)
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          clearInterval(pollRef.current);
+          setSessionError(data.message || "Sessiya topilmadi yoki tugagan");
+          return;
+        }
+        setState(data);
+      })
       .catch(() => {});
   }
 
@@ -78,6 +90,7 @@ export default function KodOyinPage() {
 
     setJoining(true);
     setError(null);
+    setSessionError(null);
     const { guestId, name } = guestRef.current;
 
     fetch(`${API_URL}/kod/join`, {
@@ -129,6 +142,7 @@ export default function KodOyinPage() {
     setSessionCode(null);
     setState(null);
     setCode('');
+    setSessionError(null);
   }
 
   if (!sessionCode) {
@@ -167,7 +181,19 @@ export default function KodOyinPage() {
 
   return (
     <Layout eyebrow="Guruh bilan birga o'ynang" title="Kod bilan qo'shilish" backHref="/oyin">
-      {state?.status === 'lobby' && (
+      {sessionError && (
+        <div className="game-hero">
+          <div className="game-card">
+            <h3>Sessiya uzildi</h3>
+            <p className="muted">{sessionError} - o&apos;qituvchidan yangi kod so&apos;rang.</p>
+            <button className="pill-btn primary" onClick={leaveSession}>
+              Chiqish
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!sessionError && state?.status === 'lobby' && (
         <div className="game-hero">
           <div className="game-card">
             <div className="duel-spinner" />
@@ -180,7 +206,7 @@ export default function KodOyinPage() {
         </div>
       )}
 
-      {state?.status === 'question' && (
+      {!sessionError && state?.status === 'question' && (
         <article className="card quiz-card">
           <div className="test-progress-header">
             <span className="test-progress-label">
@@ -240,7 +266,7 @@ export default function KodOyinPage() {
         </article>
       )}
 
-      {state?.status === 'waiting_next' && (
+      {!sessionError && state?.status === 'waiting_next' && (
         <div className="game-hero">
           <div className="game-card">
             <div className="duel-spinner" />
@@ -255,7 +281,7 @@ export default function KodOyinPage() {
         </div>
       )}
 
-      {state?.status === 'finished' && (
+      {!sessionError && state?.status === 'finished' && (
         <article className="card">
           <div className="card-header">
             <h3>
