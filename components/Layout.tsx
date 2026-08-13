@@ -10,6 +10,7 @@ import LottieMenuToggle from './LottieMenuToggle';
 import CrownBadge from './CrownBadge';
 import ThemeToggle from './ThemeToggle';
 import LogoutButton from './LogoutButton';
+import AboutMe from './AboutMe';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const TICK_MS = 5000;
@@ -150,6 +151,7 @@ export default function Layout({
                 {coins}
               </div>
             )}
+            <AboutMe />
             <LogoutButton compact />
             <div className="avatar-wrap">
               {rank?.id === 'diamond' && <CrownBadge className="avatar-crown" />}

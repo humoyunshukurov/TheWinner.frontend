@@ -300,6 +300,68 @@ body {
   box-shadow: var(--card-shadow);
 }
 
+.modal-box-wide {
+  max-width: 420px;
+}
+
+/* LinkedIn's brand blue - fixed on purpose (not a --accent/theme token)
+   so the button reads as "About" the same recognizable way in both
+   light and dark mode, same reasoning as the champion-card gold palette. */
+.about-me-btn {
+  background: none;
+  border: none;
+  color: #0a66c2;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 6px 4px;
+  white-space: nowrap;
+}
+
+.about-me-btn:hover {
+  text-decoration: underline;
+}
+
+.about-me-modal {
+  text-align: left;
+}
+
+.about-me-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.about-me-header h3 {
+  margin: 0;
+}
+
+.about-me-text {
+  margin: 14px 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text-primary);
+}
+
+.about-me-textarea {
+  margin-top: 14px;
+  min-height: 110px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.about-me-counter {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
 .modal-box h3 {
   margin: 0 0 6px;
   font-size: 1.05rem;
