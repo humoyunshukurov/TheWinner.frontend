@@ -10,6 +10,12 @@
   --text-primary: #14142b;
   --text-secondary: #6b6b85;
   --text-muted: #9797ac;
+  /* Sidebar nav's own inactive-item color - same as --text-secondary in
+     light mode (already legible there), but dark mode gets a dedicated
+     brighter value below since gray-on-navy at that dimness was hard to
+     read. Kept separate from --text-secondary itself, which is used all
+     over for genuinely-secondary text where staying muted is correct. */
+  --nav-inactive-text: var(--text-secondary);
 
   --accent: #4f46e5;
   --accent-soft: #eef0ff;
@@ -38,6 +44,7 @@
   --text-primary: #f5f5f7;
   --text-secondary: #8f8fa3;
   --text-muted: #6f6f85;
+  --nav-inactive-text: #c6c6da;
 
   --accent: #7c6cf6;
   --accent-soft: rgba(124, 108, 246, 0.18);
@@ -167,13 +174,19 @@ body {
 .nav-links a {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 13px;
   text-decoration: none;
-  padding: 11px 14px;
+  padding: 12px 14px;
   border-radius: 12px;
-  color: var(--text-secondary);
-  font-size: 0.92rem;
+  color: var(--nav-inactive-text);
+  font-size: 0.98rem;
   font-weight: 500;
+}
+
+.nav-links a svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
 }
 
 .nav-links a:hover {
