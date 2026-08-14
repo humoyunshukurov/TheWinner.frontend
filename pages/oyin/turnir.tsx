@@ -307,7 +307,10 @@ export default function TurnirPage() {
 
           {state.standings[0]?.guestId === guestId && (
             <div className="coins-earned-banner" style={{ marginTop: 14 }}>
-              +10 bonus tanga &middot; +60 HP g'olib sifatida!
+              {/* Champion bonus scales with field size (10 HP per
+                  participant) on the server - standings.length is exactly
+                  that count, so no separate field is needed here. */}
+              +10 bonus tanga &middot; +{state.standings.length * 10} HP g'olib sifatida!
             </div>
           )}
 
