@@ -85,7 +85,7 @@ export default function TurnirPage() {
       })
       .catch(() => {});
 
-    fetch(`${API_URL}/tournament/bracket`)
+    fetch(`${API_URL}/tournament/bracket?guestId=${guestId}`)
       .then((res) => res.json())
       .then(setBracket)
       .catch(() => {});
@@ -127,8 +127,17 @@ export default function TurnirPage() {
     }).then(poll);
   }
 
+  // The tournament they just finished is its own closed instance now, not
+  // a single global thing to "reset" - playing again just means rejoining
+  // whatever lobby is currently open (a fresh one, since theirs already
+  // launched and moved on).
   function playAgain() {
-    fetch(`${API_URL}/tournament/reset`, { method: 'POST' }).then(() => {
+    const { guestId, name } = guestRef.current;
+    fetch(`${API_URL}/tournament/join`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guestId, name })
+    }).then(() => {
       loadedMatchIdRef.current = null;
       setAnswers([]);
       setSubmittedMatchId(null);
