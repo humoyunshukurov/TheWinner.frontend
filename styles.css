@@ -2161,6 +2161,107 @@ body {
   }
 }
 
+/* Tournament lobby auto-start countdown - a progress ring draining as the
+   45s ticks down, replacing what used to be a "Boshlash" button. Color
+   escalates accent -> warning -> critical (with a pulse) as it nears 0. */
+.tournament-countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0 4px;
+}
+
+.tournament-countdown-ring {
+  position: relative;
+  width: 132px;
+  height: 132px;
+}
+
+.tournament-countdown-ring svg {
+  transform: rotate(-90deg);
+}
+
+.tournament-countdown-track {
+  fill: none;
+  stroke: var(--content-bg);
+}
+
+.tournament-countdown-progress {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.25s linear, stroke 0.3s ease;
+}
+
+.tournament-countdown.warning .tournament-countdown-progress {
+  stroke: var(--warning);
+}
+
+.tournament-countdown.critical .tournament-countdown-progress {
+  stroke: var(--critical);
+}
+
+.tournament-countdown.critical .tournament-countdown-ring {
+  animation: tournament-countdown-pulse 1s ease-in-out infinite;
+}
+
+@keyframes tournament-countdown-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+.tournament-countdown-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.1;
+}
+
+.tournament-countdown-number span {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.tournament-countdown.critical .tournament-countdown-number span {
+  color: var(--critical);
+}
+
+.tournament-countdown-number small {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tournament-countdown-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 0;
+}
+
+.tournament-countdown.warning .tournament-countdown-label {
+  color: var(--warning);
+}
+
+.tournament-countdown.critical .tournament-countdown-label {
+  color: var(--critical);
+}
+
 .duel-wait-card {
   width: 100%;
   max-width: 380px;

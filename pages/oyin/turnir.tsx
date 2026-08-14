@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/Layout';
 import Bracket from '../../components/Bracket';
 import TournamentBanner from '../../components/TournamentBanner';
+import TournamentCountdown from '../../components/TournamentCountdown';
 import QuestionPrompt from '../../components/QuestionPrompt';
 import { IconTrophy, IconUsers, IconClock } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
@@ -103,10 +104,6 @@ export default function TurnirPage() {
     }).then(poll);
   }
 
-  function start() {
-    fetch(`${API_URL}/tournament/start`, { method: 'POST' }).then(poll);
-  }
-
   function selectAnswer(qIndex, oIndex) {
     setAnswers((prev) => prev.map((value, i) => (i === qIndex ? oIndex : value)));
   }
@@ -179,13 +176,12 @@ export default function TurnirPage() {
               <button className="pill-btn primary" onClick={join}>
                 Turnirga qo'shilish
               </button>
+            ) : state.autoStartAt ? (
+              <TournamentCountdown autoStartAt={state.autoStartAt} />
             ) : (
-              <div className="action-row" style={{ alignItems: 'center' }}>
-                <button className="pill-btn primary" disabled={!state.canStart} onClick={start}>
-                  Boshlash
-                </button>
-                {!state.canStart && <p className="muted">Kamida 2 kishi kerak</p>}
-              </div>
+              <p className="muted" style={{ textAlign: 'center' }}>
+                Kamida 2 kishi kerak - yana ishtirokchi kutilmoqda...
+              </p>
             )}
           </article>
         </>
