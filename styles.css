@@ -43,7 +43,11 @@
 
   --text-primary: #f5f5f7;
   --text-secondary: #8f8fa3;
-  --text-muted: #6f6f85;
+  /* #6f6f85 measured at 3.5:1 / 3.85:1 against card/page backgrounds -
+     under WCAG AA's 4.5:1 minimum for normal text. This passes both
+     comfortably (5.8:1 / 6.4:1) while staying visibly de-emphasized
+     relative to --text-primary/--text-secondary. */
+  --text-muted: #9494ab;
   --nav-inactive-text: #c6c6da;
 
   --accent: #7c6cf6;
@@ -741,7 +745,7 @@ body {
 
 .chart-axis-label {
   fill: var(--text-muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .chart-tooltip {
@@ -785,10 +789,10 @@ body {
   text-align: left;
   color: var(--text-muted);
   font-weight: 600;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  padding: 8px 10px;
+  padding: 9px 10px;
 }
 
 .data-table td {
