@@ -15,7 +15,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const TICK_MS = 5000;
 const IDLE_LIMIT_MS = 30000;
 const SIDEBAR_COLLAPSED_KEY = 'nt_sidebar_collapsed';
-const PORTFOLIO_URL = 'https://shukurovhumoyun.vercel.app/';
 // Deliberately fires from every page, not just the game ones - a live
 // duel/tournament match shouldn't get auto-forfeited just because its
 // player is currently looking at Reyting or Sozlamalar in the same tab.
@@ -173,9 +172,9 @@ export default function Layout({
         </nav>
 
         <div className="sidebar-footer">
-          <a href={PORTFOLIO_URL} target="_blank" rel="noopener noreferrer" className="about-me-link">
+          <Link href="/about" className="about-me-link">
             About me
-          </a>
+          </Link>
         </div>
       </aside>
 
