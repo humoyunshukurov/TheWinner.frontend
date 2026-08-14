@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Layout from '../components/Layout';
+import PasswordInput from '../components/PasswordInput';
 import { IconEdit, IconCamera, IconEye, IconEyeOff } from '../components/icons';
 import { getGuest, isRegistered, updateAccount, getStoredPassword, loginAccount } from '../lib/guest';
 import {
@@ -16,29 +17,6 @@ import { PRESET_AVATARS } from '../lib/avatars';
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
-function PasswordInput({ value, onChange, placeholder }) {
-  const [visible, setVisible] = useState(false);
-  return (
-    <div className="password-input-wrap">
-      <input
-        className="form-input"
-        type={visible ? 'text' : 'password'}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        autoComplete="new-password"
-      />
-      <button
-        type="button"
-        className="password-toggle-btn"
-        onClick={() => setVisible((v) => !v)}
-        aria-label={visible ? 'Parolni yashirish' : "Parolni ko'rsatish"}
-      >
-        {visible ? <IconEyeOff /> : <IconEye />}
-      </button>
-    </div>
-  );
-}
 
 function EditIconButton({ onClick }) {
   return (

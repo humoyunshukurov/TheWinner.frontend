@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { IconShield } from './icons';
+import PasswordInput from './PasswordInput';
 import { registerAccount, loginAccount } from '../lib/guest';
 
 export default function AccessGate({ onDone }) {
@@ -80,9 +81,7 @@ export default function AccessGate({ onDone }) {
             onChange={(event) => setUsername(event.target.value)}
             autoComplete="username"
           />
-          <input
-            className="form-input"
-            type="password"
+          <PasswordInput
             placeholder="Parol"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
