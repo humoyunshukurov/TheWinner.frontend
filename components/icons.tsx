@@ -219,6 +219,15 @@ export function IconLogout(props) {
   );
 }
 
+export function IconLogin(props) {
+  return (
+    <Svg {...props}>
+      <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
+      <path d="M9 16.5 4 12l5-4.5M4 12h11" />
+    </Svg>
+  );
+}
+
 export function IconEdit(props) {
   return (
     <Svg size={16} {...props}>

@@ -2962,6 +2962,12 @@ body {
   color: var(--critical);
 }
 
+.login-btn {
+  margin-top: 14px;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* Mobile bottom navigation (hidden on desktop) */
 .bottom-nav {
   display: none;
