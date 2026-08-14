@@ -16,6 +16,12 @@ const TICK_MS = 5000;
 const IDLE_LIMIT_MS = 30000;
 const SIDEBAR_COLLAPSED_KEY = 'nt_sidebar_collapsed';
 const PORTFOLIO_URL = 'https://shukurovhumoyun.vercel.app/';
+// Deliberately fires from every page, not just the game ones - a live
+// duel/tournament match shouldn't get auto-forfeited just because its
+// player is currently looking at Reyting or Sozlamalar in the same tab.
+// Only when this genuinely stops (tab closed, connection lost) does the
+// server's presence sweep eventually resolve their match for them.
+const PRESENCE_PING_MS = 10000;
 
 const navItems = [
   { label: 'Bosh sahifa', href: '/', Icon: IconGrid },
@@ -31,11 +37,18 @@ export default function Layout({
   title,
   eyebrow,
   backHref,
+  onBackAttempt,
   children
 }: {
   title?: string;
   eyebrow?: string;
   backHref?: string;
+  // When set, clicking "Orqaga" calls this instead of navigating straight
+  // away - a game page mid-match uses it to confirm ("testni tugatasizmi?")
+  // and forfeit before actually leaving, rather than silently abandoning
+  // a live opponent. Every other way of navigating (sidebar, bottom nav)
+  // is deliberately left alone - only this specific button is guarded.
+  onBackAttempt?: () => void;
   children: ReactNode;
 }) {
   const router = useRouter();
@@ -51,6 +64,22 @@ export default function Layout({
 
   useEffect(() => {
     setCollapsed(localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1');
+  }, []);
+
+  useEffect(() => {
+    function ping() {
+      const { guestId } = getGuest();
+      if (!guestId) return;
+      fetch(`${API_URL}/presence/ping`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ guestId })
+      }).catch(() => {});
+    }
+
+    ping();
+    const interval = setInterval(ping, PRESENCE_PING_MS);
+    return () => clearInterval(interval);
   }, []);
 
   function toggleSidebar() {
@@ -163,7 +192,15 @@ export default function Layout({
             </button>
             <div>
               {backHref && (
-                <Link href={backHref} className="back-link">
+                <Link
+                  href={backHref}
+                  className="back-link"
+                  onClick={(e) => {
+                    if (!onBackAttempt) return;
+                    e.preventDefault();
+                    onBackAttempt();
+                  }}
+                >
                   <IconArrowLeft /> Orqaga
                 </Link>
               )}

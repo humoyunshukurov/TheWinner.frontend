@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import Bracket from '../../components/Bracket';
 import TournamentBanner from '../../components/TournamentBanner';
@@ -19,7 +20,14 @@ function rankBadgeClass(place) {
   return 'rank-badge';
 }
 
+// A live opponent for THIS round only exists once actually paired up
+// ('match') or having already submitted and waiting on them ('waiting_opponent') -
+// 'waiting_round' means their own match already resolved (or they never
+// had one this round), so there's nothing left to forfeit against.
+const PHASES_WITH_A_LIVE_OPPONENT = ['match', 'waiting_opponent'];
+
 export default function TurnirPage() {
+  const router = useRouter();
   const guestRef = useRef({ guestId: '', name: '' });
   const startTimeRef = useRef(null);
   const loadedMatchIdRef = useRef(null);
@@ -146,6 +154,27 @@ export default function TurnirPage() {
     });
   }
 
+  async function handleBackAttempt() {
+    if (!PHASES_WITH_A_LIVE_OPPONENT.includes(state?.status)) {
+      router.push('/oyin');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      "Testni tugatishni xohlaysizmi? Ha desangiz, raqibingiz g'olib deb topiladi."
+    );
+    if (!confirmed) return;
+
+    const { guestId } = guestRef.current;
+    await fetch(`${API_URL}/tournament/match/${state.matchId}/forfeit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guestId })
+    }).catch(() => {});
+
+    router.push('/oyin');
+  }
+
   if (!state) {
     return (
       <Layout backHref="/oyin">
@@ -160,7 +189,7 @@ export default function TurnirPage() {
   const { guestId } = guestRef.current;
 
   return (
-    <Layout backHref="/oyin">
+    <Layout backHref="/oyin" onBackAttempt={handleBackAttempt}>
       {state.status === 'lobby' && (
         <>
           <TournamentBanner />
