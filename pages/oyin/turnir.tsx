@@ -15,6 +15,13 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const QUESTION_SECONDS = 15;
 const MISSED_QUESTIONS_BEFORE_CHECK = 2;
 const PRESENCE_CHECK_SECONDS = 3;
+// How long a finished tournament is still worth landing on when this page
+// (re)mounts - past this, showing it would mean resurfacing an old,
+// already-seen result every time the player comes back to this page,
+// instead of a fresh "join the lobby" screen. A genuine live transition
+// (opponent finishes while this page is already open) is always well
+// within this window, so it's never affected by the check.
+const RESUME_FINISHED_WINDOW_MS = 2 * 60 * 1000;
 
 function rankBadgeClass(place) {
   if (place === 1) return 'rank-badge gold';
@@ -109,6 +116,17 @@ export default function TurnirPage() {
     fetch(`${API_URL}/tournament/state?guestId=${guestId}`)
       .then((res) => res.json())
       .then((data) => {
+        // A stale finished result (from before this mount even happened)
+        // isn't worth landing on - fall back to an empty lobby view
+        // instead so the player can start something new. A genuinely
+        // live transition is always well within the freshness window, so
+        // this never interferes with actually watching a match finish.
+        const isStaleFinish = data.status === 'finished' && !(data.finishedAt && Date.now() - data.finishedAt < RESUME_FINISHED_WINDOW_MS);
+        if (isStaleFinish) {
+          setState({ status: 'lobby', participants: [], canStart: false, joined: false, autoStartAt: null });
+          return;
+        }
+
         setState(data);
         if (data.status === 'match' && data.matchId !== loadedMatchIdRef.current) {
           loadedMatchIdRef.current = data.matchId;

@@ -13,6 +13,12 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const QUESTION_SECONDS = 15;
 const MISSED_QUESTIONS_BEFORE_CHECK = 2;
 const PRESENCE_CHECK_SECONDS = 3;
+// How long a finished duel is still worth resuming into on mount (e.g. a
+// quick refresh right after it ended). Past this, resuming into it would
+// mean silently resurfacing an old result every time this component
+// mounts - including on the /oyin hub, which embeds it too - instead of
+// letting the player start something new.
+const RESUME_FINISHED_WINDOW_MS = 2 * 60 * 1000;
 
 // A parent page (the dedicated /oyin/1vs1 screen) needs to be able to
 // forfeit the live match on the user's behalf - e.g. after they confirm
@@ -146,9 +152,19 @@ const DuelGame = forwardRef<DuelGameHandle, { compact?: boolean; onPhaseChange?:
           }
 
           if (data.status === 'finished') {
-            setResult(data.result);
-            setReward(data.reward);
-            setPhase('finished');
+            // Only worth resuming into if it JUST happened (e.g. a quick
+            // refresh right after the match ended) - otherwise this would
+            // resurface an old, already-seen result every single time this
+            // component mounts, including on the /oyin hub where it's
+            // embedded too, hijacking it back to a stale win/loss screen
+            // instead of letting the player move on to something else.
+            const finishedAt = data.result?.finishedAt;
+            const isFresh = finishedAt && Date.now() - finishedAt < RESUME_FINISHED_WINDOW_MS;
+            if (isFresh) {
+              setResult(data.result);
+              setReward(data.reward);
+              setPhase('finished');
+            }
           }
         })
         .catch(() => {});
