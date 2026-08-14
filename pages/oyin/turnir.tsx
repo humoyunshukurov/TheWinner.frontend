@@ -4,6 +4,7 @@ import Layout from '../../components/Layout';
 import Bracket from '../../components/Bracket';
 import TournamentBanner from '../../components/TournamentBanner';
 import TournamentCountdown from '../../components/TournamentCountdown';
+import PresenceCheckModal from '../../components/PresenceCheckModal';
 import QuestionPrompt from '../../components/QuestionPrompt';
 import { IconTrophy, IconUsers, IconClock } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
@@ -12,6 +13,8 @@ import { burstSideConfetti } from '../../lib/confetti';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const QUESTION_SECONDS = 15;
+const MISSED_QUESTIONS_BEFORE_CHECK = 2;
+const PRESENCE_CHECK_SECONDS = 3;
 
 function rankBadgeClass(place) {
   if (place === 1) return 'rank-badge gold';
@@ -38,6 +41,12 @@ export default function TurnirPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(QUESTION_SECONDS);
   const [submittedMatchId, setSubmittedMatchId] = useState(null);
+  // Two unanswered questions in a row (timer ran out with nothing
+  // selected) pauses the round and asks this player specifically whether
+  // they're still there - never shown to their opponent.
+  const [presenceCheck, setPresenceCheck] = useState(false);
+  const [presenceSecondsLeft, setPresenceSecondsLeft] = useState(PRESENCE_CHECK_SECONDS);
+  const missedInARowRef = useRef(0);
   const { requireAccess } = useRequireAccess();
 
   useEffect(() => {
@@ -53,17 +62,36 @@ export default function TurnirPage() {
   }, [currentIndex, state?.status]);
 
   useEffect(() => {
-    if (state?.status !== 'match' || submittedMatchId === state?.matchId) return;
+    if (state?.status !== 'match' || submittedMatchId === state?.matchId || presenceCheck) return;
 
     if (timeLeft <= 0) {
-      goToNext();
+      handleTimeUp();
       return;
     }
 
     const timer = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeLeft, state?.status, submittedMatchId]);
+  }, [timeLeft, state?.status, submittedMatchId, presenceCheck]);
+
+  // Counts the 3s grace period down once the check is showing, and
+  // forfeits this round on this player's behalf if it runs out unanswered.
+  useEffect(() => {
+    if (!presenceCheck) return;
+    setPresenceSecondsLeft(PRESENCE_CHECK_SECONDS);
+    const deadline = Date.now() + PRESENCE_CHECK_SECONDS * 1000;
+    const interval = setInterval(() => {
+      const remaining = Math.ceil((deadline - Date.now()) / 1000);
+      if (remaining <= 0) {
+        clearInterval(interval);
+        confirmAbsentAndForfeit();
+        return;
+      }
+      setPresenceSecondsLeft(remaining);
+    }, 200);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [presenceCheck]);
 
   useEffect(() => {
     if (state?.status !== 'finished') return;
@@ -154,6 +182,18 @@ export default function TurnirPage() {
     });
   }
 
+  // Shared by the back-button forfeit (confirmed) and the auto-forfeit
+  // below (presence check timed out) - both just resign this round.
+  async function callForfeitEndpoint() {
+    if (!state?.matchId) return;
+    const { guestId } = guestRef.current;
+    await fetch(`${API_URL}/tournament/match/${state.matchId}/forfeit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guestId })
+    }).catch(() => {});
+  }
+
   async function handleBackAttempt() {
     if (!PHASES_WITH_A_LIVE_OPPONENT.includes(state?.status)) {
       router.push('/oyin');
@@ -165,14 +205,39 @@ export default function TurnirPage() {
     );
     if (!confirmed) return;
 
-    const { guestId } = guestRef.current;
-    await fetch(`${API_URL}/tournament/match/${state.matchId}/forfeit`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ guestId })
-    }).catch(() => {});
-
+    await callForfeitEndpoint();
     router.push('/oyin');
+  }
+
+  // Called instead of goToNext() whenever the timer runs out - only
+  // pauses on a MISS (nothing selected); answering normally, even right
+  // at the buzzer, resets the streak same as clicking "Keyingi savol".
+  function handleTimeUp() {
+    const wasAnswered = answers[currentIndex] !== null && answers[currentIndex] !== undefined;
+    if (wasAnswered) {
+      missedInARowRef.current = 0;
+      goToNext();
+      return;
+    }
+
+    missedInARowRef.current += 1;
+    if (missedInARowRef.current >= MISSED_QUESTIONS_BEFORE_CHECK) {
+      setPresenceCheck(true);
+      return;
+    }
+    goToNext();
+  }
+
+  function confirmStillHere() {
+    setPresenceCheck(false);
+    missedInARowRef.current = 0;
+    goToNext();
+  }
+
+  async function confirmAbsentAndForfeit() {
+    setPresenceCheck(false);
+    await callForfeitEndpoint();
+    poll();
   }
 
   if (!state) {
@@ -288,6 +353,8 @@ export default function TurnirPage() {
           </button>
         </article>
       )}
+
+      {presenceCheck && <PresenceCheckModal secondsLeft={presenceSecondsLeft} onConfirm={confirmStillHere} />}
 
       {(state.status === 'waiting_opponent' || state.status === 'waiting_round') && (
         <div className="game-hero">

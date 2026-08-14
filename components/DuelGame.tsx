@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import BattleBanner from './BattleBanner';
 import Avatar from './Avatar';
 import QuestionPrompt from './QuestionPrompt';
+import PresenceCheckModal from './PresenceCheckModal';
 import { IconSwords, IconClock } from './icons';
 import { getGuest } from '../lib/guest';
 import { loadProfilePhoto } from '../lib/profile';
@@ -10,6 +11,8 @@ import { burstSideConfetti } from '../lib/confetti';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const QUESTION_SECONDS = 15;
+const MISSED_QUESTIONS_BEFORE_CHECK = 2;
+const PRESENCE_CHECK_SECONDS = 3;
 
 // A parent page (the dedicated /oyin/1vs1 screen) needs to be able to
 // forfeit the live match on the user's behalf - e.g. after they confirm
@@ -30,11 +33,18 @@ const DuelGame = forwardRef<DuelGameHandle, { compact?: boolean; onPhaseChange?:
     const [reward, setReward] = useState(null);
     const [myPhoto, setMyPhoto] = useState(null);
     const [iAmReady, setIAmReady] = useState(false);
+    // Two unanswered questions in a row (timer ran out with nothing
+    // selected) pauses the match and asks this player specifically
+    // whether they're still there - never shown to the opponent, who's
+    // just waiting normally with no idea this is even happening.
+    const [presenceCheck, setPresenceCheck] = useState(false);
+    const [presenceSecondsLeft, setPresenceSecondsLeft] = useState(PRESENCE_CHECK_SECONDS);
 
     const pollRef = useRef(null);
     const startTimeRef = useRef(null);
     const guestRef = useRef({ guestId: '', name: '' });
     const duelRef = useRef(null);
+    const missedInARowRef = useRef(0);
     const { requireAccess } = useRequireAccess();
 
     // Kept in sync with `duel` state so the imperative forfeit() below -
@@ -62,17 +72,36 @@ const DuelGame = forwardRef<DuelGameHandle, { compact?: boolean; onPhaseChange?:
     }, [currentIndex, phase]);
 
     useEffect(() => {
-      if (phase !== 'playing' || !duel) return;
+      if (phase !== 'playing' || !duel || presenceCheck) return;
 
       if (timeLeft <= 0) {
-        goToNext();
+        handleTimeUp();
         return;
       }
 
       const timer = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
       return () => clearTimeout(timer);
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [timeLeft, phase, duel]);
+    }, [timeLeft, phase, duel, presenceCheck]);
+
+    // Counts the 3s grace period down once the check is showing, and
+    // forfeits on this player's behalf if it runs out with no response.
+    useEffect(() => {
+      if (!presenceCheck) return;
+      setPresenceSecondsLeft(PRESENCE_CHECK_SECONDS);
+      const deadline = Date.now() + PRESENCE_CHECK_SECONDS * 1000;
+      const interval = setInterval(() => {
+        const remaining = Math.ceil((deadline - Date.now()) / 1000);
+        if (remaining <= 0) {
+          clearInterval(interval);
+          confirmAbsentAndForfeit();
+          return;
+        }
+        setPresenceSecondsLeft(remaining);
+      }, 200);
+      return () => clearInterval(interval);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [presenceCheck]);
 
     useEffect(() => {
       if (!result || result.winnerGuestId !== guestRef.current.guestId) return;
@@ -125,19 +154,57 @@ const DuelGame = forwardRef<DuelGameHandle, { compact?: boolean; onPhaseChange?:
         .catch(() => {});
     }
 
+    // Shared by the parent-triggered forfeit (back button, confirmed) and
+    // the auto-forfeit below (presence check timed out) - both just need
+    // "resign this duel", nothing about how they got there differs.
+    async function callForfeitEndpoint() {
+      const activeDuel = duelRef.current as any;
+      if (!activeDuel?.duelId) return;
+      const { guestId } = guestRef.current;
+      await fetch(`${API_URL}/duel/${activeDuel.duelId}/forfeit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ guestId })
+      }).catch(() => {});
+    }
+
     useImperativeHandle(ref, () => ({
       async forfeit() {
         clearInterval(pollRef.current);
-        const activeDuel = duelRef.current as any;
-        if (!activeDuel?.duelId) return;
-        const { guestId } = guestRef.current;
-        await fetch(`${API_URL}/duel/${activeDuel.duelId}/forfeit`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ guestId })
-        }).catch(() => {});
+        await callForfeitEndpoint();
       }
     }));
+
+    // Called instead of goToNext() whenever the timer runs out - only
+    // pauses on a MISS (nothing selected); answering normally, even right
+    // at the buzzer, resets the streak same as clicking "Keyingi savol".
+    function handleTimeUp() {
+      const wasAnswered = answers[currentIndex] !== null && answers[currentIndex] !== undefined;
+      if (wasAnswered) {
+        missedInARowRef.current = 0;
+        goToNext();
+        return;
+      }
+
+      missedInARowRef.current += 1;
+      if (missedInARowRef.current >= MISSED_QUESTIONS_BEFORE_CHECK) {
+        setPresenceCheck(true);
+        return;
+      }
+      goToNext();
+    }
+
+    function confirmStillHere() {
+      setPresenceCheck(false);
+      missedInARowRef.current = 0;
+      goToNext();
+    }
+
+    async function confirmAbsentAndForfeit() {
+      setPresenceCheck(false);
+      await callForfeitEndpoint();
+      pollResult();
+    }
 
     function enterMatch(data) {
       clearInterval(pollRef.current);
@@ -411,6 +478,8 @@ const DuelGame = forwardRef<DuelGameHandle, { compact?: boolean; onPhaseChange?:
             </button>
           </article>
         )}
+
+        {presenceCheck && <PresenceCheckModal secondsLeft={presenceSecondsLeft} onConfirm={confirmStillHere} />}
 
         {phase === 'waiting_opponent' && (
           <div className="game-hero">
