@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import Layout from '../components/Layout';
 import PasswordInput from '../components/PasswordInput';
-import { IconEdit, IconCamera, IconEye, IconEyeOff } from '../components/icons';
+import { IconEdit, IconCamera, IconEye, IconEyeOff, IconSend } from '../components/icons';
 import { getGuest, isRegistered, updateAccount, getStoredPassword, loginAccount } from '../lib/guest';
+import { requestTelegramFeedbackLink } from '../lib/feedback';
 import {
   loadProfile,
   saveProfile as persistProfile,
@@ -46,6 +47,25 @@ export default function SozlamalarPage() {
   const [revealPromptValue, setRevealPromptValue] = useState('');
   const [revealPromptError, setRevealPromptError] = useState(null);
   const [revealPromptBusy, setRevealPromptBusy] = useState(false);
+  const [tgLinking, setTgLinking] = useState(false);
+  const [tgError, setTgError] = useState(null);
+
+  // Actual writing happens in Telegram itself, not here - this just opens
+  // a one-time deep-link that tells the bot who's writing (name, so no
+  // one has to type it themselves) before handing off.
+  async function openTelegramFeedback() {
+    setTgLinking(true);
+    setTgError(null);
+    try {
+      const { guestId, name } = getGuest();
+      const deepLink = await requestTelegramFeedbackLink(guestId, profile.firstName || name);
+      window.open(deepLink, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      setTgError(err.message || 'Xatolik yuz berdi');
+    } finally {
+      setTgLinking(false);
+    }
+  }
 
   useEffect(() => {
     const { guestId, name } = getGuest();
@@ -390,6 +410,22 @@ export default function SozlamalarPage() {
           </article>
         )}
       </div>
+
+      <article className="card" style={{ marginTop: 18 }}>
+        <div className="card-header">
+          <h3>Taklif yoki fikr yozish</h3>
+        </div>
+        <p className="muted" style={{ marginBottom: 14 }}>
+          Sayt haqida biror taklif yoki fikringiz bo&apos;lsa, quyidagi tugma orqali Telegram botimizga
+          to&apos;g&apos;ridan-to&apos;g&apos;ri yozib yuborishingiz mumkin.
+        </p>
+        <div className="action-row">
+          <button type="button" className="pill-btn primary" onClick={openTelegramFeedback} disabled={tgLinking}>
+            <IconSend size={16} /> {tgLinking ? 'Ochilmoqda...' : 'Telegram orqali yozish'}
+          </button>
+        </div>
+        {tgError && <p className="profile-photo-error">{tgError}</p>}
+      </article>
 
       {editingProfile && renameError && (
         <p className="muted" style={{ color: 'var(--critical)', marginTop: 16, marginBottom: 0 }}>

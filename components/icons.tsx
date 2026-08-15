@@ -228,6 +228,14 @@ export function IconLogin(props) {
   );
 }
 
+export function IconSend(props) {
+  return (
+    <Svg {...props}>
+      <path d="m3 11 18-8-8 18-2.5-7.5L3 11Z" />
+    </Svg>
+  );
+}
+
 export function IconEdit(props) {
   return (
     <Svg size={16} {...props}>
