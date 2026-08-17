@@ -69,6 +69,15 @@
   box-sizing: border-box;
 }
 
+/* Edge/IE inject their own built-in "show password" eye icon into every
+   type="password" input - stacking right next to PasswordInput's own
+   custom eye button and showing two overlapping icons. This is the only
+   way to turn the browser-native one off. */
+input[type='password']::-ms-reveal,
+input[type='password']::-ms-clear {
+  display: none;
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
