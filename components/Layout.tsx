@@ -11,6 +11,7 @@ import CrownBadge from './CrownBadge';
 import ThemeToggle from './ThemeToggle';
 import LogoutButton from './LogoutButton';
 import LoginButton from './LoginButton';
+import NotificationBell from './NotificationBell';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const TICK_MS = 5000;
@@ -209,6 +210,7 @@ export default function Layout({
           </div>
 
           <div className="topbar-actions">
+            <NotificationBell />
             <ThemeToggle />
             {rank && (
               <div className={`rank-badge-pill rank-${rank.id}`}>

@@ -306,6 +306,101 @@ body {
   color: var(--accent);
 }
 
+.feedback-bell-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--critical);
+  color: #fff;
+  font-size: 0.64rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Invisible full-screen click-catcher, not a dimming .modal-overlay -
+   this dropdown is a small anchored panel, not a full modal. */
+.feedback-bell-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: transparent;
+}
+
+.feedback-bell-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 91;
+  width: 320px;
+  max-width: min(320px, calc(100vw - 32px));
+  max-height: 420px;
+  overflow-y: auto;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  padding: 14px;
+}
+
+.feedback-bell-header {
+  padding: 0 2px 10px;
+}
+
+.feedback-thread-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.feedback-thread-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.feedback-thread-mine,
+.feedback-thread-reply {
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.feedback-thread-mine p,
+.feedback-thread-reply p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.feedback-thread-mine {
+  background: var(--content-bg);
+  border: 1px solid var(--card-border);
+}
+
+.feedback-thread-reply {
+  background: var(--accent-soft);
+  color: var(--accent);
+  margin-left: 14px;
+}
+
+.feedback-thread-time {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
 .modal-overlay {
   position: fixed;
   inset: 0;
