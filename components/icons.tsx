@@ -236,6 +236,15 @@ export function IconSend(props) {
   );
 }
 
+export function IconLock(props) {
+  return (
+    <Svg size={16} {...props}>
+      <rect x="5" y="10.5" width="14" height="9.5" rx="2.5" />
+      <path d="M8 10.5V7a4 4 0 0 1 8 0v3.5" />
+    </Svg>
+  );
+}
+
 export function IconEdit(props) {
   return (
     <Svg size={16} {...props}>

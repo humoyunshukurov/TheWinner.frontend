@@ -4,9 +4,13 @@ import DuelGame from '../components/DuelGame';
 import TournamentBanner from '../components/TournamentBanner';
 import KodBanner from '../components/KodBanner';
 import MarafonBanner from '../components/MarafonBanner';
+import { useMyGroup } from '../lib/useMyGroup';
 
 export default function OyinHubPage() {
   const [duelActive, setDuelActive] = useState(false);
+  // Defaults to locked while still loading (rather than briefly flashing
+  // "unlocked" for a groupless guest before the real check comes back).
+  const { hasGroup, loaded } = useMyGroup();
 
   return (
     <Layout eyebrow="Qaysi rejimda o'ynaymiz?" title="O'yinlar">
@@ -18,7 +22,7 @@ export default function OyinHubPage() {
         {!duelActive && (
           <>
             <div className="mode-card mode-card-battle">
-              <KodBanner compact href="/oyin/kod" />
+              <KodBanner compact href="/oyin/kod" locked={!loaded || !hasGroup} />
             </div>
 
             <div className="mode-card mode-card-battle">

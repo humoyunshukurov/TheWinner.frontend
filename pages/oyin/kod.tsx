@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import Link from 'next/link';
 import Layout from '../../components/Layout';
 import QuestionPrompt from '../../components/QuestionPrompt';
-import { IconPlay, IconTrophy, IconClock } from '../../components/icons';
+import { IconPlay, IconTrophy, IconClock, IconLock } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
 import { useRequireAccess } from '../../lib/useRequireAccess';
+import { useMyGroup } from '../../lib/useMyGroup';
 import { burstSideConfetti } from '../../lib/confetti';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
@@ -28,6 +30,10 @@ export default function KodOyinPage() {
   const guestRef = useRef({ guestId: '', name: '' });
   const pollRef = useRef<any>(null);
   const { requireAccess } = useRequireAccess();
+  // Direct-link/back-forward guard - the hub already hides this behind a
+  // lock for a groupless guest, but landing here straight by URL should
+  // hit the same wall, not just a cosmetic one on the hub tile.
+  const { hasGroup, loaded: groupLoaded } = useMyGroup();
 
   useEffect(() => {
     guestRef.current = getGuest();
@@ -143,6 +149,33 @@ export default function KodOyinPage() {
     setState(null);
     setCode('');
     setSessionError(null);
+  }
+
+  // Defaults to the locked view while the group check is still in
+  // flight, same as the hub tile - briefly showing "locked" and then
+  // unlocking is a much safer default than the other way around.
+  if (!sessionCode && (!groupLoaded || !hasGroup)) {
+    return (
+      <Layout eyebrow="Guruh bilan birga o'ynang" title="Kod bilan qo'shilish" backHref="/oyin">
+        <div className="game-hero">
+          <div className="game-card">
+            <button className="game-icon-badge" style={{ background: 'var(--text-muted)' }} aria-hidden="true">
+              <IconLock size={24} />
+            </button>
+
+            <h3>Faqat guruh a'zolari uchun</h3>
+            <p className="muted">
+              Kod bilan o&apos;yin sinf/guruh bilan birga o&apos;ynaladi - buni ochish uchun avval biror guruhga
+              qo&apos;shiling.
+            </p>
+
+            <Link href="/guruhlar" className="pill-btn primary" style={{ marginTop: 14 }}>
+              Guruhga qo&apos;shilish
+            </Link>
+          </div>
+        </div>
+      </Layout>
+    );
   }
 
   if (!sessionCode) {
