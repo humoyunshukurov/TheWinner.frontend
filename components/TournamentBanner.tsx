@@ -29,19 +29,19 @@ export default function TournamentBanner({
           <IconTrophy size={14} />
         </span>
         <span className="battle-badge alt">
-          <IconUsers size={14} /> Guruh
+          <IconUsers size={14} /> Ko'p o'yinchi
         </span>
       </div>
 
       <div className="battle-banner-main">
         <h2 className="battle-title">TURNIR</h2>
-        <p className="battle-subtitle">Butun guruh bilan bellashing</p>
+        <p className="battle-subtitle">Boshqa o'quvchilar bilan bellashing</p>
         <div className="battle-features">
           <span className="battle-feature">
             <span className="battle-feature-icon">
               <IconUsers size={13} />
             </span>
-            Guruh
+            Ko'p o'yinchi
           </span>
           <span className="battle-feature">
             <span className="battle-feature-icon">
