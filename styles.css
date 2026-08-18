@@ -2595,12 +2595,14 @@ body {
 
 /* Group coin race */
 .race-card {
-  background: #0d0d0d;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 20px;
   padding: 22px 24px 18px;
   box-shadow: var(--card-shadow);
   margin-bottom: 18px;
   overflow: hidden;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .race-card-header {
@@ -2614,28 +2616,28 @@ body {
   margin: 0;
   font-size: 1rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .race-chip {
   font-size: 0.75rem;
   padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.7);
+  background: var(--content-bg);
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
 .race-range-select {
   appearance: none;
   -webkit-appearance: none;
-  background-color: rgba(255, 255, 255, 0.08);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-color: var(--content-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b6b85' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #fff;
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
   font-size: 0.78rem;
   font-weight: 700;
   padding: 8px 32px 8px 14px;
@@ -2643,14 +2645,18 @@ body {
   cursor: pointer;
 }
 
+:root[data-theme='dark'] .race-range-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
 .race-range-select:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.35);
+  border-color: var(--accent);
 }
 
 .race-range-select option {
-  background: #1a1a1a;
-  color: #fff;
+  background: var(--card-bg);
+  color: var(--text-primary);
 }
 
 .race-legend {
@@ -2672,7 +2678,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
   padding: 4px 0;
   min-width: 30px;
   text-align: right;
@@ -2687,13 +2693,13 @@ body {
 }
 
 .race-crosshair {
-  stroke: rgba(255, 255, 255, 0.2);
+  stroke: var(--card-border);
   stroke-width: 1;
 }
 
 .race-tooltip {
   margin-top: 14px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--content-bg);
   border-radius: 12px;
   padding: 10px 14px;
   display: grid;
@@ -2702,7 +2708,7 @@ body {
 
 .race-tooltip strong {
   font-size: 0.82rem;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .race-tooltip-row {
@@ -2710,7 +2716,7 @@ body {
   align-items: center;
   gap: 8px;
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-secondary);
 }
 
 .race-tooltip-row strong {
@@ -2718,7 +2724,7 @@ body {
 }
 
 .race-tooltip-rank {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   width: 14px;
 }
 
@@ -2734,16 +2740,16 @@ body {
   justify-content: space-between;
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--card-border);
 }
 
 .race-page-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  border: 1px solid var(--card-border);
+  background: var(--content-bg);
+  color: var(--text-primary);
   font-size: 0.8rem;
   font-weight: 700;
   padding: 8px 16px;
@@ -2753,7 +2759,8 @@ body {
 }
 
 .race-page-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.16);
+  background: var(--accent-soft);
+  border-color: var(--accent);
   transform: translateY(-1px);
 }
 
@@ -2763,7 +2770,7 @@ body {
 }
 
 .race-page-indicator {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
   font-size: 0.78rem;
   font-weight: 600;
 }

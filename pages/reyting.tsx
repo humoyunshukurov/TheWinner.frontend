@@ -69,9 +69,7 @@ export default function ReytingPage() {
         {groupsHistory ? (
           <GroupRaceChart labels={groupsHistory.labels} series={groupsHistory.series} />
         ) : (
-          <p className="muted" style={{ color: 'rgba(255,255,255,0.6)' }}>
-            Yuklanmoqda...
-          </p>
+          <p className="muted">Yuklanmoqda...</p>
         )}
       </article>
 
