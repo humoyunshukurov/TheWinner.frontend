@@ -9,16 +9,16 @@ function formatTime(ts: number) {
   return new Date(ts).toLocaleString('uz-UZ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
 
-// Topbar bell for replies to takliflar this guest has sent (see Sozlamalar's
-// "Telegram orqali yozish") - a reply normally reaches them via Telegram
-// already, this is just a second, in-app way to notice it, especially for
-// anyone who hasn't connected their Telegram at all. Opens a small dropdown
-// showing every taklif they've sent with whatever replies have come back,
-// styled as a mini chat thread per entry.
+// Topbar bell, fully in-app: two kinds of thing show up here - (1) taklif
+// threads this guest has sent from Sozlamalar, with whatever replies have
+// come back, and (2) e'lonlar (announcements) the super admin broadcast to
+// everyone or to this guest's group. Merged into one reverse-chron feed so
+// "Bildirishnomalar" really is a single place everything lands, not two
+// separate lists.
 export default function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
-  const [items, setItems] = useState<any[] | null>(null);
+  const [feed, setFeed] = useState<any[] | null>(null);
   const guestRef = useRef({ guestId: '' });
 
   function loadUnreadCount() {
@@ -45,9 +45,17 @@ export default function NotificationBell() {
       const next = !prev;
       if (next) {
         const { guestId } = guestRef.current;
-        fetch(`${API_URL}/feedback/mine?guestId=${guestId}`)
-          .then((res) => res.json())
-          .then(setItems)
+        Promise.all([
+          fetch(`${API_URL}/feedback/mine?guestId=${guestId}`).then((res) => res.json()),
+          fetch(`${API_URL}/feedback/announcements?guestId=${guestId}`).then((res) => res.json())
+        ])
+          .then(([mine, announcements]) => {
+            const merged = [
+              ...mine.map((entry) => ({ type: 'thread', createdAt: entry.createdAt, entry })),
+              ...announcements.map((a) => ({ type: 'announcement', createdAt: a.createdAt, entry: a }))
+            ].sort((a, b) => b.createdAt - a.createdAt);
+            setFeed(merged);
+          })
           .catch(() => {});
         // Opening the panel counts as "seen" - clears the badge right
         // away instead of waiting for the next poll.
@@ -78,24 +86,31 @@ export default function NotificationBell() {
               <strong>Bildirishnomalar</strong>
             </div>
             <div className="feedback-thread-list">
-              {!items && <p className="muted">Yuklanmoqda...</p>}
-              {items?.length === 0 && (
-                <p className="muted">Hali taklif yubormagansiz. Sozlamalar &rsaquo; Telegram orqali yozish.</p>
-              )}
-              {items?.map((entry) => (
-                <div key={entry.id} className="feedback-thread-item">
-                  <div className="feedback-thread-mine">
-                    <p>{entry.text}</p>
-                    <span className="feedback-thread-time">{formatTime(entry.createdAt)}</span>
-                  </div>
-                  {entry.replies?.map((reply, i) => (
-                    <div key={i} className="feedback-thread-reply">
-                      <p>{reply.text}</p>
-                      <span className="feedback-thread-time">{formatTime(reply.createdAt)}</span>
+              {!feed && <p className="muted">Yuklanmoqda...</p>}
+              {feed?.length === 0 && <p className="muted">Hali hech narsa yo&apos;q. Sozlamalar &rsaquo; Taklif yozish.</p>}
+              {feed?.map((item) =>
+                item.type === 'announcement' ? (
+                  <div key={`a${item.entry.id}`} className="feedback-thread-item">
+                    <div className="feedback-thread-reply">
+                      <p>📢 {item.entry.text}</p>
+                      <span className="feedback-thread-time">{formatTime(item.entry.createdAt)}</span>
                     </div>
-                  ))}
-                </div>
-              ))}
+                  </div>
+                ) : (
+                  <div key={`t${item.entry.id}`} className="feedback-thread-item">
+                    <div className="feedback-thread-mine">
+                      <p>{item.entry.text}</p>
+                      <span className="feedback-thread-time">{formatTime(item.entry.createdAt)}</span>
+                    </div>
+                    {item.entry.replies?.map((reply, i) => (
+                      <div key={i} className="feedback-thread-reply">
+                        <p>{reply.text}</p>
+                        <span className="feedback-thread-time">{formatTime(reply.createdAt)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )
+              )}
             </div>
           </div>
         </>
