@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
-import { IconSwords, IconPlay, IconTrophy, IconTrendUp, IconCoin, IconGlobe } from '../components/icons';
+import { IconSwords, IconPlay, IconTrophy, IconTrendUp, IconCoin, IconGlobe, IconClock } from '../components/icons';
 import { getGuest } from '../lib/guest';
+import { fetchUsage, formatUsageDuration } from '../lib/usage';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
@@ -32,6 +33,7 @@ function formatDate(ms: number) {
 
 export default function TarixPage() {
   const [history, setHistory] = useState<any[] | null>(null);
+  const [usage, setUsage] = useState<{ todayMs: number; totalMs: number } | null>(null);
 
   useEffect(() => {
     const { guestId } = getGuest();
@@ -39,10 +41,23 @@ export default function TarixPage() {
       .then((res) => res.json())
       .then(setHistory)
       .catch(() => setHistory([]));
+    fetchUsage(guestId).then(setUsage);
   }, []);
 
   return (
     <Layout eyebrow="Qaysi o'yinlarni o'ynagansiz?" title="Tarix">
+      <article className="card alert-card" style={{ marginBottom: 18 }}>
+        <div className="alert-icon accent">
+          <IconClock size={22} />
+        </div>
+        <div>
+          <strong>O&apos;ynagan vaqtingiz</strong>
+          <span className="muted-link">
+            {usage ? `Bugun ${formatUsageDuration(usage.todayMs)} · Jami ${formatUsageDuration(usage.totalMs)}` : '...'}
+          </span>
+        </div>
+      </article>
+
       <article className="card">
         <div className="card-header">
           <h3>O'yinlar tarixi</h3>

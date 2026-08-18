@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconArrowLeft, IconShield, IconUsers, IconClock } from './icons';
 import { getGuest, GUEST_CHANGED_EVENT } from '../lib/guest';
 import { loadProfilePhoto, resyncProfilePhotoOnce, PROFILE_PHOTO_CHANGED_EVENT } from '../lib/profile';
-import { addUsageMs } from '../lib/usage';
+import { pingUsage } from '../lib/usage';
 import LottieCoin from './LottieCoin';
 import LottieMenuToggle from './LottieMenuToggle';
 import CrownBadge from './CrownBadge';
@@ -14,8 +14,8 @@ import LoginButton from './LoginButton';
 import NotificationBell from './NotificationBell';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-const TICK_MS = 5000;
-const IDLE_LIMIT_MS = 30000;
+const TICK_MS = 20000;
+const IDLE_LIMIT_MS = 45000;
 const SIDEBAR_COLLAPSED_KEY = 'nt_sidebar_collapsed';
 // Deliberately fires from every page, not just the game ones - a live
 // duel/tournament match shouldn't get auto-forfeited just because its
@@ -142,7 +142,7 @@ export default function Layout({
     const interval = setInterval(() => {
       if (document.visibilityState !== 'visible') return;
       if (Date.now() - lastActivity < IDLE_LIMIT_MS) {
-        addUsageMs(TICK_MS);
+        pingUsage(getGuest().guestId, TICK_MS);
       }
     }, TICK_MS);
 

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Layout from '../components/Layout';
-import { IconClock, IconCoin, IconTrendUp, IconGlobe } from '../components/icons';
+import UsageClock from '../components/UsageClock';
+import { IconCoin, IconTrendUp, IconGlobe } from '../components/icons';
 import { getGuest } from '../lib/guest';
-import { getTotalUsageMs, formatUsageDuration } from '../lib/usage';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
@@ -12,7 +12,6 @@ export default function HomePage() {
   const [hpData, setHpData] = useState(null);
   const [groupName, setGroupName] = useState(undefined);
   const [groupMembersCount, setGroupMembersCount] = useState(null);
-  const [usageText, setUsageText] = useState('');
 
   useEffect(() => {
     const { guestId } = getGuest();
@@ -25,11 +24,6 @@ export default function HomePage() {
         setGroupMembersCount(data.membersCount ?? null);
       })
       .catch(() => setGroupName(null));
-
-    const updateUsage = () => setUsageText(formatUsageDuration(getTotalUsageMs()));
-    updateUsage();
-    const interval = setInterval(updateUsage, 5000);
-    return () => clearInterval(interval);
   }, []);
 
   const rank = hpData?.rank;
@@ -37,15 +31,7 @@ export default function HomePage() {
 
   return (
     <Layout eyebrow="Najot Ta'lim akademiyasi" title="Bosh sahifa">
-      <article className="card alert-card">
-        <div className="alert-icon accent">
-          <IconClock size={22} />
-        </div>
-        <div>
-          <strong>Ishlatish muddati</strong>
-          <span className="muted-link">{usageText}</span>
-        </div>
-      </article>
+      <UsageClock />
 
       <article className="card level-card" style={{ marginTop: 14 }}>
         <div className="level-header">
