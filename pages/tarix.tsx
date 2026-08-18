@@ -34,7 +34,7 @@ function formatDate(ms: number) {
 
 export default function TarixPage() {
   const [history, setHistory] = useState<any[] | null>(null);
-  const [usage, setUsage] = useState<{ todayMs: number; totalMs: number } | null>(null);
+  const [usage, setUsage] = useState<{ todayMs: number } | null>(null);
 
   useEffect(() => {
     const { guestId } = getGuest();
@@ -51,13 +51,10 @@ export default function TarixPage() {
         <div className="alert-icon accent">
           <IconClock size={22} />
         </div>
-        <div className="usage-card-body">
-          <strong>O&apos;ynagan vaqtingiz</strong>
-          <span className="muted-link">
-            {usage ? `Bugun ${formatUsageDuration(usage.todayMs)} · Jami ${formatUsageDuration(usage.totalMs)}` : '...'}
-          </span>
+        <div>
+          <strong>Bugun o&apos;ynagan vaqtingiz</strong>
+          <span className="muted-link">{usage ? formatUsageDuration(usage.todayMs) : '...'}</span>
         </div>
-        <span className="usage-card-more">Qayerda? →</span>
       </Link>
 
       <article className="card">

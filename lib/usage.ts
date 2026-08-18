@@ -65,15 +65,3 @@ export function formatUsageDuration(ms: number) {
   if (minutes === 0) return `${hours} soat`;
   return `${hours} soat ${minutes} daqiqa`;
 }
-
-// HH:MM:SS for the live session stopwatch - always shows all three
-// units (even "00:00:07") since it's meant to visibly tick, not just
-// summarize like formatUsageDuration above.
-export function formatStopwatch(ms: number) {
-  const totalSeconds = Math.floor(ms / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return hours > 0 ? `${pad(hours)}:${pad(minutes)}:${pad(seconds)}` : `${pad(minutes)}:${pad(seconds)}`;
-}
