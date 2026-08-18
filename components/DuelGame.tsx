@@ -541,7 +541,7 @@ const DuelGame = forwardRef<DuelGameHandle, { compact?: boolean; onPhaseChange?:
 
             {reward && (
               <div className="coins-earned-banner" style={{ marginTop: 14 }}>
-                +{reward.coins} tanga &middot; +{reward.hp} HP
+                +{reward.coins} tanga &middot; +{reward.hp} XP
               </div>
             )}
 

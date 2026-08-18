@@ -54,7 +54,7 @@ export default function ReytingPage() {
   }, [range]);
 
   return (
-    <Layout eyebrow="Kim eng ko'p HP to'playapti?" title="Reyting">
+    <Layout eyebrow="Kim eng ko'p XP to'playapti?" title="Reyting">
       <article className="race-card">
         <div className="race-card-header">
           <h3>Guruhlar poygasi</h3>
@@ -102,7 +102,7 @@ export default function ReytingPage() {
                     <tr>
                       <th>O'rin</th>
                       <th>Talaba</th>
-                      <th>HP</th>
+                      <th>XP</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -137,7 +137,7 @@ export default function ReytingPage() {
           <article className="card">
             <div className="card-header">
               <h3>Guruhlar reytingi</h3>
-              <span className="select-chip">Umumiy HP</span>
+              <span className="select-chip">Umumiy XP</span>
             </div>
             {groupsBoard ? (
               <>
@@ -147,7 +147,7 @@ export default function ReytingPage() {
                       <tr>
                         <th>O'rin</th>
                         <th>Guruh</th>
-                        <th>HP</th>
+                        <th>XP</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -222,7 +222,7 @@ export default function ReytingPage() {
                   <tr>
                     <th>O'rin</th>
                     <th>O&apos;yinchi</th>
-                    <th>HP</th>
+                    <th>XP</th>
                   </tr>
                 </thead>
                 <tbody>

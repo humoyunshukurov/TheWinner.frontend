@@ -161,7 +161,7 @@ export default function MarafonPage() {
 
           {result.coins > 0 && (
             <div className="champion-reward">
-              <IconCoin /> +{result.coins} tanga &middot; +{result.hp} HP
+              <IconCoin /> +{result.coins} tanga &middot; +{result.hp} XP
             </div>
           )}
 
@@ -181,7 +181,7 @@ export default function MarafonPage() {
 
           {result.coins > 0 && (
             <div className="coins-earned-banner">
-              <IconCoin /> +{result.coins} tanga &middot; +{result.hp} HP
+              <IconCoin /> +{result.coins} tanga &middot; +{result.hp} XP
             </div>
           )}
 

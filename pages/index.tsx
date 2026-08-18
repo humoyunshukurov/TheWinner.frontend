@@ -68,7 +68,7 @@ export default function HomePage() {
         <p className="level-caption">
           {rank
             ? rank.hpToNext != null
-              ? `Keyingi bosqichgacha ${rank.hpToNext} HP qoldi`
+              ? `Keyingi bosqichgacha ${rank.hpToNext} XP qoldi`
               : "Eng yuqori bosqichdasiz"
             : '...'}
         </p>

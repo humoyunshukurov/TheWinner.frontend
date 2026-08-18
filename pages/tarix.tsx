@@ -75,7 +75,7 @@ export default function TarixPage() {
                       <IconCoin size={14} /> +{entry.coins}
                     </span>
                     <span className="history-reward">
-                      <IconGlobe size={14} /> +{entry.hp} HP
+                      <IconGlobe size={14} /> +{entry.hp} XP
                     </span>
                   </div>
                 </li>
