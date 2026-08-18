@@ -2094,13 +2094,6 @@ body {
   white-space: nowrap;
 }
 
-/* KodBanner's "guruh kerak" badge when locked - a warmer tint than the
-   plain translucent .battle-badge so the constraint actually catches the
-   eye instead of blending in as just another feature chip. */
-.battle-badge.locked-badge {
-  background: rgba(251, 191, 36, 0.85);
-  color: #78350f;
-}
 
 .battle-banner-main {
   position: relative;
@@ -2175,13 +2168,6 @@ body {
 
 .battle-cta:hover {
   transform: translateY(-2px);
-}
-
-/* Points at Guruhlar instead of the game itself - recolored to the
-   app's own accent (same color Guruhga qo'shilish uses elsewhere) so it
-   reads as "go do this first", not as the banner's main play action. */
-.battle-cta.locked {
-  color: #4338ca;
 }
 
 .game-icon-badge {

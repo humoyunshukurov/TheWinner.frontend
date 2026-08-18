@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import QuestionPrompt from '../../components/QuestionPrompt';
-import { IconPlay, IconTrophy, IconClock, IconLock } from '../../components/icons';
+import { IconPlay, IconTrophy, IconClock } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
 import { useRequireAccess } from '../../lib/useRequireAccess';
 import { useMyGroup } from '../../lib/useMyGroup';
@@ -30,15 +30,23 @@ export default function KodOyinPage() {
   const guestRef = useRef({ guestId: '', name: '' });
   const pollRef = useRef<any>(null);
   const { requireAccess } = useRequireAccess();
-  // Direct-link/back-forward guard - the hub already hides this behind a
-  // lock for a groupless guest, but landing here straight by URL should
-  // hit the same wall, not just a cosmetic one on the hub tile.
+  const router = useRouter();
+  // Direct-link/back-forward guard - the hub already doesn't show this
+  // tile at all for a groupless guest, so landing here straight by URL
+  // shouldn't reveal it either; bounce back to the hub instead of
+  // rendering anything about Kod for them.
   const { hasGroup, loaded: groupLoaded } = useMyGroup();
 
   useEffect(() => {
     guestRef.current = getGuest();
     return () => clearInterval(pollRef.current);
   }, []);
+
+  useEffect(() => {
+    if (groupLoaded && !hasGroup) {
+      router.replace('/oyin');
+    }
+  }, [groupLoaded, hasGroup, router]);
 
   useEffect(() => {
     if (!sessionCode) return;
@@ -151,29 +159,13 @@ export default function KodOyinPage() {
     setSessionError(null);
   }
 
-  // Defaults to the locked view while the group check is still in
-  // flight, same as the hub tile - briefly showing "locked" and then
-  // unlocking is a much safer default than the other way around.
+  // Still checking group membership, or confirmed groupless and about to
+  // be bounced back to the hub (see the effect above) - either way,
+  // nothing about Kod should flash on screen while that's unresolved.
   if (!sessionCode && (!groupLoaded || !hasGroup)) {
     return (
-      <Layout eyebrow="Guruh bilan birga o'ynang" title="Kod bilan qo'shilish" backHref="/oyin">
-        <div className="game-hero">
-          <div className="game-card">
-            <button className="game-icon-badge" style={{ background: 'var(--text-muted)' }} aria-hidden="true">
-              <IconLock size={24} />
-            </button>
-
-            <h3>Faqat guruh a'zolari uchun</h3>
-            <p className="muted">
-              Kod bilan o&apos;yin sinf/guruh bilan birga o&apos;ynaladi - buni ochish uchun avval biror guruhga
-              qo&apos;shiling.
-            </p>
-
-            <Link href="/guruhlar" className="pill-btn primary" style={{ marginTop: 14 }}>
-              Guruhga qo&apos;shilish
-            </Link>
-          </div>
-        </div>
+      <Layout backHref="/oyin">
+        <p className="muted">Yuklanmoqda...</p>
       </Layout>
     );
   }

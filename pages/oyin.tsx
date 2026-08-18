@@ -8,8 +8,9 @@ import { useMyGroup } from '../lib/useMyGroup';
 
 export default function OyinHubPage() {
   const [duelActive, setDuelActive] = useState(false);
-  // Defaults to locked while still loading (rather than briefly flashing
-  // "unlocked" for a groupless guest before the real check comes back).
+  // Kod bilan o'yin doesn't even show up for a groupless guest, not just
+  // locked - defaults to "don't show" while still loading too, rather
+  // than flashing it briefly before the real check comes back.
   const { hasGroup, loaded } = useMyGroup();
 
   return (
@@ -21,9 +22,11 @@ export default function OyinHubPage() {
 
         {!duelActive && (
           <>
-            <div className="mode-card mode-card-battle">
-              <KodBanner compact href="/oyin/kod" locked={!loaded || !hasGroup} />
-            </div>
+            {loaded && hasGroup && (
+              <div className="mode-card mode-card-battle">
+                <KodBanner compact href="/oyin/kod" />
+              </div>
+            )}
 
             <div className="mode-card mode-card-battle">
               <TournamentBanner compact href="/oyin/turnir" />
