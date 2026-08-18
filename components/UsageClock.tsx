@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { IconClock } from './icons';
 import { getGuest } from '../lib/guest';
-import { fetchUsage, formatStopwatch, formatUsageDuration } from '../lib/usage';
+import { fetchUsage, formatStopwatch, formatUsageDuration, type UsageStats } from '../lib/usage';
 
 const REFRESH_MS = 30000;
 
@@ -11,9 +12,11 @@ const REFRESH_MS = 30000;
 // vizual - har safar sahifa qayta ochilganda 00:00 dan boshlanadi;
 // haqiqiy hisob (bugun/jami) esa serverda saqlanadi, shuning uchun bir
 // nechta qurilma/tab ochiq bo'lsa ham noto'g'ri/tasodifiy son chiqmaydi.
+// Bosilsa /vaqt sahifasiga - bo'lim bo'yicha to'liq taqsimotga - olib
+// boradi.
 export default function UsageClock() {
   const [sessionMs, setSessionMs] = useState(0);
-  const [usage, setUsage] = useState<{ todayMs: number; totalMs: number } | null>(null);
+  const [usage, setUsage] = useState<UsageStats | null>(null);
 
   useEffect(() => {
     const start = Date.now();
@@ -34,11 +37,11 @@ export default function UsageClock() {
   }, []);
 
   return (
-    <article className="card usage-card">
+    <Link href="/vaqt" className="card usage-card usage-card-link">
       <div className="alert-icon accent">
         <IconClock size={22} />
       </div>
-      <div>
+      <div className="usage-card-body">
         <span className="usage-clock">{formatStopwatch(sessionMs)}</span>
         <div className="usage-stats-row">
           <span>
@@ -49,6 +52,7 @@ export default function UsageClock() {
           </span>
         </div>
       </div>
-    </article>
+      <span className="usage-card-more">Qayerda? →</span>
+    </Link>
   );
 }

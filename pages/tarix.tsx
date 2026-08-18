@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Layout from '../components/Layout';
 import { IconSwords, IconPlay, IconTrophy, IconTrendUp, IconCoin, IconGlobe, IconClock } from '../components/icons';
 import { getGuest } from '../lib/guest';
@@ -46,17 +47,18 @@ export default function TarixPage() {
 
   return (
     <Layout eyebrow="Qaysi o'yinlarni o'ynagansiz?" title="Tarix">
-      <article className="card alert-card" style={{ marginBottom: 18 }}>
+      <Link href="/vaqt" className="card alert-card usage-card-link" style={{ marginBottom: 18 }}>
         <div className="alert-icon accent">
           <IconClock size={22} />
         </div>
-        <div>
+        <div className="usage-card-body">
           <strong>O&apos;ynagan vaqtingiz</strong>
           <span className="muted-link">
             {usage ? `Bugun ${formatUsageDuration(usage.todayMs)} · Jami ${formatUsageDuration(usage.totalMs)}` : '...'}
           </span>
         </div>
-      </article>
+        <span className="usage-card-more">Qayerda? →</span>
+      </Link>
 
       <article className="card">
         <div className="card-header">

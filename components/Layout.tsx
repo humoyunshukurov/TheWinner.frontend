@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconArrowLeft, IconShield, IconUsers, IconClock } from './icons';
 import { getGuest, GUEST_CHANGED_EVENT } from '../lib/guest';
 import { loadProfilePhoto, resyncProfilePhotoOnce, PROFILE_PHOTO_CHANGED_EVENT } from '../lib/profile';
-import { pingUsage } from '../lib/usage';
+import { pingUsage, sectionForPath } from '../lib/usage';
 import LottieCoin from './LottieCoin';
 import LottieMenuToggle from './LottieMenuToggle';
 import CrownBadge from './CrownBadge';
@@ -139,10 +139,11 @@ export default function Layout({
     const events = ['mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
     events.forEach((event) => window.addEventListener(event, markActive, { passive: true }));
 
+    const section = sectionForPath(router.pathname);
     const interval = setInterval(() => {
       if (document.visibilityState !== 'visible') return;
       if (Date.now() - lastActivity < IDLE_LIMIT_MS) {
-        pingUsage(getGuest().guestId, TICK_MS);
+        pingUsage(getGuest().guestId, TICK_MS, section);
       }
     }, TICK_MS);
 
@@ -150,7 +151,13 @@ export default function Layout({
       events.forEach((event) => window.removeEventListener(event, markActive));
       clearInterval(interval);
     };
-  }, []);
+    // Layout remounts on every page navigation (pages router doesn't
+    // persist it across routes), so a fresh effect instance always
+    // captures the section that's actually current for its own lifetime
+    // - router.pathname is still listed here so this stays correct even
+    // if that assumption ever changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.pathname]);
 
   function isActive(href) {
     return href !== '#' && (router.pathname === href || router.pathname.startsWith(`${href}/`));
