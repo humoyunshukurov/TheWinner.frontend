@@ -133,7 +133,7 @@ export default function GroupRaceChart({ labels, series }) {
               cy={line.points[active].y}
               r="4"
               fill={line.color}
-              style={{ stroke: 'var(--card-bg)' }}
+              style={{ stroke: 'var(--race-card-bg)' }}
               strokeWidth="2"
             />
           ))}

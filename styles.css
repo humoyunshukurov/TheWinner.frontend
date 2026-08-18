@@ -30,6 +30,15 @@
   --status-good-soft: #e0e7ff;
 
   --grid-line: #e7e7f5;
+
+  /* Race chart card's own background - plain --card-bg (pure white)
+     reads as flush with --content-bg/--page-bg right behind it, too
+     close to tell apart on a big chart card that used to be solid
+     black instead. --page-bg-end is already a visibly grayer/lavender
+     tone elsewhere in this same light palette, so it's a "different
+     from white" surface using this app's own colors rather than an
+     arbitrary new one. */
+  --race-card-bg: var(--page-bg-end);
 }
 
 :root[data-theme='dark'] {
@@ -63,6 +72,11 @@
   --status-good-soft: rgba(183, 174, 251, 0.16);
 
   --grid-line: rgba(255, 255, 255, 0.07);
+
+  /* Dark mode already has good contrast with the plain elevated-surface
+     --card-bg (lighter than the page, like every other card) - only
+     light mode needed the extra distinction above. */
+  --race-card-bg: var(--card-bg);
 }
 
 * {
@@ -2595,7 +2609,7 @@ body {
 
 /* Group coin race */
 .race-card {
-  background: var(--card-bg);
+  background: var(--race-card-bg);
   border: 1px solid var(--card-border);
   border-radius: 20px;
   padding: 22px 24px 18px;
