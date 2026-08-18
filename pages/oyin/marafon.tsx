@@ -98,7 +98,7 @@ export default function MarafonPage() {
   }, [result]);
 
   return (
-    <Layout eyebrow="Xato qilmasdan qancha uzoqqa borasiz?" title="Infinite Quiz" backHref="/oyin">
+    <Layout title="Infinite Quiz" backHref="/oyin">
       {phase === 'idle' && (
         <div className="game-hero">
           <div className="game-card battle-card">

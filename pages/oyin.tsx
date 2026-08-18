@@ -14,7 +14,7 @@ export default function OyinHubPage() {
   const { hasGroup, loaded } = useMyGroup();
 
   return (
-    <Layout eyebrow="Qaysi rejimda o'ynaymiz?" title="O'yinlar">
+    <Layout title="O'yinlar">
       <div className={duelActive ? 'duel-stage' : 'mode-grid'}>
         <div className={duelActive ? 'duel-stage-inner' : 'mode-card mode-card-battle'}>
           <DuelGame compact={!duelActive} onPhaseChange={(phase) => setDuelActive(phase !== 'idle')} />

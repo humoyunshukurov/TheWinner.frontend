@@ -54,7 +54,7 @@ export default function ReytingPage() {
   }, [range]);
 
   return (
-    <Layout eyebrow="Kim eng ko'p XP to'playapti?" title="Reyting">
+    <Layout title="Reyting">
       <article className="race-card">
         <div className="race-card-header">
           <h3>Guruhlar poygasi</h3>

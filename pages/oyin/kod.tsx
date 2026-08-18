@@ -172,7 +172,7 @@ export default function KodOyinPage() {
 
   if (!sessionCode) {
     return (
-      <Layout eyebrow="Guruh bilan birga o'ynang" title="Kod bilan qo'shilish" backHref="/oyin">
+      <Layout title="Kod bilan qo'shilish" backHref="/oyin">
         <div className="game-hero">
           <div className="game-card">
             <button className="game-icon-badge" onClick={() => submitJoin()} aria-label="Qo'shilish">
@@ -205,7 +205,7 @@ export default function KodOyinPage() {
   }
 
   return (
-    <Layout eyebrow="Guruh bilan birga o'ynang" title="Kod bilan qo'shilish" backHref="/oyin">
+    <Layout title="Kod bilan qo'shilish" backHref="/oyin">
       {sessionError && (
         <div className="game-hero">
           <div className="game-card">

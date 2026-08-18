@@ -74,7 +74,7 @@ export default function GuruhlarPage() {
   }
 
   return (
-    <Layout eyebrow="Sinfdoshlaringiz bilan birga" title="Guruhlar">
+    <Layout title="Guruhlar">
       {loading && <p className="muted">Yuklanmoqda...</p>}
 
       {!loading && group?.group && (

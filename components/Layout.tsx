@@ -36,13 +36,11 @@ const navItems = [
 
 export default function Layout({
   title,
-  eyebrow,
   backHref,
   onBackAttempt,
   children
 }: {
   title?: string;
-  eyebrow?: string;
   backHref?: string;
   // When set, clicking "Orqaga" calls this instead of navigating straight
   // away - a game page mid-match uses it to confirm ("testni tugatasizmi?")
@@ -239,8 +237,6 @@ export default function Layout({
             </div>
           </div>
         </header>
-
-        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
 
         {children}
       </section>

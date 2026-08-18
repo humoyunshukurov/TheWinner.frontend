@@ -30,7 +30,7 @@ export default function HomePage() {
   const progressLabel = rank ? `${hpData.hp} / ${rank.max ?? hpData.hp}` : '...';
 
   return (
-    <Layout eyebrow="Najot Ta'lim akademiyasi" title="Bosh sahifa">
+    <Layout title="Bosh sahifa">
       <UsageClock />
 
       <article className="card level-card" style={{ marginTop: 14 }}>

@@ -599,12 +599,6 @@ body {
   object-fit: cover;
 }
 
-.eyebrow {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  margin: 4px 0 24px;
-}
-
 /* Stat cards */
 .stats-grid {
   display: grid;
@@ -3228,10 +3222,6 @@ body {
 
   .topbar h2 {
     font-size: 1.1rem;
-  }
-
-  .eyebrow {
-    margin: 4px 0 16px;
   }
 
   .card,

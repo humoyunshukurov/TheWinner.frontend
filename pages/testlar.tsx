@@ -15,7 +15,7 @@ export default function TestlarPage() {
   }, []);
 
   return (
-    <Layout eyebrow="Bilimingizni sinab ko'ring" title="Testlar">
+    <Layout title="Testlar">
       {tests ? (
         <div className="test-grid">
           {tests.map((test) => (

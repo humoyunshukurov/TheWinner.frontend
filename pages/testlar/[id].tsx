@@ -98,7 +98,7 @@ export default function TestPage() {
   const isPerfect = result && result.total > 0 && result.correctCount === result.total;
 
   return (
-    <Layout eyebrow="Test" title={test?.title || 'Yuklanmoqda...'}>
+    <Layout title={test?.title || 'Yuklanmoqda...'}>
       {(!test || access !== true) && <p className="muted">Yuklanmoqda...</p>}
 
       {access === true && test && !result && question && (

@@ -40,7 +40,7 @@ export default function VaqtPage() {
     : [];
 
   return (
-    <Layout eyebrow="Qayerda qancha vaqt sarfladingiz?" title="Vaqt" backHref="/">
+    <Layout title="Vaqt" backHref="/">
       <article className="card alert-card">
         <div className="alert-icon accent">
           <IconClock size={22} />

@@ -249,7 +249,7 @@ export default function SozlamalarPage() {
   }
 
   return (
-    <Layout eyebrow="Ilova sozlamalari" title="Sozlamalar">
+    <Layout title="Sozlamalar">
       <div className="settings-page-grid">
         <article className="card" style={!account ? { gridColumn: '1 / -1' } : undefined}>
           <div className="card-header">

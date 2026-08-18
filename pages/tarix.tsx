@@ -46,7 +46,7 @@ export default function TarixPage() {
   }, []);
 
   return (
-    <Layout eyebrow="Qaysi o'yinlarni o'ynagansiz?" title="Tarix">
+    <Layout title="Tarix">
       <Link href="/vaqt" className="card alert-card usage-card-link" style={{ marginBottom: 18 }}>
         <div className="alert-icon accent">
           <IconClock size={22} />
