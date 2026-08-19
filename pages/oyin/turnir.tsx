@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import Bracket from '../../components/Bracket';
 import TournamentBanner from '../../components/TournamentBanner';
@@ -30,14 +29,7 @@ function rankBadgeClass(place) {
   return 'rank-badge';
 }
 
-// A live opponent for THIS round only exists once actually paired up
-// ('match') or having already submitted and waiting on them ('waiting_opponent') -
-// 'waiting_round' means their own match already resolved (or they never
-// had one this round), so there's nothing left to forfeit against.
-const PHASES_WITH_A_LIVE_OPPONENT = ['match', 'waiting_opponent'];
-
 export default function TurnirPage() {
-  const router = useRouter();
   const guestRef = useRef({ guestId: '', name: '' });
   const startTimeRef = useRef(null);
   const loadedMatchIdRef = useRef(null);
@@ -212,21 +204,6 @@ export default function TurnirPage() {
     }).catch(() => {});
   }
 
-  async function handleBackAttempt() {
-    if (!PHASES_WITH_A_LIVE_OPPONENT.includes(state?.status)) {
-      router.push('/oyin');
-      return;
-    }
-
-    const confirmed = window.confirm(
-      "Testni tugatishni xohlaysizmi? Ha desangiz, raqibingiz g'olib deb topiladi."
-    );
-    if (!confirmed) return;
-
-    await callForfeitEndpoint();
-    router.push('/oyin');
-  }
-
   // Called instead of goToNext() whenever the timer runs out - only
   // pauses on a MISS (nothing selected); answering normally, even right
   // at the buzzer, resets the streak same as clicking "Keyingi savol".
@@ -260,7 +237,7 @@ export default function TurnirPage() {
 
   if (!state) {
     return (
-      <Layout backHref="/oyin">
+      <Layout>
         <p className="muted">Yuklanmoqda...</p>
       </Layout>
     );
@@ -272,7 +249,7 @@ export default function TurnirPage() {
   const { guestId } = guestRef.current;
 
   return (
-    <Layout backHref="/oyin" onBackAttempt={handleBackAttempt}>
+    <Layout>
       {state.status === 'lobby' && (
         <>
           <TournamentBanner />

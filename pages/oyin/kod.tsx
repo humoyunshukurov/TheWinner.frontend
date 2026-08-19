@@ -164,7 +164,7 @@ export default function KodOyinPage() {
   // nothing about Kod should flash on screen while that's unresolved.
   if (!sessionCode && (!groupLoaded || !hasGroup)) {
     return (
-      <Layout backHref="/oyin">
+      <Layout>
         <p className="muted">Yuklanmoqda...</p>
       </Layout>
     );
@@ -172,7 +172,7 @@ export default function KodOyinPage() {
 
   if (!sessionCode) {
     return (
-      <Layout title="Kod bilan qo'shilish" backHref="/oyin">
+      <Layout title="Kod bilan qo'shilish">
         <div className="game-hero">
           <div className="game-card">
             <button className="game-icon-badge" onClick={() => submitJoin()} aria-label="Qo'shilish">
@@ -205,7 +205,7 @@ export default function KodOyinPage() {
   }
 
   return (
-    <Layout title="Kod bilan qo'shilish" backHref="/oyin">
+    <Layout title="Kod bilan qo'shilish">
       {sessionError && (
         <div className="game-hero">
           <div className="game-card">

@@ -27,6 +27,20 @@ export default function MarafonPage() {
     requireAccess(doStart);
   }
 
+  // The O'yinlar hub's card already shows this exact same banner with its
+  // own "Kirish" - landing here and making them click it again (unlike
+  // 1vs1/Turnir/Kod, which genuinely need a queue/lobby/code step first)
+  // was pure redundant friction, since Marafon has no matchmaking to wait
+  // through. Auto-starts once on mount instead; the idle-phase banner
+  // below still renders during the brief moment the request is in flight.
+  const autoStartedRef = useRef(false);
+  useEffect(() => {
+    if (autoStartedRef.current) return;
+    autoStartedRef.current = true;
+    startGame();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function doStart() {
     guestRef.current = getGuest();
     setStarting(true);
@@ -98,7 +112,7 @@ export default function MarafonPage() {
   }, [result]);
 
   return (
-    <Layout title="Infinite Quiz" backHref="/oyin">
+    <Layout title="Infinite Quiz">
       {phase === 'idle' && (
         <div className="game-hero">
           <div className="game-card battle-card">

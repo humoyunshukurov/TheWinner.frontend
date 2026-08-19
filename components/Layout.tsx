@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconArrowLeft, IconShield, IconUsers, IconClock } from './icons';
+import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconShield, IconUsers, IconClock } from './icons';
 import { getGuest, GUEST_CHANGED_EVENT } from '../lib/guest';
 import { loadProfilePhoto, resyncProfilePhotoOnce, PROFILE_PHOTO_CHANGED_EVENT } from '../lib/profile';
 import { pingUsage, sectionForPath } from '../lib/usage';
@@ -36,18 +36,9 @@ const navItems = [
 
 export default function Layout({
   title,
-  backHref,
-  onBackAttempt,
   children
 }: {
   title?: string;
-  backHref?: string;
-  // When set, clicking "Orqaga" calls this instead of navigating straight
-  // away - a game page mid-match uses it to confirm ("testni tugatasizmi?")
-  // and forfeit before actually leaving, rather than silently abandoning
-  // a live opponent. Every other way of navigating (sidebar, bottom nav)
-  // is deliberately left alone - only this specific button is guarded.
-  onBackAttempt?: () => void;
   children: ReactNode;
 }) {
   const router = useRouter();
@@ -196,22 +187,7 @@ export default function Layout({
             >
               <LottieMenuToggle collapsed={collapsed} size={20} />
             </button>
-            <div>
-              {backHref && (
-                <Link
-                  href={backHref}
-                  className="back-link"
-                  onClick={(e) => {
-                    if (!onBackAttempt) return;
-                    e.preventDefault();
-                    onBackAttempt();
-                  }}
-                >
-                  <IconArrowLeft /> Orqaga
-                </Link>
-              )}
-              {title && <h2>{title}</h2>}
-            </div>
+            <div>{title && <h2>{title}</h2>}</div>
           </div>
 
           <div className="topbar-actions">

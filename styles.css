@@ -246,21 +246,6 @@ body {
   font-weight: 700;
 }
 
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--text-muted);
-  text-decoration: none;
-  font-size: 0.82rem;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.back-link:hover {
-  color: var(--accent);
-}
-
 .topbar-left {
   display: flex;
   align-items: center;

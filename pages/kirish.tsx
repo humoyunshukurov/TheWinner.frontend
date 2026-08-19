@@ -11,7 +11,7 @@ export default function KirishPage() {
   }
 
   return (
-    <Layout backHref="/">
+    <Layout>
       <AccessGate onDone={handleDone} />
     </Layout>
   );
