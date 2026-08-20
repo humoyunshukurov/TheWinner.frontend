@@ -115,7 +115,6 @@ export default function MarafonPage() {
         <div className="game-hero">
           <div className="game-card">
             <div className="duel-spinner" />
-            <h3>Infinite Quiz boshlanmoqda...</h3>
           </div>
         </div>
       )}
