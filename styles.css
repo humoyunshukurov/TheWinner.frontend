@@ -358,6 +358,11 @@ body {
   color: var(--good);
 }
 
+.notif-card-icon.groupJoin {
+  background: var(--status-good-soft);
+  color: var(--status-good-text);
+}
+
 .notif-card-body {
   flex: 1;
   min-width: 0;

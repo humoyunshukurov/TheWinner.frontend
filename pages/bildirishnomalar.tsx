@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
-import { IconBell, IconSend, IconPlay } from '../components/icons';
+import { IconBell, IconSend, IconPlay, IconUsers } from '../components/icons';
 import { getGuest } from '../lib/guest';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
@@ -10,15 +10,18 @@ function formatTime(ts: number) {
   return new Date(ts).toLocaleString('uz-UZ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
 
-// Three kinds of thing show up here, merged into one reverse-chron feed -
+// Four kinds of thing show up here, merged into one reverse-chron feed -
 // (1) taklif threads this guest has sent from Sozlamalar, with whatever
 // replies have come back, (2) e'lonlar (announcements) sent to everyone
-// or to this guest's group, and (3) Kod bilan o'yin takliflari - an admin
+// or to this guest's group, (3) Kod bilan o'yin takliflari - an admin
 // started a live session FOR this guest's group specifically, Ha/Yo'q
-// right here decides whether to join, no code typing needed. Never shows
-// who specifically replied/sent/invited (the backend does track that
-// internally, but it's deliberately not surfaced here) - every message
-// reads as coming from "ma'muriyat" as a whole, not a named person.
+// right here decides whether to join, no code typing needed - and (4) a
+// one-way notice when an admin adds this guest to a group directly (not
+// their own code-join, which they already see happen live). Never shows
+// who specifically replied/sent/invited/added (the backend does track
+// that internally, but it's deliberately not surfaced here) - every
+// message reads as coming from "ma'muriyat" as a whole, not a named
+// person.
 export default function BildirishnomalarPage() {
   const router = useRouter();
   const [feed, setFeed] = useState<any[] | null>(null);
@@ -30,13 +33,15 @@ export default function BildirishnomalarPage() {
     Promise.all([
       fetch(`${API_URL}/feedback/mine?guestId=${guestId}`).then((res) => res.json()),
       fetch(`${API_URL}/feedback/announcements?guestId=${guestId}`).then((res) => res.json()),
-      fetch(`${API_URL}/kod/invites?guestId=${guestId}`).then((res) => res.json())
+      fetch(`${API_URL}/kod/invites?guestId=${guestId}`).then((res) => res.json()),
+      fetch(`${API_URL}/group-join-notices?guestId=${guestId}`).then((res) => res.json())
     ])
-      .then(([mine, announcements, invites]) => {
+      .then(([mine, announcements, invites, groupJoins]) => {
         const merged = [
           ...mine.map((entry) => ({ type: 'thread', createdAt: entry.createdAt, entry })),
           ...announcements.map((a) => ({ type: 'announcement', createdAt: a.createdAt, entry: a })),
-          ...invites.map((inv) => ({ type: 'invite', createdAt: inv.createdAt, entry: inv }))
+          ...invites.map((inv) => ({ type: 'invite', createdAt: inv.createdAt, entry: inv })),
+          ...groupJoins.map((n) => ({ type: 'groupJoin', createdAt: n.createdAt, entry: n }))
         ].sort((a, b) => b.createdAt - a.createdAt);
         setFeed(merged);
       })
@@ -143,6 +148,22 @@ export default function BildirishnomalarPage() {
                   </div>
                   <div className="notif-card-body">
                     <p>{item.entry.text}</p>
+                    <span className="notif-card-time">{formatTime(item.entry.createdAt)}</span>
+                  </div>
+                </article>
+              );
+            }
+
+            if (item.type === 'groupJoin') {
+              return (
+                <article key={`g${item.entry.id}`} className="card notif-card">
+                  <div className="notif-card-icon groupJoin">
+                    <IconUsers size={20} />
+                  </div>
+                  <div className="notif-card-body">
+                    <p>
+                      Siz <strong>{item.entry.groupName}</strong> guruhiga qo&apos;shildingiz.
+                    </p>
                     <span className="notif-card-time">{formatTime(item.entry.createdAt)}</span>
                   </div>
                 </article>
