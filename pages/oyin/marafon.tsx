@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/Layout';
-import MarafonBanner from '../../components/MarafonBanner';
 import QuestionPrompt from '../../components/QuestionPrompt';
 import { IconTrendUp, IconCoin, IconTrophy, IconSparkle } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
@@ -18,7 +17,6 @@ export default function MarafonPage() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [result, setResult] = useState<any>(null);
-  const [starting, setStarting] = useState(false);
 
   const guestRef = useRef({ guestId: '', name: '' });
   const { requireAccess } = useRequireAccess();
@@ -27,12 +25,12 @@ export default function MarafonPage() {
     requireAccess(doStart);
   }
 
-  // The O'yinlar hub's card already shows this exact same banner with its
-  // own "Kirish" - landing here and making them click it again (unlike
-  // 1vs1/Turnir/Kod, which genuinely need a queue/lobby/code step first)
-  // was pure redundant friction, since Marafon has no matchmaking to wait
-  // through. Auto-starts once on mount instead; the idle-phase banner
-  // below still renders during the brief moment the request is in flight.
+  // Marafon has no matchmaking/queue/lobby step to actually wait through
+  // (unlike 1vs1/Turnir/Kod), so there's nothing for a landing screen
+  // with its own "Kirish" to justify - the O'yinlar hub card already
+  // asks for that click. Auto-starts once on mount instead; the idle
+  // phase below is purely a loading state for the brief round-trip,
+  // not an interactive screen the player has to get past.
   const autoStartedRef = useRef(false);
   useEffect(() => {
     if (autoStartedRef.current) return;
@@ -43,7 +41,7 @@ export default function MarafonPage() {
 
   function doStart() {
     guestRef.current = getGuest();
-    setStarting(true);
+    setPhase('idle');
     const { guestId } = guestRef.current;
 
     fetch(`${API_URL}/marafon/start`, {
@@ -53,7 +51,6 @@ export default function MarafonPage() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setStarting(false);
         setSessionId(data.sessionId);
         setQuestion(data.question);
         setStreak(0);
@@ -104,6 +101,7 @@ export default function MarafonPage() {
     setSessionId(null);
     setQuestion(null);
     setResult(null);
+    startGame();
   }
 
   useEffect(() => {
@@ -115,10 +113,10 @@ export default function MarafonPage() {
     <Layout title="Infinite Quiz">
       {phase === 'idle' && (
         <div className="game-hero">
-          <div className="game-card battle-card">
-            <MarafonBanner onPlay={startGame} />
+          <div className="game-card">
+            <div className="duel-spinner" />
+            <h3>Infinite Quiz boshlanmoqda...</h3>
           </div>
-          {starting && <p className="muted" style={{ marginTop: 10 }}>Boshlanmoqda...</p>}
         </div>
       )}
 
