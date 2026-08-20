@@ -2407,6 +2407,7 @@ body {
   background: var(--content-bg);
   border: 1px solid var(--card-border);
   text-align: left;
+  min-width: 0;
 }
 
 .duel-wait-row.me {
@@ -2427,8 +2428,13 @@ body {
 }
 
 .duel-wait-name {
+  flex: 1;
+  min-width: 0;
   font-weight: 600;
   font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .duel-vs-banner {
@@ -2464,6 +2470,7 @@ body {
   padding: 18px 12px;
   border-radius: 16px;
   background: var(--content-bg);
+  min-width: 0;
 }
 
 .duel-result-side.winner {
@@ -2475,6 +2482,9 @@ body {
   display: block;
   margin-bottom: 6px;
   font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .duel-result-vs {
