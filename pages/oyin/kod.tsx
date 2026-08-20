@@ -48,6 +48,19 @@ export default function KodOyinPage() {
     }
   }, [groupLoaded, hasGroup, router]);
 
+  // Accepting a Kod taklif in Bildirishnomalar already joins the session
+  // server-side (see /api/kod/invites/:id/respond) - landing here with
+  // ?code=... in the URL just needs to skip straight past the manual
+  // code-entry form, not ask them to type in what they just accepted.
+  useEffect(() => {
+    if (!router.isReady) return;
+    const codeFromUrl = router.query.code;
+    if (typeof codeFromUrl === 'string' && codeFromUrl && !sessionCode) {
+      setSessionCode(codeFromUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady, router.query.code]);
+
   useEffect(() => {
     if (!sessionCode) return;
     poll();
