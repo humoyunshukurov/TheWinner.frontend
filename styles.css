@@ -2938,6 +2938,23 @@ body {
   background: var(--card-bg);
 }
 
+/* The browser forces its own yellow autofill background/text-color on a
+   filled-in field (login/register forms trigger this constantly),
+   completely ignoring the CSS above - a huge inset box-shadow the same
+   color as the real background is the only reliable way to paint over
+   it, since background/color themselves can't win against the
+   browser's autofill styles. The long transition delay stops Chrome's
+   autofill entrance animation from flashing yellow for a moment before
+   this applies. */
+.form-input:-webkit-autofill,
+.form-input:-webkit-autofill:hover,
+.form-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-primary);
+  -webkit-box-shadow: 0 0 0px 1000px var(--content-bg) inset;
+  box-shadow: 0 0 0px 1000px var(--content-bg) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 .icon-edit-btn {
   width: 26px;
   height: 26px;
