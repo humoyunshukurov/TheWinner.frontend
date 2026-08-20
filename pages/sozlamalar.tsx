@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import PasswordInput from '../components/PasswordInput';
 import { IconEdit, IconCamera, IconEye, IconEyeOff, IconSend } from '../components/icons';
-import { getGuest, isRegistered, updateAccount, getStoredPassword, loginAccount } from '../lib/guest';
+import { getGuest, isRegistered, updateAccount, getStoredPassword, loginAccount, deleteAccount } from '../lib/guest';
 import { submitFeedback } from '../lib/feedback';
 import {
   loadProfile,
@@ -28,6 +29,7 @@ function EditIconButton({ onClick }) {
 }
 
 export default function SozlamalarPage() {
+  const router = useRouter();
   const [photo, setPhoto] = useState(null);
   const [photoError, setPhotoError] = useState(null);
   const [pendingPhoto, setPendingPhoto] = useState(null);
@@ -51,6 +53,10 @@ export default function SozlamalarPage() {
   const [feedbackSending, setFeedbackSending] = useState(false);
   const [feedbackError, setFeedbackError] = useState(null);
   const [feedbackSent, setFeedbackSent] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   async function sendFeedback() {
     const text = feedbackText.trim();
@@ -68,6 +74,28 @@ export default function SozlamalarPage() {
       setFeedbackError(err.message || 'Xatolik yuz berdi');
     } finally {
       setFeedbackSending(false);
+    }
+  }
+
+  function openDeleteConfirm() {
+    setDeletePassword('');
+    setDeleteError(null);
+    setDeleteConfirmOpen(true);
+  }
+
+  async function confirmDeleteAccount() {
+    if (!deletePassword) {
+      setDeleteError('Joriy parolni kiriting');
+      return;
+    }
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await deleteAccount(deletePassword);
+      router.push('/');
+    } catch (err) {
+      setDeleteError(err.message || 'Xatolik yuz berdi');
+      setDeleting(false);
     }
   }
 
@@ -415,6 +443,21 @@ export default function SozlamalarPage() {
         )}
       </div>
 
+      {account && (
+        <article className="card" style={{ marginTop: 18 }}>
+          <div className="card-header">
+            <h3>Xavfli hudud</h3>
+          </div>
+          <p className="muted" style={{ marginBottom: 14 }}>
+            Hisobingizni o&apos;chirsangiz, ism, parol, guruh a&apos;zoligi, XP, tangalar va barcha natijalar
+            butunlay o&apos;chiriladi. Bu amalni ortga qaytarib bo&apos;lmaydi.
+          </p>
+          <button type="button" className="pill-btn" onClick={openDeleteConfirm}>
+            Hisobni o&apos;chirish
+          </button>
+        </article>
+      )}
+
       <article className="card" style={{ marginTop: 18 }}>
         <div className="card-header">
           <h3>Taklif yoki fikr yozish</h3>
@@ -470,6 +513,32 @@ export default function SozlamalarPage() {
               </button>
               <button className="pill-btn primary" onClick={confirmPhotoChange}>
                 Ha
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteConfirmOpen && (
+        <div className="modal-overlay" onClick={() => !deleting && setDeleteConfirmOpen(false)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <h3>Hisobni o&apos;chirishni tasdiqlang</h3>
+            <p className="muted">
+              Bu amalni ortga qaytarib bo&apos;lmaydi. Tasdiqlash uchun joriy parolingizni kiriting.
+            </p>
+            <PasswordInput
+              value={deletePassword}
+              onChange={(e) => setDeletePassword(e.target.value)}
+              placeholder="Joriy parolingiz"
+              autoComplete="current-password"
+            />
+            {deleteError && <p className="profile-photo-error">{deleteError}</p>}
+            <div className="modal-actions">
+              <button className="pill-btn" onClick={() => setDeleteConfirmOpen(false)} disabled={deleting}>
+                Bekor qilish
+              </button>
+              <button className="pill-btn primary" onClick={confirmDeleteAccount} disabled={deleting}>
+                {deleting ? "O'chirilmoqda..." : "Ha, o'chirish"}
               </button>
             </div>
           </div>

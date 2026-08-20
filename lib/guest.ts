@@ -89,3 +89,21 @@ export async function updateAccount({ currentPassword, newUsername, newPassword 
   persistIdentity(data.guestId, data.username, newPassword || currentPassword);
   return data;
 }
+
+export async function deleteAccount(currentPassword) {
+  const { guestId } = getGuest();
+  const res = await fetch(`${API_URL}/auth/delete-account`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ guestId, currentPassword })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.message || 'Xatolik yuz berdi');
+  }
+  // Same local wipe as a normal logout - the account no longer exists
+  // server-side, so nothing about it (id/name/registered flag/cached
+  // password) should linger on this device either.
+  logout();
+  return data;
+}
