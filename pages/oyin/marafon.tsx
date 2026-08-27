@@ -134,6 +134,14 @@ export default function MarafonPage() {
                 let stateClass = '';
                 if (selectedIndex === oIndex) {
                   stateClass = feedback === 'wrong' ? 'wrong' : feedback === 'correct' ? 'correct' : 'selected';
+                } else if (selectedIndex !== null) {
+                  // The click target is this <label>, not the radio input
+                  // inside it - disabling only the input (as before) never
+                  // actually blocked clicking the other options, it just
+                  // grayed out their little circles while staying fully
+                  // clickable. pointer-events:none on the label itself is
+                  // what actually locks them once an answer is picked.
+                  stateClass = 'locked';
                 }
                 return (
                   <label key={option} className={`option-label ${stateClass}`} onClick={() => selectAnswer(oIndex)}>

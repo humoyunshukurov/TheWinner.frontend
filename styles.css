@@ -1442,6 +1442,21 @@ body {
   font-weight: 700;
 }
 
+/* Once an answer is picked, every OTHER option should read as genuinely
+   locked, not just cosmetically not-selected - disabling the tiny radio
+   input alone (a separate element from this label, which is the actual
+   click target) never actually blocked clicking the rest, it only grayed
+   out the little circle. pointer-events:none is what makes the other
+   options truly unclickable, and the dimmed opacity/no-hover-lift is
+   what makes that obvious at a glance instead of still looking live. */
+.option-label.locked {
+  cursor: default;
+  /* Also removes :hover from ever matching, so the border-color/lift
+     hover styles above can't fire on a locked option either. */
+  pointer-events: none;
+  opacity: 0.55;
+}
+
 .option-label.correct {
   border-color: var(--good);
   background: var(--good-soft);
