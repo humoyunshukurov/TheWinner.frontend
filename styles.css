@@ -409,6 +409,77 @@ body {
   z-index: 100;
 }
 
+/* Kod bilan o'yin taklifi - ataylab .modal-overlay/.modal-box'dan
+   boshqacha: butun sahifani bosib qorong'ilashtirmaydi (pointer-events
+   faqat kartaning o'zida), fon shunchaki sal hiralanadi - bildirishnoma
+   (toast) kabi, o'ng yuqori burchakda suzib turadi. */
+.kod-invite-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background: rgba(10, 8, 25, 0.06);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 20px;
+  animation: kod-invite-fade 0.25s ease both;
+}
+
+@keyframes kod-invite-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.kod-invite-card {
+  pointer-events: auto;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 380px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  box-shadow: var(--card-shadow);
+  padding: 16px 18px;
+  animation: kod-invite-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes kod-invite-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.kod-invite-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.kod-invite-body p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.kod-invite-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .modal-box {
   width: 100%;
   max-width: 340px;

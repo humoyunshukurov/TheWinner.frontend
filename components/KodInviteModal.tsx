@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
+import { IconPlay } from './icons';
 import { getGuest, GUEST_CHANGED_EVENT } from '../lib/guest';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
@@ -20,6 +21,16 @@ type KodInvite = {
 // (taklifni qabul qilib yoki kodni qo'lda kiritib) talaba uchun qo'shilish
 // oqimi allaqachon sahifaning o'zida ketyapti, ustiga yana shu modalni
 // chiqarish shunchaki halaqit beradi.
+//
+// Boshqa tasdiqlash oynalaridan (.modal-overlay/.modal-box, masalan
+// PresenceCheckModal) ataylab boshqacha - u yerlar sahifani butunlay
+// bosib, qorong'ilashtiradi, bu esa har sahifaga kirganda shunga
+// duch kelavergani uchun juda halaqit bo'lib qoldi. Shu sabab bu yerda
+// yengil, bildirishnoma (toast) ko'rinishida: fon shunchaki sal
+// hiralashadi (butunlay qorong'ilashmaydi va bosishni to'sib qo'ymaydi -
+// pointer-events faqat kartaning o'zida), xabar va Ha/Yo'q tugmalari esa
+// oʻng yuqori burchakda alohida karta sifatida aniq va toʻliq koʻrinib
+// turadi.
 export default function KodInviteModal() {
   const router = useRouter();
   const [invite, setInvite] = useState<KodInvite | null>(null);
@@ -70,19 +81,24 @@ export default function KodInviteModal() {
   if (!invite || router.pathname === '/oyin/kod') return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-box">
-        <h3>Kod bilan o&apos;yin</h3>
-        <p className="muted">
-          <strong>{invite.groupName}</strong> guruhi uchun &quot;Kod bilan o&apos;yin&quot; boshlanmoqda - qo&apos;shilasizmi?
-        </p>
-        <div className="modal-actions">
-          <button type="button" className="pill-btn primary" onClick={() => respond(true)} disabled={responding}>
-            Ha
-          </button>
-          <button type="button" className="pill-btn" onClick={() => respond(false)} disabled={responding}>
-            Yo&apos;q
-          </button>
+    <div className="kod-invite-wrap">
+      <div className="kod-invite-card">
+        <div className="notif-card-icon invite">
+          <IconPlay size={20} />
+        </div>
+        <div className="kod-invite-body">
+          <p>
+            <strong>{invite.groupName}</strong> guruhi uchun &quot;Kod bilan o&apos;yin&quot; boshlanmoqda -
+            qo&apos;shilasizmi?
+          </p>
+          <div className="kod-invite-actions">
+            <button type="button" className="pill-btn primary" onClick={() => respond(true)} disabled={responding}>
+              Ha
+            </button>
+            <button type="button" className="pill-btn" onClick={() => respond(false)} disabled={responding}>
+              Yo&apos;q
+            </button>
+          </div>
         </div>
       </div>
     </div>
