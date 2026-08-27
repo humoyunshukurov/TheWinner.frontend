@@ -83,22 +83,22 @@ export default function KodInviteModal() {
   return (
     <div className="kod-invite-wrap">
       <div className="kod-invite-card">
-        <div className="notif-card-icon invite">
-          <IconPlay size={24} />
+        <div className="kod-invite-icon">
+          <IconPlay size={26} />
         </div>
         <div className="kod-invite-body">
+          <h3>Kod bilan o&apos;yin</h3>
           <p>
-            <strong>{invite.groupName}</strong> guruhi uchun &quot;Kod bilan o&apos;yin&quot; boshlanmoqda -
-            qo&apos;shilasizmi?
+            <strong>{invite.groupName}</strong> guruhi uchun boshlanmoqda - qo&apos;shilasizmi?
           </p>
-          <div className="kod-invite-actions">
-            <button type="button" className="pill-btn primary" onClick={() => respond(true)} disabled={responding}>
-              Ha
-            </button>
-            <button type="button" className="pill-btn" onClick={() => respond(false)} disabled={responding}>
-              Yo&apos;q
-            </button>
-          </div>
+        </div>
+        <div className="kod-invite-actions">
+          <button type="button" className="pill-btn primary" onClick={() => respond(true)} disabled={responding}>
+            Ha
+          </button>
+          <button type="button" className="pill-btn" onClick={() => respond(false)} disabled={responding}>
+            Yo&apos;q
+          </button>
         </div>
       </div>
     </div>

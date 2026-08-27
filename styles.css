@@ -444,17 +444,21 @@ body {
 .kod-invite-card {
   pointer-events: auto;
   display: flex;
-  gap: 18px;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   width: 100%;
-  /* Roughly on par with a game card on the O'yin hub grid (~480px per
-     card there), not the small corner-toast size this used to be. */
-  max-width: 480px;
+  /* On par with a game card on the O'yin hub grid (~480px there) - a
+     stacked, centered dialog reads full at a touch narrower than that,
+     unlike the old wide left-aligned icon+text row. */
+  max-width: 440px;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 20px;
-  box-shadow: var(--card-shadow);
-  padding: 22px 26px;
+  border-radius: 24px;
+  /* A visible lift, not just the flat default card shadow - this now
+     reads as a genuine centered prompt, not an oversized list row. */
+  box-shadow: 0 24px 60px rgba(20, 20, 43, 0.16), var(--card-shadow);
+  padding: 34px 30px 28px;
   animation: kod-invite-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -469,27 +473,45 @@ body {
   }
 }
 
-.kod-invite-body {
-  flex: 1;
-  min-width: 0;
+/* Same gradient-glow treatment as .game-icon-badge (the O'yin hub's own
+   "start" buttons) - branded to the app's accent instead of the muted
+   notification-list green, since this card is a single focused prompt,
+   not one color-coded item among several feed types. */
+.kod-invite-icon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--accent), #8b7ef0);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.32);
+  margin-bottom: 18px;
+}
+
+.kod-invite-body h3 {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
 }
 
 .kod-invite-body p {
   margin: 0;
-  font-size: 1.02rem;
+  font-size: 0.98rem;
   line-height: 1.55;
+  color: var(--text-secondary);
 }
 
 .kod-invite-actions {
   display: flex;
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 24px;
+  width: 100%;
 }
 
-.kod-invite-card .notif-card-icon {
-  width: 54px;
-  height: 54px;
-  min-width: 54px;
+.kod-invite-actions .pill-btn {
+  flex: 1;
+  justify-content: center;
 }
 
 .modal-box {
