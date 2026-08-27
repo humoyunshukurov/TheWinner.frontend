@@ -236,7 +236,7 @@ export default function KodOyinPage() {
           <div className="game-card">
             <div className="duel-spinner" />
             <h3>Kutish zali</h3>
-            <p className="muted">Boshlanishini kuting, xo'jayin (admin) o'yinni boshlaydi</p>
+            <p className="muted">Boshlanishini kuting, xo'jayin (o'qituvchi) o'yinni boshlaydi</p>
             <button className="pill-btn" onClick={leaveSession}>
               Chiqish
             </button>

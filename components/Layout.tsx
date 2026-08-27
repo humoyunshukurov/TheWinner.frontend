@@ -12,6 +12,7 @@ import ThemeToggle from './ThemeToggle';
 import LogoutButton from './LogoutButton';
 import LoginButton from './LoginButton';
 import NotificationBell from './NotificationBell';
+import KodInviteModal from './KodInviteModal';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 const TICK_MS = 20000;
@@ -154,6 +155,7 @@ export default function Layout({
 
   return (
     <main className={`shell ${collapsed ? 'sidebar-collapsed' : ''}`}>
+      <KodInviteModal />
       <aside className="sidebar">
         <div className="brand">
           <div className="brand-icon">N</div>
