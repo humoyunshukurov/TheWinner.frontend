@@ -172,9 +172,9 @@ export default function Layout({
         </nav>
 
         <div className="sidebar-footer">
-          <Link href="/about" className="about-me-link">
+          <a href="https://partfolio-black.vercel.app/" target="_blank" rel="noopener noreferrer" className="about-me-link">
             About me
-          </Link>
+          </a>
         </div>
       </aside>
 
