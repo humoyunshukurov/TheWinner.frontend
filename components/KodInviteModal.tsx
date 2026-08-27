@@ -26,11 +26,11 @@ type KodInvite = {
 // PresenceCheckModal) ataylab boshqacha - u yerlar sahifani butunlay
 // bosib, qorong'ilashtiradi, bu esa har sahifaga kirganda shunga
 // duch kelavergani uchun juda halaqit bo'lib qoldi. Shu sabab bu yerda
-// yengil, bildirishnoma (toast) ko'rinishida: fon shunchaki sal
-// hiralashadi (butunlay qorong'ilashmaydi va bosishni to'sib qo'ymaydi -
-// pointer-events faqat kartaning o'zida), xabar va Ha/Yo'q tugmalari esa
-// oʻng yuqori burchakda alohida karta sifatida aniq va toʻliq koʻrinib
-// turadi.
+// yengil ko'rinishda: fon shunchaki sal hiralashadi (butunlay
+// qorong'ilashmaydi va bosishni to'sib qo'ymaydi - pointer-events faqat
+// kartaning o'zida), xabar va Ha/Yo'q tugmalari esa ekran markazida,
+// o'yin kartalari bilan taqqoslanadigan kattalikda aniq va to'liq
+// ko'rinib turadi.
 export default function KodInviteModal() {
   const router = useRouter();
   const [invite, setInvite] = useState<KodInvite | null>(null);
@@ -84,7 +84,7 @@ export default function KodInviteModal() {
     <div className="kod-invite-wrap">
       <div className="kod-invite-card">
         <div className="notif-card-icon invite">
-          <IconPlay size={20} />
+          <IconPlay size={24} />
         </div>
         <div className="kod-invite-body">
           <p>

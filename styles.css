@@ -418,12 +418,16 @@ body {
   inset: 0;
   z-index: 90;
   pointer-events: none;
-  background: rgba(10, 8, 25, 0.06);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  /* Dialed back from blur(2px)/6% - that read as the whole page going
+     hazy, not the light "sal hiralashadi" touch described in the note
+     below. Barely-there now: just enough to separate the card from the
+     page behind it. */
+  background: rgba(10, 8, 25, 0.03);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
   animation: kod-invite-fade 0.25s ease both;
 }
@@ -440,15 +444,17 @@ body {
 .kod-invite-card {
   pointer-events: auto;
   display: flex;
-  gap: 14px;
+  gap: 18px;
   align-items: flex-start;
   width: 100%;
-  max-width: 380px;
+  /* Roughly on par with a game card on the O'yin hub grid (~480px per
+     card there), not the small corner-toast size this used to be. */
+  max-width: 480px;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 18px;
+  border-radius: 20px;
   box-shadow: var(--card-shadow);
-  padding: 16px 18px;
+  padding: 22px 26px;
   animation: kod-invite-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -470,14 +476,20 @@ body {
 
 .kod-invite-body p {
   margin: 0;
-  font-size: 0.92rem;
-  line-height: 1.5;
+  font-size: 1.02rem;
+  line-height: 1.55;
 }
 
 .kod-invite-actions {
   display: flex;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.kod-invite-card .notif-card-icon {
+  width: 54px;
+  height: 54px;
+  min-width: 54px;
 }
 
 .modal-box {
