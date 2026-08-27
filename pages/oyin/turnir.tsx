@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/Layout';
 import Bracket from '../../components/Bracket';
+import Avatar from '../../components/Avatar';
 import TournamentBanner from '../../components/TournamentBanner';
 import TournamentCountdown from '../../components/TournamentCountdown';
 import PresenceCheckModal from '../../components/PresenceCheckModal';
 import QuestionPrompt from '../../components/QuestionPrompt';
-import { IconTrophy, IconUsers, IconClock } from '../../components/icons';
+import { IconTrophy, IconClock } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
 import { useRequireAccess } from '../../lib/useRequireAccess';
 import { burstSideConfetti } from '../../lib/confetti';
@@ -260,15 +261,19 @@ export default function TurnirPage() {
               <span className="select-chip">{state.participants.length} kishi</span>
             </div>
 
-            <ul className="facts-list" style={{ marginBottom: 18 }}>
-              {state.participants.map((p) => (
-                <li key={p.guestId}>
-                  <IconUsers size={16} /> {p.name}
-                  {p.guestId === guestId ? ' (siz)' : ''}
-                </li>
+            <div className="duel-wait-list" style={{ marginBottom: 18 }}>
+              {state.participants.map((p, i) => (
+                <div key={p.guestId} className={`duel-wait-row ${p.guestId === guestId ? 'me' : ''}`}>
+                  <span className="duel-wait-number">{i + 1}</span>
+                  <Avatar photo={p.photo} size={36} />
+                  <span className="duel-wait-name">
+                    {p.name}
+                    {p.guestId === guestId ? ' (siz)' : ''}
+                  </span>
+                </div>
               ))}
               {state.participants.length === 0 && <p className="muted">Hali hech kim qo'shilmadi</p>}
-            </ul>
+            </div>
 
             {!state.joined ? (
               <button className="pill-btn primary" onClick={join}>

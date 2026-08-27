@@ -4,6 +4,7 @@ import DuelGame from '../components/DuelGame';
 import TournamentBanner from '../components/TournamentBanner';
 import KodBanner from '../components/KodBanner';
 import MarafonBanner from '../components/MarafonBanner';
+import StarBadge from '../components/StarBadge';
 import { useMyGroup } from '../lib/useMyGroup';
 
 export default function OyinHubPage() {
@@ -17,6 +18,7 @@ export default function OyinHubPage() {
     <Layout title="O'yinlar">
       <div className={duelActive ? 'duel-stage' : 'mode-grid'}>
         <div className={duelActive ? 'duel-stage-inner' : 'mode-card mode-card-battle'}>
+          {!duelActive && <StarBadge size={30} className="mode-card-star" />}
           <DuelGame compact={!duelActive} onPhaseChange={(phase) => setDuelActive(phase !== 'idle')} />
         </div>
 
@@ -24,15 +26,18 @@ export default function OyinHubPage() {
           <>
             {loaded && hasGroup && (
               <div className="mode-card mode-card-battle">
+                <StarBadge size={30} className="mode-card-star" />
                 <KodBanner compact href="/oyin/kod" />
               </div>
             )}
 
             <div className="mode-card mode-card-battle">
+              <StarBadge size={30} className="mode-card-star" />
               <TournamentBanner compact href="/oyin/turnir" />
             </div>
 
             <div className="mode-card mode-card-battle">
+              <StarBadge size={30} className="mode-card-star" />
               <MarafonBanner compact href="/oyin/marafon" />
             </div>
           </>

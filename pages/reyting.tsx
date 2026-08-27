@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import GroupRaceChart from '../components/GroupRaceChart';
 import Avatar from '../components/Avatar';
 import CrownBadge from '../components/CrownBadge';
+import StarBadge from '../components/StarBadge';
 import { getGuest } from '../lib/guest';
 import { loadProfilePhoto } from '../lib/profile';
 
@@ -112,7 +113,12 @@ export default function ReytingPage() {
                         <tr key={member.guestId} className={isMe ? 'me-row' : ''}>
                           <td>
                             <span className="rank-badge-wrap">
-                              {member.rank === 1 && member.points > 0 && <CrownBadge size={20} className="rank-crown" />}
+                              {member.rank === 1 && member.points > 0 && (
+                                <>
+                                  <CrownBadge size={20} className="rank-crown" />
+                                  <StarBadge size={22} className="rank-star" />
+                                </>
+                              )}
                               <span className={rankBadgeClass(member.rank)}>{member.rank}</span>
                             </span>
                           </td>
@@ -234,7 +240,12 @@ export default function ReytingPage() {
                         <tr key={player.guestId} className={isMe ? 'me-row' : ''}>
                           <td>
                             <span className="rank-badge-wrap">
-                              {player.rank === 1 && player.hp > 0 && <CrownBadge size={20} className="rank-crown" />}
+                              {player.rank === 1 && player.hp > 0 && (
+                                <>
+                                  <CrownBadge size={20} className="rank-crown" />
+                                  <StarBadge size={22} className="rank-star" />
+                                </>
+                              )}
                               <span className={rankBadgeClass(player.rank)}>{player.rank}</span>
                             </span>
                           </td>

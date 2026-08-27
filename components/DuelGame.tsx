@@ -431,7 +431,7 @@ const DuelGame = forwardRef<DuelGameHandle, { compact?: boolean; onPhaseChange?:
                 </div>
                 <div className="duel-wait-row">
                   <span className="duel-wait-number">2</span>
-                  <Avatar photo={null} size={40} />
+                  <Avatar photo={duel.opponent.photo} size={40} />
                   <span className="duel-wait-name">{duel.opponent.name}</span>
                 </div>
               </div>
