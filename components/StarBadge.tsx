@@ -1,8 +1,11 @@
 import { useEffect, useRef } from 'react';
 
 // Continuous decorative flourish (unlike CrownBadge's one-shot pop-in) -
-// next to a group/global leaderboard's #1 entry, and on every O'yin hub
-// game card so the whole page reads as a bit more alive.
+// marks a group's top scorer on the Reyting page: always rank 1 on the
+// group-scoped table, but on the global "Barcha o'yinchilar" table it can
+// land on any row (one per group) alongside whichever player has that
+// group's highest XP - independent of the crown, which only ever marks
+// the single overall #1.
 export default function StarBadge({ size = 32, className = '' }: { size?: number; className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<any>(null);

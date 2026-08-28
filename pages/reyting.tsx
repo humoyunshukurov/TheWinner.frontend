@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Layout from '../components/Layout';
 import GroupRaceChart from '../components/GroupRaceChart';
@@ -53,6 +53,29 @@ export default function ReytingPage() {
       .then(setGroupsHistory)
       .catch(() => {});
   }, [range]);
+
+  // On the global "Barcha o'yinchilar" board, the star marks each group's
+  // own top scorer - not just the overall #1 (that's what the crown is
+  // for). So there's one star per group, scattered across whatever ranks
+  // those students land at, and a student who's both their group's leader
+  // AND the overall #1 rightfully gets crown + star together. Ties for a
+  // group's top XP all get a star rather than picking one arbitrarily.
+  const groupLeaderIds = useMemo(() => {
+    if (!allBoard) return new Set<string>();
+    const bestByGroup = new Map<string, number>();
+    for (const player of allBoard) {
+      if (!player.group || player.hp <= 0) continue;
+      const best = bestByGroup.get(player.group);
+      if (best === undefined || player.hp > best) bestByGroup.set(player.group, player.hp);
+    }
+    const leaders = new Set<string>();
+    for (const player of allBoard) {
+      if (player.group && player.hp > 0 && player.hp === bestByGroup.get(player.group)) {
+        leaders.add(player.guestId);
+      }
+    }
+    return leaders;
+  }, [allBoard]);
 
   return (
     <Layout title="Reyting">
@@ -116,7 +139,7 @@ export default function ReytingPage() {
                               {member.rank === 1 && member.points > 0 && (
                                 <>
                                   <CrownBadge size={20} className="rank-crown" />
-                                  <StarBadge size={22} className="rank-star" />
+                                  <StarBadge size={32} className="rank-star" />
                                 </>
                               )}
                               <span className={rankBadgeClass(member.rank)}>{member.rank}</span>
@@ -240,12 +263,8 @@ export default function ReytingPage() {
                         <tr key={player.guestId} className={isMe ? 'me-row' : ''}>
                           <td>
                             <span className="rank-badge-wrap">
-                              {player.rank === 1 && player.hp > 0 && (
-                                <>
-                                  <CrownBadge size={20} className="rank-crown" />
-                                  <StarBadge size={22} className="rank-star" />
-                                </>
-                              )}
+                              {player.rank === 1 && player.hp > 0 && <CrownBadge size={20} className="rank-crown" />}
+                              {groupLeaderIds.has(player.guestId) && <StarBadge size={32} className="rank-star" />}
                               <span className={rankBadgeClass(player.rank)}>{player.rank}</span>
                             </span>
                           </td>

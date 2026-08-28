@@ -40,7 +40,7 @@ export default function BattleBanner({ onPlay, compact }: { onPlay: () => void; 
       {onPlay && (
         <div className="battle-banner-footer">
           <button type="button" className="battle-cta" onClick={onPlay}>
-            <IconBolt /> O'ynash
+            <IconBolt /> Kirish
           </button>
         </div>
       )}
