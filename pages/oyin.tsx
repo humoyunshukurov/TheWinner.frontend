@@ -19,7 +19,11 @@ export default function OyinHubPage() {
       <div className={duelActive ? 'duel-stage' : 'mode-grid'}>
         <div className={duelActive ? 'duel-stage-inner' : 'mode-card mode-card-battle'}>
           {!duelActive && <StarBadge size={30} className="mode-card-star" />}
-          <DuelGame compact={!duelActive} onPhaseChange={(phase) => setDuelActive(phase !== 'idle')} />
+          <DuelGame
+            compact={!duelActive}
+            resumeFinished={false}
+            onPhaseChange={(phase) => setDuelActive(phase !== 'idle')}
+          />
         </div>
 
         {!duelActive && (

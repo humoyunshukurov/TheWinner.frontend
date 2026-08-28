@@ -159,14 +159,41 @@ body::before {
   transition: grid-template-columns 0.2s ease;
 }
 
+/* Collapsed shrinks the sidebar down to an icon-only rail rather than
+   hiding it outright - a page's icon is still how you'd recognize and
+   jump to it at a glance, so losing every icon along with the labels
+   just to save width was the actual bug here. */
 .shell.sidebar-collapsed {
-  grid-template-columns: 0px 1fr;
+  grid-template-columns: 84px 1fr;
 }
 
 .shell.sidebar-collapsed .sidebar {
-  padding-left: 0;
-  padding-right: 0;
-  border-right: none;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.shell.sidebar-collapsed .brand {
+  justify-content: center;
+  padding: 0;
+}
+
+.shell.sidebar-collapsed .brand h1 {
+  display: none;
+}
+
+.shell.sidebar-collapsed .nav-links a {
+  justify-content: center;
+  padding: 12px;
+}
+
+.shell.sidebar-collapsed .nav-links a span {
+  display: none;
+}
+
+/* The footer link is text-only (no icon of its own) - nothing sensible
+   to show in an icon-only rail, so it just steps aside while collapsed. */
+.shell.sidebar-collapsed .sidebar-footer {
+  display: none;
 }
 
 @media (min-width: 1240px) {

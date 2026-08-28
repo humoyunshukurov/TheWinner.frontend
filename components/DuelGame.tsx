@@ -28,8 +28,11 @@ export interface DuelGameHandle {
   forfeit: () => Promise<void>;
 }
 
-const DuelGame = forwardRef<DuelGameHandle, { compact?: boolean; onPhaseChange?: (phase: string) => void }>(
-  function DuelGame({ compact, onPhaseChange }, ref) {
+const DuelGame = forwardRef<
+  DuelGameHandle,
+  { compact?: boolean; resumeFinished?: boolean; onPhaseChange?: (phase: string) => void }
+>(
+  function DuelGame({ compact, resumeFinished = true, onPhaseChange }, ref) {
     const [phase, setPhase] = useState('idle');
     const [duel, setDuel] = useState(null);
     const [answers, setAnswers] = useState([]);
@@ -155,12 +158,14 @@ const DuelGame = forwardRef<DuelGameHandle, { compact?: boolean; onPhaseChange?:
             // Only worth resuming into if it JUST happened (e.g. a quick
             // refresh right after the match ended) - otherwise this would
             // resurface an old, already-seen result every single time this
-            // component mounts, including on the /oyin hub where it's
-            // embedded too, hijacking it back to a stale win/loss screen
-            // instead of letting the player move on to something else.
+            // component mounts. And on the /oyin hub specifically, callers
+            // pass resumeFinished={false}: leaving the hub for the home
+            // page or another section and coming back should always land
+            // back on the mode grid, never hijack it back to the win/loss
+            // screen the player already saw and moved past.
             const finishedAt = data.result?.finishedAt;
             const isFresh = finishedAt && Date.now() - finishedAt < RESUME_FINISHED_WINDOW_MS;
-            if (isFresh) {
+            if (resumeFinished && isFresh) {
               setResult(data.result);
               setReward(data.reward);
               setPhase('finished');
