@@ -307,6 +307,12 @@ body::before {
   padding: 28px 32px 40px;
   display: flex;
   flex-direction: column;
+  /* A grid item's default min-width is auto, not 0 - without this it
+     won't shrink below its content's natural width (the topbar's action
+     icons in particular), so it can grow past its 1fr track and take
+     the whole page wider with it. Same fix admin_frontend needed once
+     its topbar grew a few more icons than it had room for. */
+  min-width: 0;
 }
 
 .topbar {
@@ -3474,6 +3480,16 @@ body::before {
     font-size: 0.65rem;
     font-weight: 600;
     text-align: center;
+  }
+
+  /* Truncation on the label itself, not the flex row - a flex
+     container's own overflow/text-overflow doesn't reliably clip a
+     flex-item child's text (harmless here since every current label is
+     short enough to fit either way, but the admin app just hit this
+     exact gap with longer labels - matching the fix here too). */
+  .bottom-nav a span {
+    display: block;
+    max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

@@ -485,6 +485,18 @@ export default function SozlamalarPage() {
         {feedbackError && <p className="profile-photo-error">{feedbackError}</p>}
       </article>
 
+      {/* Sidebar's "About me" footer link isn't reachable on mobile (the
+          whole sidebar hides below 640px in favor of the bottom nav) -
+          this is that same link's only way onto a phone. */}
+      <article className="card" style={{ marginTop: 18 }}>
+        <div className="card-header">
+          <h3>Dastur haqida</h3>
+        </div>
+        <a href="https://partfolio-black.vercel.app/" target="_blank" rel="noopener noreferrer" className="about-me-link">
+          About me
+        </a>
+      </article>
+
       {editingProfile && renameError && (
         <p className="muted" style={{ color: 'var(--critical)', marginTop: 16, marginBottom: 0 }}>
           {renameError}
