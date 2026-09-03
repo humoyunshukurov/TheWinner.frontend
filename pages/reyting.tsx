@@ -5,6 +5,7 @@ import GroupRaceChart from '../components/GroupRaceChart';
 import Avatar from '../components/Avatar';
 import CrownBadge from '../components/CrownBadge';
 import StarBadge from '../components/StarBadge';
+import PlayerProfileModal, { type PlayerSummary } from '../components/PlayerProfileModal';
 import { getGuest } from '../lib/guest';
 import { loadProfilePhoto } from '../lib/profile';
 
@@ -26,6 +27,10 @@ const RANGE_OPTIONS = [
 
 const GROUPS_PAGE_SIZE = 5;
 const ALL_PAGE_SIZE = 8;
+// Mirrors backend's RANK_TIERS - the 'diamond' tier (labeled "Chempion"
+// there) starts at 1000 HP with no upper bound. Kept in sync by hand
+// since there's no shared-package boundary between the two apps here.
+const CHAMPION_TIER_MIN_HP = 1000;
 
 export default function ReytingPage() {
   const [groupBoard, setGroupBoard] = useState(null);
@@ -37,6 +42,7 @@ export default function ReytingPage() {
   const [allPage, setAllPage] = useState(0);
   const [myPhoto, setMyPhoto] = useState(null);
   const [myGuestId, setMyGuestId] = useState(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<PlayerSummary | null>(null);
 
   useEffect(() => {
     const { guestId } = getGuest();
@@ -60,6 +66,9 @@ export default function ReytingPage() {
   // those students land at, and a student who's both their group's leader
   // AND the overall #1 rightfully gets crown + star together. Ties for a
   // group's top XP all get a star rather than picking one arbitrarily.
+  // Being the top scorer alone isn't enough, though - they also have to
+  // have actually reached Chempion (diamond) tier themselves. A group
+  // whose best student is still Boshlang'ich/O'rta/etc. has no star yet.
   const groupLeaderIds = useMemo(() => {
     if (!allBoard) return new Set<string>();
     const bestByGroup = new Map<string, number>();
@@ -70,7 +79,11 @@ export default function ReytingPage() {
     }
     const leaders = new Set<string>();
     for (const player of allBoard) {
-      if (player.group && player.hp > 0 && player.hp === bestByGroup.get(player.group)) {
+      if (
+        player.group &&
+        player.hp >= CHAMPION_TIER_MIN_HP &&
+        player.hp === bestByGroup.get(player.group)
+      ) {
         leaders.add(player.guestId);
       }
     }
@@ -133,14 +146,25 @@ export default function ReytingPage() {
                     {groupBoard.members.map((member) => {
                       const isMe = member.guestId === myGuestId;
                       return (
-                        <tr key={member.guestId} className={isMe ? 'me-row' : ''}>
+                        <tr
+                          key={member.guestId}
+                          className={`clickable-row ${isMe ? 'me-row' : ''}`}
+                          onClick={() =>
+                            setSelectedPlayer({
+                              guestId: member.guestId,
+                              name: isMe ? `${member.name} (siz)` : member.name,
+                              group: groupBoard.group,
+                              photo: isMe ? myPhoto : member.photo
+                            })
+                          }
+                        >
                           <td>
                             <span className="rank-badge-wrap">
                               {member.rank === 1 && member.points > 0 && (
-                                <>
-                                  <CrownBadge size={20} className="rank-crown" />
-                                  <StarBadge size={32} className="rank-star" />
-                                </>
+                                <CrownBadge size={20} className="rank-crown" />
+                              )}
+                              {member.rank === 1 && member.points >= CHAMPION_TIER_MIN_HP && (
+                                <StarBadge size={32} className="rank-star" />
                               )}
                               <span className={rankBadgeClass(member.rank)}>{member.rank}</span>
                             </span>
@@ -260,7 +284,18 @@ export default function ReytingPage() {
                     .map((player) => {
                       const isMe = player.guestId === myGuestId;
                       return (
-                        <tr key={player.guestId} className={isMe ? 'me-row' : ''}>
+                        <tr
+                          key={player.guestId}
+                          className={`clickable-row ${isMe ? 'me-row' : ''}`}
+                          onClick={() =>
+                            setSelectedPlayer({
+                              guestId: player.guestId,
+                              name: isMe ? `${player.name} (siz)` : player.name,
+                              group: player.group,
+                              photo: isMe ? myPhoto : player.photo
+                            })
+                          }
+                        >
                           <td>
                             <span className="rank-badge-wrap">
                               {player.rank === 1 && player.hp > 0 && <CrownBadge size={20} className="rank-crown" />}
@@ -314,6 +349,10 @@ export default function ReytingPage() {
           </>
         )}
       </article>
+
+      {selectedPlayer && (
+        <PlayerProfileModal player={selectedPlayer} onClose={() => setSelectedPlayer(null)} />
+      )}
     </Layout>
   );
 }
