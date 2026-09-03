@@ -1602,6 +1602,71 @@ body::before {
   transition: width 0.25s ease;
 }
 
+/* Two-lane race track: your avatar and your opponent's both slide along
+   their own line as you each move through the questions, with a shared
+   number scale underneath so it's obvious at a glance who's ahead. */
+.q-tracker {
+  margin-bottom: 22px;
+}
+
+.q-tracker-lane {
+  height: 30px;
+}
+
+.q-tracker-lane + .q-tracker-lane {
+  margin-top: 2px;
+}
+
+.q-tracker-inner {
+  position: relative;
+  height: 100%;
+  margin: 0 15px;
+}
+
+.q-tracker-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--card-border);
+  transform: translateY(-50%);
+}
+
+.q-tracker-avatar {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: left 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
+  line-height: 0;
+}
+
+.q-tracker-avatar .avatar-circle {
+  box-shadow: 0 2px 6px rgba(20, 20, 43, 0.2);
+}
+
+.q-tracker-avatar.mine .avatar-circle {
+  box-shadow: 0 0 0 2px var(--accent), 0 2px 6px rgba(20, 20, 43, 0.2);
+}
+
+.q-tracker-avatar.opp .avatar-circle {
+  box-shadow: 0 0 0 2px var(--good), 0 2px 6px rgba(20, 20, 43, 0.2);
+}
+
+.q-tracker-numbers {
+  display: grid;
+  margin: 4px 15px 0;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.q-tracker-numbers span {
+  text-align: center;
+}
+
 .question-block {
   margin-bottom: 22px;
 }

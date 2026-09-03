@@ -6,8 +6,10 @@ import TournamentBanner from '../../components/TournamentBanner';
 import TournamentCountdown from '../../components/TournamentCountdown';
 import PresenceCheckModal from '../../components/PresenceCheckModal';
 import QuestionPrompt from '../../components/QuestionPrompt';
+import QuestionTracker from '../../components/QuestionTracker';
 import { IconTrophy, IconClock } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
+import { loadProfilePhoto } from '../../lib/profile';
 import { useRequireAccess } from '../../lib/useRequireAccess';
 import { burstSideConfetti } from '../../lib/confetti';
 
@@ -41,6 +43,7 @@ export default function TurnirPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(QUESTION_SECONDS);
   const [submittedMatchId, setSubmittedMatchId] = useState(null);
+  const [myPhoto, setMyPhoto] = useState(null);
   // Two unanswered questions in a row (timer ran out with nothing
   // selected) pauses the round and asks this player specifically whether
   // they're still there - never shown to their opponent.
@@ -51,10 +54,25 @@ export default function TurnirPage() {
 
   useEffect(() => {
     guestRef.current = getGuest();
+    setMyPhoto(loadProfilePhoto(guestRef.current.guestId));
     poll();
     const interval = setInterval(poll, 1500);
     return () => clearInterval(interval);
   }, []);
+
+  // Same fire-and-forget progress ping as the 1vs1 duel - the opponent's
+  // side of the tracker below is already covered for free by the
+  // always-running poll() above, which already returns opponent.currentIndex
+  // as part of the normal 'match' status response.
+  useEffect(() => {
+    if (state?.status !== 'match' || !state?.matchId) return;
+    const { guestId } = guestRef.current;
+    fetch(`${API_URL}/tournament/match/${state.matchId}/progress`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guestId, questionIndex: currentIndex })
+    }).catch(() => {});
+  }, [currentIndex, state?.status, state?.matchId]);
 
   useEffect(() => {
     if (state?.status !== 'match') return;
@@ -320,12 +338,13 @@ export default function TurnirPage() {
               <IconClock /> {timeLeft}s
             </span>
           </div>
-          <div className="test-progress-bar">
-            <div
-              className="test-progress-fill"
-              style={{ width: `${((currentIndex + 1) / state.questions.length) * 100}%` }}
-            />
-          </div>
+          <QuestionTracker
+            total={state.questions.length}
+            mePhoto={myPhoto}
+            meIndex={currentIndex}
+            oppPhoto={state.opponent.photo}
+            oppIndex={state.opponent.currentIndex ?? 0}
+          />
 
           <div className="question-block">
             <QuestionPrompt number={currentIndex + 1} text={question.text} image={question.image} />

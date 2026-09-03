@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import BattleBanner from './BattleBanner';
 import Avatar from './Avatar';
 import QuestionPrompt from './QuestionPrompt';
+import QuestionTracker from './QuestionTracker';
 import PresenceCheckModal from './PresenceCheckModal';
 import { IconSwords, IconClock } from './icons';
 import { getGuest } from '../lib/guest';
@@ -42,6 +43,10 @@ const DuelGame = forwardRef<
     const [reward, setReward] = useState(null);
     const [myPhoto, setMyPhoto] = useState(null);
     const [iAmReady, setIAmReady] = useState(false);
+    // Opponent's live question position for the tracker - purely
+    // cosmetic, refreshed by polling while playing (see the effect
+    // below); never used for anything scoring-related.
+    const [opponentIndex, setOpponentIndex] = useState(0);
     // Two unanswered questions in a row (timer ran out with nothing
     // selected) pauses the match and asks this player specifically
     // whether they're still there - never shown to the opponent, who's
@@ -50,6 +55,7 @@ const DuelGame = forwardRef<
     const [presenceSecondsLeft, setPresenceSecondsLeft] = useState(PRESENCE_CHECK_SECONDS);
 
     const pollRef = useRef(null);
+    const progressPollRef = useRef(null);
     const startTimeRef = useRef(null);
     const guestRef = useRef({ guestId: '', name: '' });
     const duelRef = useRef(null);
@@ -79,6 +85,38 @@ const DuelGame = forwardRef<
       if (phase !== 'playing') return;
       setTimeLeft(QUESTION_SECONDS);
     }, [currentIndex, phase]);
+
+    // Tells the server which question this side just moved to - fire and
+    // forget, purely so the opponent's tracker (below) has something to
+    // poll for. Never affects scoring, which still only happens at submit.
+    useEffect(() => {
+      if (phase !== 'playing' || !duel) return;
+      const { guestId } = guestRef.current;
+      fetch(`${API_URL}/duel/${(duel as any).duelId}/progress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ guestId, questionIndex: currentIndex })
+      }).catch(() => {});
+    }, [currentIndex, phase, duel]);
+
+    // The other half of the tracker - polls for the opponent's own
+    // progress ping while actively playing, stops the moment this side
+    // leaves 'playing' (submits, forfeits, or the component unmounts).
+    useEffect(() => {
+      if (phase !== 'playing' || !duel) return;
+      function poll() {
+        const { guestId } = guestRef.current;
+        fetch(`${API_URL}/duel/${(duel as any).duelId}/state?guestId=${guestId}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.opponent) setOpponentIndex(data.opponent.currentIndex ?? 0);
+          })
+          .catch(() => {});
+      }
+      poll();
+      progressPollRef.current = setInterval(poll, 1500);
+      return () => clearInterval(progressPollRef.current);
+    }, [phase, duel]);
 
     useEffect(() => {
       if (phase !== 'playing' || !duel || presenceCheck) return;
@@ -232,6 +270,7 @@ const DuelGame = forwardRef<
       setDuel(data);
       setAnswers(new Array(data.questions.length).fill(null));
       setIAmReady(false);
+      setOpponentIndex(0);
       setPhase('matched');
     }
 
@@ -470,12 +509,13 @@ const DuelGame = forwardRef<
                 <IconClock /> {timeLeft}s
               </span>
             </div>
-            <div className="test-progress-bar">
-              <div
-                className="test-progress-fill"
-                style={{ width: `${((currentIndex + 1) / duel.questions.length) * 100}%` }}
-              />
-            </div>
+            <QuestionTracker
+              total={duel.questions.length}
+              mePhoto={myPhoto}
+              meIndex={currentIndex}
+              oppPhoto={duel.opponent.photo}
+              oppIndex={opponentIndex}
+            />
 
             <div className="question-block">
               <QuestionPrompt number={currentIndex + 1} text={question.text} image={question.image} />
