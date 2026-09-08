@@ -3,6 +3,7 @@ import BattleBanner from './BattleBanner';
 import Avatar from './Avatar';
 import QuestionPrompt from './QuestionPrompt';
 import QuestionTracker from './QuestionTracker';
+import SearchingIcon from './SearchingIcon';
 import PresenceCheckModal from './PresenceCheckModal';
 import { IconSwords, IconClock } from './icons';
 import { getGuest } from '../lib/guest';
@@ -440,6 +441,7 @@ const DuelGame = forwardRef<
           <div className="game-hero">
             <div className="game-card duel-wait-card">
               <h3>Jangni kutish</h3>
+              <SearchingIcon />
               <div className="duel-wait-list">
                 <div className="duel-wait-row me">
                   <span className="duel-wait-number">1</span>

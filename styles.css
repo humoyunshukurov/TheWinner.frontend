@@ -2820,6 +2820,16 @@ body::before {
   max-width: 380px;
 }
 
+/* 20% of the actual viewport (vmin, not the card it sits in) in both
+   dimensions, so it reads the same size whether it's dropped into the
+   1vs1 search card or the Turnir waiting room, regardless of how wide
+   either card happens to be. */
+.searching-icon {
+  width: 20vmin;
+  height: 20vmin;
+  margin: 0 auto 14px;
+}
+
 .duel-wait-list {
   display: flex;
   flex-direction: column;

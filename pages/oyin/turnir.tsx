@@ -7,6 +7,7 @@ import TournamentCountdown from '../../components/TournamentCountdown';
 import PresenceCheckModal from '../../components/PresenceCheckModal';
 import QuestionPrompt from '../../components/QuestionPrompt';
 import QuestionTracker from '../../components/QuestionTracker';
+import SearchingIcon from '../../components/SearchingIcon';
 import { IconTrophy, IconClock } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
 import { loadProfilePhoto } from '../../lib/profile';
@@ -278,6 +279,8 @@ export default function TurnirPage() {
               <h3>Kutish zali</h3>
               <span className="select-chip">{state.participants.length} kishi</span>
             </div>
+
+            <SearchingIcon />
 
             <div className="duel-wait-list" style={{ marginBottom: 18 }}>
               {state.participants.map((p, i) => (
