@@ -2868,6 +2868,10 @@ body::before {
   min-width: 14px;
 }
 
+.duel-wait-star {
+  flex-shrink: 0;
+}
+
 .duel-wait-name {
   flex: 1;
   min-width: 0;

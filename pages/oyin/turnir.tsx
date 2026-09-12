@@ -8,6 +8,7 @@ import PresenceCheckModal from '../../components/PresenceCheckModal';
 import QuestionPrompt from '../../components/QuestionPrompt';
 import QuestionTracker from '../../components/QuestionTracker';
 import SearchingIcon from '../../components/SearchingIcon';
+import StarBadge from '../../components/StarBadge';
 import { IconTrophy, IconClock } from '../../components/icons';
 import { getGuest } from '../../lib/guest';
 import { loadProfilePhoto } from '../../lib/profile';
@@ -170,6 +171,19 @@ export default function TurnirPage() {
     }).then(poll);
   }
 
+  // Backing out of the waiting room before the tournament actually
+  // launches - stays available even once the join countdown is ticking
+  // (not just while still waiting on a 2nd player), since the tournament
+  // hasn't launched yet either way.
+  function leaveLobby() {
+    const { guestId } = guestRef.current;
+    fetch(`${API_URL}/tournament/leave`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guestId })
+    }).then(poll);
+  }
+
   function selectAnswer(qIndex, oIndex) {
     setAnswers((prev) => prev.map((value, i) => (i === qIndex ? oIndex : value)));
   }
@@ -291,6 +305,7 @@ export default function TurnirPage() {
                     {p.name}
                     {p.guestId === guestId ? ' (siz)' : ''}
                   </span>
+                  {p.isGroupChampion && <StarBadge size={32} className="duel-wait-star" />}
                 </div>
               ))}
               {state.participants.length === 0 && <p className="muted">Hali hech kim qo'shilmadi</p>}
@@ -300,12 +315,24 @@ export default function TurnirPage() {
               <button className="pill-btn primary" onClick={join}>
                 Turnirga qo'shilish
               </button>
-            ) : state.autoStartAt ? (
-              <TournamentCountdown autoStartAt={state.autoStartAt} />
             ) : (
-              <p className="muted" style={{ textAlign: 'center' }}>
-                Kamida 2 kishi kerak - yana ishtirokchi kutilmoqda...
-              </p>
+              <>
+                {state.autoStartAt ? (
+                  <TournamentCountdown autoStartAt={state.autoStartAt} />
+                ) : (
+                  <p className="muted" style={{ textAlign: 'center' }}>
+                    Kamida 2 kishi kerak - yana ishtirokchi kutilmoqda...
+                  </p>
+                )}
+                <button
+                  type="button"
+                  className="pill-btn"
+                  onClick={leaveLobby}
+                  style={{ marginTop: 14, width: '100%', justifyContent: 'center' }}
+                >
+                  Bekor qilish
+                </button>
+              </>
             )}
           </article>
         </>
