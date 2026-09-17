@@ -2388,6 +2388,23 @@ body::before {
   background: transparent;
 }
 
+/* .mode-card-battle has no padding of its own - .battle-banner fills it
+   edge to edge, so translating THIS box on :hover (like every other
+   .mode-card) moved the exact box that :hover is measured against. With
+   the cursor anywhere near the top/bottom edge, that 5px shift could
+   walk the boundary out from under it, un-hovering, snapping back,
+   re-hovering - a jitter loop instead of a lift. Cancel the shared rule
+   here and move .battle-banner (a child, not what :hover is measured on)
+   instead - the hover box itself now never moves. */
+.mode-card-battle:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.mode-card-battle:hover .battle-banner {
+  transform: translateY(-5px);
+}
+
 .mode-icon {
   position: relative;
   overflow: hidden;
@@ -2474,6 +2491,7 @@ body::before {
   flex-direction: column;
   justify-content: space-between;
   color: #fff;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   background-image: linear-gradient(180deg, rgba(10, 8, 25, 0.4) 0%, rgba(30, 10, 35, 0.05) 35%, rgba(10, 8, 25, 0.15) 65%, rgba(10, 8, 25, 0.55) 100%),
     url('/images/battle-1vs1.jpg');
   background-size: cover;
