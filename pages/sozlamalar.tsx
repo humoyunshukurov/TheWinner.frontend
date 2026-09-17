@@ -487,8 +487,10 @@ export default function SozlamalarPage() {
 
       {/* Sidebar's "About me" footer link isn't reachable on mobile (the
           whole sidebar hides below 640px in favor of the bottom nav) -
-          this is that same link's only way onto a phone. */}
-      <article className="card" style={{ marginTop: 18 }}>
+          this is that same link's only way onto a phone. Hidden on
+          desktop (.mobile-only) since the sidebar already has it there -
+          showing it twice was just noise. */}
+      <article className="card mobile-only" style={{ marginTop: 18 }}>
         <div className="card-header">
           <h3>Dastur haqida</h3>
         </div>

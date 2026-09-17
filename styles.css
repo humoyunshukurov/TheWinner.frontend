@@ -665,6 +665,15 @@ body::before {
   padding: 14px 8px 4px;
 }
 
+/* Sozlamalar's "Dastur haqida" card exists only to give the sidebar's
+   own "About me" link somewhere to live once the sidebar itself hides
+   on mobile - on desktop, where the sidebar's still there, this is just
+   the same link twice. Hidden here, restored below 640px alongside the
+   rest of the mobile-only chrome (.bottom-nav etc). */
+.mobile-only {
+  display: none;
+}
+
 /* Fixed brand blue (not a --accent/theme token) so this reads the same
    recognizable way in both light and dark mode, same reasoning as the
    champion-card's fixed gold palette. */
@@ -3658,6 +3667,10 @@ body::before {
      sit uselessly in front of the page title. */
   .sidebar-toggle-btn {
     display: none;
+  }
+
+  .mobile-only {
+    display: block;
   }
 
   .bottom-nav {
