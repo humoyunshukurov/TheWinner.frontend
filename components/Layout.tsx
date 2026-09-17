@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { IconGrid, IconQuiz, IconPlay, IconTrophy, IconGear, IconShield, IconUsers, IconClock } from './icons';
@@ -155,6 +156,12 @@ export default function Layout({
 
   return (
     <main className={`shell ${collapsed ? 'sidebar-collapsed' : ''}`}>
+      <Head>
+        {/* Every page already passes `title` for the on-page <h2> heading -
+            reusing it here too so the browser tab isn't just blank, without
+            touching any individual page. */}
+        <title>{title ? `${title} · Najot Ta'lim` : "Najot Ta'lim"}</title>
+      </Head>
       <KodInviteModal />
       <aside className="sidebar">
         <div className="brand">
