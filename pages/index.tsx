@@ -12,9 +12,16 @@ export default function HomePage() {
   const [hpData, setHpData] = useState(null);
   const [groupName, setGroupName] = useState(undefined);
   const [groupMembersCount, setGroupMembersCount] = useState(null);
+  // getGuest() reads localStorage, which doesn't exist during SSR - set
+  // in an effect (not read straight in render, like the rest of this
+  // page's data) so the server's empty-string pass matches the client's
+  // first pass too, instead of a hydration mismatch once the real name
+  // shows up.
+  const [firstName, setFirstName] = useState('');
 
   useEffect(() => {
-    const { guestId } = getGuest();
+    const { guestId, name } = getGuest();
+    setFirstName(name?.split(' ')[0] || name);
     fetch(`${API_URL}/coins?guestId=${guestId}`).then((res) => res.json()).then((data) => setCoins(data.coins)).catch(() => {});
     fetch(`${API_URL}/hp?guestId=${guestId}`).then((res) => res.json()).then(setHpData).catch(() => {});
     fetch(`${API_URL}/groups/mine?guestId=${guestId}`)
@@ -31,6 +38,17 @@ export default function HomePage() {
 
   return (
     <Layout title="Bosh sahifa">
+      <section className="welcome-hero">
+        <div className="welcome-hero-glow" aria-hidden="true" />
+        <div className="welcome-hero-content">
+          <p className="welcome-hero-eyebrow">Xush kelibsiz</p>
+          <h2>Salom, {firstName}!</h2>
+          <p className="welcome-hero-sub">
+            Testlar yeching, o&apos;yinlarda raqobatlashing va guruhingiz bilan birga XP to&apos;plang.
+          </p>
+        </div>
+      </section>
+
       <UsageClock />
 
       <article className="card level-card" style={{ marginTop: 14 }}>

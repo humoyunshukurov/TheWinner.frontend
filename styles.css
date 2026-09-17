@@ -812,6 +812,60 @@ body::before {
   object-fit: cover;
 }
 
+/* Bosh sahifa'ning yuqorisidagi salomlashuv bannieri - ilova qanchalik
+   yaxshi ishlab chiqilgan bo'lsa ham, avval sahifa to'g'ridan-to'g'ri
+   statistika kartasiga sakrardi, iliq "xush kelibsiz" hissi yo'q edi.
+   Gradient + orqa fondagi yumshoq nur doirasi shu bo'shliqni to'ldiradi. */
+.welcome-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  padding: 28px 32px;
+  margin-top: 14px;
+  background: linear-gradient(135deg, var(--accent), #7c6cf6 65%, #a78bfa);
+  color: #fff;
+  box-shadow: 0 20px 45px -18px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.welcome-hero-glow {
+  position: absolute;
+  top: -70px;
+  right: -50px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+}
+
+.welcome-hero-content {
+  position: relative;
+  max-width: 520px;
+}
+
+.welcome-hero-eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.welcome-hero h2 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.welcome-hero-sub {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.86);
+}
+
 /* Stat cards */
 .stats-grid {
   display: grid;
@@ -3788,6 +3842,14 @@ body::before {
     width: 68px;
     height: 68px;
     min-width: 68px;
+    font-size: 1.3rem;
+  }
+
+  .welcome-hero {
+    padding: 22px 20px;
+  }
+
+  .welcome-hero h2 {
     font-size: 1.3rem;
   }
 }
