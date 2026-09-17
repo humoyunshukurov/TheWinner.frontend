@@ -22,6 +22,15 @@ export function burstSideConfetti(durationMs = 3000) {
         }
         if (Date.now() < end && !cancelled) {
           requestAnimationFrame(frame);
+        } else if (cancelled) {
+          // Stopping the loop alone only stops FUTURE bursts - particles
+          // already thrown keep falling on confetti's own canvas (appended
+          // straight to <body>, outside React) for another second or two.
+          // Since that canvas survives a client-side route change (Next
+          // only swaps the page content, not stuff appended elsewhere in
+          // <body>), a leftover burst would otherwise keep animating on top
+          // of whatever page comes next. reset() clears it immediately.
+          confetti.reset();
         }
       })();
     })

@@ -164,12 +164,16 @@ export default function KodOyinPage() {
       });
   }
 
+  // "Chiqish" tugmasi (sessiya uzilganda, kutish zalida yoki yakuniy
+  // natijalarda) - avval faqat lokal state'ni tozalab, shu sahifaning
+  // o'zidagi "kod kiriting" shakliga qaytarardi va (agar hozirgina g'olib
+  // chiqqan bo'lsa) konfetti animatsiyasi ham davom etaverardi, chunki
+  // sahifa hali ham mount holida qolardi. O'yinlar bo'limiga chiqib
+  // ketish sahifani butunlay unmount qiladi - shu bilan konfetti effekti
+  // ham o'zining cleanup'i orqali to'xtaydi.
   function leaveSession() {
     clearInterval(pollRef.current);
-    setSessionCode(null);
-    setState(null);
-    setCode('');
-    setSessionError(null);
+    router.push('/oyin');
   }
 
   // Still checking group membership, or confirmed groupless and about to
