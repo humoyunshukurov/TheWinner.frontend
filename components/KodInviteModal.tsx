@@ -23,14 +23,16 @@ type KodInvite = {
 // chiqarish shunchaki halaqit beradi.
 //
 // Boshqa tasdiqlash oynalaridan (.modal-overlay/.modal-box, masalan
-// PresenceCheckModal) ataylab boshqacha - u yerlar sahifani butunlay
-// bosib, qorong'ilashtiradi, bu esa har sahifaga kirganda shunga
+// PresenceCheckModal) ko'rinishda ataylab boshqacha - u yerlar sahifani
+// butunlay bosib qorong'ilashtiradi, bu esa har sahifaga kirganda shunga
 // duch kelavergani uchun juda halaqit bo'lib qoldi. Shu sabab bu yerda
 // yengil ko'rinishda: fon shunchaki sal hiralashadi (butunlay
-// qorong'ilashmaydi va bosishni to'sib qo'ymaydi - pointer-events faqat
-// kartaning o'zida), xabar va Ha/Yo'q tugmalari esa ekran markazida,
+// qorong'ilashmaydi), xabar va Ha/Yo'q tugmalari esa ekran markazida,
 // o'yin kartalari bilan taqqoslanadigan kattalikda aniq va to'liq
-// ko'rinib turadi.
+// ko'rinib turadi. Lekin ular kabi, oyna ochiq turgan paytda orqadagi
+// karta/tugmalar bosilmasligi kerak - shuning uchun fon ham ularga
+// o'xshab butun ekranni bosishni to'suvchi qatlam (.kod-invite-wrap'da
+// pointer-events endi cheklanmagan).
 export default function KodInviteModal() {
   const router = useRouter();
   const [invite, setInvite] = useState<KodInvite | null>(null);

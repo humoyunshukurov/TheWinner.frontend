@@ -492,14 +492,14 @@ body::before {
 }
 
 /* Kod bilan o'yin taklifi - ataylab .modal-overlay/.modal-box'dan
-   boshqacha: butun sahifani bosib qorong'ilashtirmaydi (pointer-events
-   faqat kartaning o'zida), fon shunchaki sal hiralanadi - bildirishnoma
-   (toast) kabi, o'ng yuqori burchakda suzib turadi. */
+   boshqacha ko'rinishda: butun sahifani qorong'ilashtirmaydi, fon
+   shunchaki sal hiralanadi. Lekin xuddi ular kabi, oyna ochiq turgan
+   paytda orqadagi sahifa bosilmasin - shu uchun bu wrap ham butun
+   ekranni pointer-events bilan qoplaydi, faqat kartaning o'zi emas. */
 .kod-invite-wrap {
   position: fixed;
   inset: 0;
   z-index: 90;
-  pointer-events: none;
   /* Dialed back from blur(2px)/6% - that read as the whole page going
      hazy, not the light "sal hiralashadi" touch described in the note
      below. Barely-there now: just enough to separate the card from the
