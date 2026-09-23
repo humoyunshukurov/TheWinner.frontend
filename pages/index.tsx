@@ -51,61 +51,61 @@ export default function HomePage() {
 
       <UsageClock />
 
-      <article className="card level-card" style={{ marginTop: 14 }}>
-        <div className="level-header">
-          <h2>Ballarim: {coins !== null ? coins : '...'}</h2>
-          <IconCoin size={20} />
-        </div>
-
-        <div className="level-row">
-          <IconTrendUp size={18} />
-          <span className="muted">Bosqich:</span>
-          <strong>{rank ? rank.stage : '...'}</strong>
-        </div>
-
-        <div className="level-progress-bar">
-          <div className="level-progress-fill" style={{ width: `${(rank?.progress ?? 0) * 100}%` }}>
-            <span>{progressLabel}</span>
+      {coins !== null && hpData && groupName !== undefined ? (
+        <article className="card level-card" style={{ marginTop: 14 }}>
+          <div className="level-header">
+            <h2>Ballarim: {coins}</h2>
+            <IconCoin size={20} />
           </div>
-        </div>
 
-        <p className="level-caption">
-          {rank
-            ? rank.hpToNext != null
-              ? `Keyingi bosqichgacha ${rank.hpToNext} XP qoldi`
-              : "Eng yuqori bosqichdasiz"
-            : '...'}
-        </p>
+          <div className="level-row">
+            <IconTrendUp size={18} />
+            <span className="muted">Bosqich:</span>
+            <strong>{rank.stage}</strong>
+          </div>
 
-        <div className="level-row">
-          <IconGlobe size={18} />
-          <span className="muted">XP:</span>
-          <strong>{hpData ? hpData.hp : '...'}</strong>
-        </div>
+          <div className="level-progress-bar">
+            <div className="level-progress-fill" style={{ width: `${(rank?.progress ?? 0) * 100}%` }}>
+              <span>{progressLabel}</span>
+            </div>
+          </div>
 
-        <div className="level-divider" />
+          <p className="level-caption">
+            {rank.hpToNext != null ? `Keyingi bosqichgacha ${rank.hpToNext} XP qoldi` : "Eng yuqori bosqichdasiz"}
+          </p>
 
-        <div className="level-row">
-          <span className="muted">Guruh:</span>
-          <strong>{groupName === undefined ? '...' : groupName || 'Guruhsiz'}</strong>
-        </div>
-        <div className="level-row" style={{ marginBottom: 0 }}>
-          {groupName ? (
-            <>
-              <span className="muted">A&apos;zolar:</span>
-              <strong className="level-rank-value">
-                {groupMembersCount != null ? `${groupMembersCount} ta` : '...'}
-              </strong>
-            </>
-          ) : (
-            groupName === null && (
+          <div className="level-row">
+            <IconGlobe size={18} />
+            <span className="muted">XP:</span>
+            <strong>{hpData.hp}</strong>
+          </div>
+
+          <div className="level-divider" />
+
+          <div className="level-row">
+            <span className="muted">Guruh:</span>
+            <strong>{groupName || 'Guruhsiz'}</strong>
+          </div>
+          <div className="level-row" style={{ marginBottom: 0 }}>
+            {groupName ? (
+              <>
+                <span className="muted">A&apos;zolar:</span>
+                <strong className="level-rank-value">
+                  {groupMembersCount != null ? `${groupMembersCount} ta` : '...'}
+                </strong>
+              </>
+            ) : (
               <Link href="/guruhlar" className="link-more">
                 Guruhga qo&apos;shilish
               </Link>
-            )
-          )}
-        </div>
-      </article>
+            )}
+          </div>
+        </article>
+      ) : (
+        <article className="card level-card" style={{ marginTop: 14 }}>
+          <p className="muted">Yuklanmoqda...</p>
+        </article>
+      )}
     </Layout>
   );
 }
