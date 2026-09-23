@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { IconLogout } from './icons';
-import { isRegistered, logout } from '../lib/guest';
+import { isRegistered, logout, GUEST_CHANGED_EVENT } from '../lib/guest';
 
 export default function LogoutButton({ compact }) {
   const router = useRouter();
@@ -9,7 +9,12 @@ export default function LogoutButton({ compact }) {
   const [confirming, setConfirming] = useState(false);
 
   useEffect(() => {
-    setRegistered(isRegistered());
+    function refresh() {
+      setRegistered(isRegistered());
+    }
+    refresh();
+    window.addEventListener(GUEST_CHANGED_EVENT, refresh);
+    return () => window.removeEventListener(GUEST_CHANGED_EVENT, refresh);
   }, [router.pathname]);
 
   if (!registered) return null;
